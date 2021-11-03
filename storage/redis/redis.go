@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/chyroc/go-ptr"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 	"time"
@@ -34,6 +35,11 @@ func NewCommonRedisWrapper(client *redis.Client) *CommonRedisWrapper {
 	}
 }
 
+func (c *CommonRedisWrapper) Set(ctx context.Context, key string, val interface{}, expiration time.Duration) error {
+	_, err := c.RawClient.Set(ctx, key, val, expiration).Result()
+	return err
+}
+
 func (c *CommonRedisWrapper) MSet(ctx context.Context, kvs map[string]interface{}, expiration time.Duration) error {
 	pipeline := c.RawClient.Pipeline()
 	defer pipeline.Close()
@@ -53,6 +59,14 @@ func (c *CommonRedisWrapper) MSet(ctx context.Context, kvs map[string]interface{
 	return nil
 }
 
+func (c *CommonRedisWrapper) Get(ctx context.Context, key string) (*string, error) {
+	v, err := c.RawClient.Get(ctx, key).Result()
+	if err != nil {
+		c.Logger.Logf(logrus.ErrorLevel, "Get failed, errL %s", err)
+		return nil, errors.New(fmt.Sprintf("Get failed, errL %s", err))
+	}
+	return ptr.String(v), nil
+}
 
 func (c *CommonRedisWrapper) MGet(ctx context.Context, keys []string) ([][]byte, error) {
 	vals, err := c.RawClient.MGet(ctx, keys...).Result()
@@ -84,7 +98,7 @@ func (c *CommonRedisWrapper) MDelete(ctx context.Context, keys []string) error {
 	return nil
 }
 
-func (c *CommonRedisWrapper) Lock (ctx context.Context, key string, uuid string, timeout, retry time.Duration) error{
+func (c *CommonRedisWrapper) Lock(ctx context.Context, key string, uuid string, timeout, retry time.Duration) error {
 	var (
 		err    error
 		isLock bool
