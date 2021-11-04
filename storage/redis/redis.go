@@ -14,9 +14,9 @@ var (
 	CommonRedisClient *redis.Client
 )
 
-func CommonRedisWrapperInit() *CommonRedisWrapper {
+func CommonRedisWrapperInit(address string) *CommonRedisWrapper {
 	CommonRedisClient = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     address,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
@@ -45,9 +45,9 @@ func (c *CommonRedisWrapper) MSet(ctx context.Context, kvs map[string]interface{
 	defer pipeline.Close()
 
 	for k, v := range kvs {
-		if _, err := pipeline.Set(ctx, k, v, expiration).Result(); err != nil {
-			c.Logger.Logf(logrus.ErrorLevel, fmt.Sprintf("Set error err: %v", err))
-			return errors.New(fmt.Sprintf("Set error err: %v", err))
+		err := pipeline.Set(ctx, k, v, expiration).Err()
+		if err != nil {
+			c.Logger.Warnf(fmt.Sprintf("Operation Set failef, err: %s", err))
 		}
 	}
 
@@ -127,4 +127,37 @@ func (c *CommonRedisWrapper) Unlock(ctx context.Context, key string, uuid string
 		return false, errors.New(fmt.Sprintf("RedisUnLock failed result: %v", result))
 	}
 	return true, nil
+}
+
+func (c *CommonRedisWrapper) SetExpireTime(ctx context.Context, key string, expiration time.Duration) (bool, error) {
+	return c.RawClient.Expire(ctx, key, expiration).Result()
+}
+
+func (c *CommonRedisWrapper) GetExpireTime (ctx context.Context, key string) time.Duration {
+	return c.RawClient.TTL(ctx, key).Val()
+}
+
+func (c *CommonRedisWrapper) MSetNx(ctx context.Context, kvs map[string]interface{}, expiration time.Duration) ([]string, error) {
+	pipeline := c.RawClient.Pipeline()
+	defer pipeline.Close()
+
+	var failedKeys []string
+	for k, v := range kvs {
+		boolCmd, err := pipeline.SetNX(ctx, k, v, expiration).Result()
+		if err != nil {
+			c.Logger.Warnf(fmt.Sprintf("MSetNx to redis failed, err: %s", err))
+		}
+		if !boolCmd {
+			c.Logger.Logf(logrus.InfoLevel, fmt.Sprintf("SetNX key: %s failed because of existence, ttl: %v", k, c.GetExpireTime(ctx, k)))
+			failedKeys = append(failedKeys, k)
+		}
+	}
+
+	_, err := pipeline.Exec(ctx)
+	if err != nil {
+		c.Logger.Logf(logrus.ErrorLevel, "Commit error: %s", err)
+		return nil, err
+	}
+
+	return failedKeys, nil
 }
