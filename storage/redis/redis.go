@@ -10,6 +10,13 @@ import (
 	"time"
 )
 
+type ListOperationDirection int64
+
+const (
+	ListFromLeft  ListOperationDirection = 1
+	ListFromRight ListOperationDirection = 2
+)
+
 var (
 	CommonRedisClient *redis.Client
 )
@@ -133,7 +140,7 @@ func (c *CommonRedisWrapper) SetExpireTime(ctx context.Context, key string, expi
 	return c.RawClient.Expire(ctx, key, expiration).Result()
 }
 
-func (c *CommonRedisWrapper) GetExpireTime (ctx context.Context, key string) time.Duration {
+func (c *CommonRedisWrapper) GetExpireTime(ctx context.Context, key string) time.Duration {
 	return c.RawClient.TTL(ctx, key).Val()
 }
 
@@ -160,4 +167,51 @@ func (c *CommonRedisWrapper) MSetNx(ctx context.Context, kvs map[string]interfac
 	}
 
 	return failedKeys, nil
+}
+
+// Push in fact is an operation of upsert.
+// If list exists, we will push in this list.
+// Or insert elements after create a new list
+func (c *CommonRedisWrapper) Push(ctx context.Context, direction ListOperationDirection, listName string, values ...interface{}) (num int64, err error) {
+	switch direction {
+	case ListFromLeft:
+		num, err = c.RawClient.LPush(ctx, listName, values...).Result()
+	case ListFromRight:
+		num, err = c.RawClient.RPush(ctx, listName, values...).Result()
+	}
+	return
+}
+
+func (c *CommonRedisWrapper) Pop(ctx context.Context, direction ListOperationDirection, listName string) (str string, err error) {
+	switch direction {
+	case ListFromLeft:
+		str, err = c.RawClient.LPop(ctx, listName).Result()
+	case ListFromRight:
+		str, err = c.RawClient.RPop(ctx, listName).Result()
+	}
+	return
+}
+
+// PushX in fact is an operation of insert.
+// If list doesn't exist, push will fail.
+func (c *CommonRedisWrapper) PushX(ctx context.Context, direction ListOperationDirection, listName string, values ...interface{}) (num int64, err error) {
+	switch direction {
+	case ListFromLeft:
+		num, err = c.RawClient.LPushX(ctx, listName, values...).Result()
+	case ListFromRight:
+		num, err = c.RawClient.RPushX(ctx, listName, values...).Result()
+	}
+	return
+}
+
+func (c *CommonRedisWrapper) LRange(ctx context.Context, listName string, start, stop int64) ([]string, error) {
+	return c.RawClient.LRange(ctx, listName, start, stop).Result()
+}
+
+func (c *CommonRedisWrapper) LIndex(ctx context.Context, listName string, index int64) (string, error) {
+	return c.RawClient.LIndex(ctx, listName, index).Result()
+}
+
+func (c *CommonRedisWrapper) LLen(ctx context.Context, listName string) (int64, error) {
+	return c.RawClient.LLen(ctx, listName).Result()
 }
