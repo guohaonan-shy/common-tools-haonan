@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/chyroc/go-ptr"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 	"time"
@@ -13,12 +12,16 @@ import (
 type ListOperationDirection int64
 
 const (
-	ListFromLeft  ListOperationDirection = 1
-	ListFromRight ListOperationDirection = 2
+	ListPushFromLeft     ListOperationDirection = 1
+	ListPushFromRight    ListOperationDirection = 2
+	ListInsertFromBefore ListOperationDirection = 3
+	ListInsertFromAfter  ListOperationDirection = 4
 )
 
 var (
 	CommonRedisClient *redis.Client
+
+	Log = logrus.New()
 )
 
 func CommonRedisWrapperInit(address string) *CommonRedisWrapper {
@@ -32,78 +35,19 @@ func CommonRedisWrapperInit(address string) *CommonRedisWrapper {
 
 type CommonRedisWrapper struct {
 	RawClient *redis.Client
-	Logger    *logrus.Logger
 }
 
 func NewCommonRedisWrapper(client *redis.Client) *CommonRedisWrapper {
 	return &CommonRedisWrapper{
 		RawClient: client,
-		Logger:    logrus.New(),
 	}
 }
 
-func (c *CommonRedisWrapper) Set(ctx context.Context, key string, val interface{}, expiration time.Duration) error {
-	_, err := c.RawClient.Set(ctx, key, val, expiration).Result()
-	return err
+type ConnectAcquire interface {
+	GetCommonRedis() *CommonRedisWrapper
+	GetRawRedis() *redis.Client
 }
 
-func (c *CommonRedisWrapper) MSet(ctx context.Context, kvs map[string]interface{}, expiration time.Duration) error {
-	pipeline := c.RawClient.Pipeline()
-	defer pipeline.Close()
-
-	for k, v := range kvs {
-		err := pipeline.Set(ctx, k, v, expiration).Err()
-		if err != nil {
-			c.Logger.Warnf(fmt.Sprintf("Operation Set failef, err: %s", err))
-		}
-	}
-
-	if _, err := pipeline.Exec(ctx); err != nil {
-		c.Logger.Logf(logrus.ErrorLevel, fmt.Sprintf("Pipeline commit error err: %v", err))
-		return errors.New(fmt.Sprintf("Pipeline commit error err: %v", err))
-	}
-
-	return nil
-}
-
-func (c *CommonRedisWrapper) Get(ctx context.Context, key string) (*string, error) {
-	v, err := c.RawClient.Get(ctx, key).Result()
-	if err != nil {
-		c.Logger.Logf(logrus.ErrorLevel, "Get failed, errL %s", err)
-		return nil, errors.New(fmt.Sprintf("Get failed, errL %s", err))
-	}
-	return ptr.String(v), nil
-}
-
-func (c *CommonRedisWrapper) MGet(ctx context.Context, keys []string) ([][]byte, error) {
-	vals, err := c.RawClient.MGet(ctx, keys...).Result()
-	if err != nil {
-		c.Logger.Logf(logrus.WarnLevel, "MGet error err: %v", err)
-		return nil, errors.New(fmt.Sprintf("MGet error err: %v", err))
-	}
-
-	ret := make([][]byte, 0, len(vals))
-	for _, val := range vals {
-		switch v := val.(type) {
-		case []byte:
-			ret = append(ret, v)
-		case string:
-			ret = append(ret, []byte(v))
-		case nil:
-			ret = append(ret, nil)
-		}
-	}
-
-	return ret, nil
-}
-
-func (c *CommonRedisWrapper) MDelete(ctx context.Context, keys []string) error {
-	if _, err := c.RawClient.Del(ctx, keys...).Result(); err != nil {
-		c.Logger.Logf(logrus.WarnLevel, "mDelete error err: %v", err)
-		return errors.New(fmt.Sprintf("mDelete error err: %v", err))
-	}
-	return nil
-}
 
 func (c *CommonRedisWrapper) Lock(ctx context.Context, key string, uuid string, timeout, retry time.Duration) error {
 	var (
@@ -142,76 +86,4 @@ func (c *CommonRedisWrapper) SetExpireTime(ctx context.Context, key string, expi
 
 func (c *CommonRedisWrapper) GetExpireTime(ctx context.Context, key string) time.Duration {
 	return c.RawClient.TTL(ctx, key).Val()
-}
-
-func (c *CommonRedisWrapper) MSetNx(ctx context.Context, kvs map[string]interface{}, expiration time.Duration) ([]string, error) {
-	pipeline := c.RawClient.Pipeline()
-	defer pipeline.Close()
-
-	var failedKeys []string
-	for k, v := range kvs {
-		boolCmd, err := pipeline.SetNX(ctx, k, v, expiration).Result()
-		if err != nil {
-			c.Logger.Warnf(fmt.Sprintf("MSetNx to redis failed, err: %s", err))
-		}
-		if !boolCmd {
-			c.Logger.Logf(logrus.InfoLevel, fmt.Sprintf("SetNX key: %s failed because of existence, ttl: %v", k, c.GetExpireTime(ctx, k)))
-			failedKeys = append(failedKeys, k)
-		}
-	}
-
-	_, err := pipeline.Exec(ctx)
-	if err != nil {
-		c.Logger.Logf(logrus.ErrorLevel, "Commit error: %s", err)
-		return nil, err
-	}
-
-	return failedKeys, nil
-}
-
-// Push in fact is an operation of upsert.
-// If list exists, we will push in this list.
-// Or insert elements after create a new list
-func (c *CommonRedisWrapper) Push(ctx context.Context, direction ListOperationDirection, listName string, values ...interface{}) (num int64, err error) {
-	switch direction {
-	case ListFromLeft:
-		num, err = c.RawClient.LPush(ctx, listName, values...).Result()
-	case ListFromRight:
-		num, err = c.RawClient.RPush(ctx, listName, values...).Result()
-	}
-	return
-}
-
-func (c *CommonRedisWrapper) Pop(ctx context.Context, direction ListOperationDirection, listName string) (str string, err error) {
-	switch direction {
-	case ListFromLeft:
-		str, err = c.RawClient.LPop(ctx, listName).Result()
-	case ListFromRight:
-		str, err = c.RawClient.RPop(ctx, listName).Result()
-	}
-	return
-}
-
-// PushX in fact is an operation of insert.
-// If list doesn't exist, push will fail.
-func (c *CommonRedisWrapper) PushX(ctx context.Context, direction ListOperationDirection, listName string, values ...interface{}) (num int64, err error) {
-	switch direction {
-	case ListFromLeft:
-		num, err = c.RawClient.LPushX(ctx, listName, values...).Result()
-	case ListFromRight:
-		num, err = c.RawClient.RPushX(ctx, listName, values...).Result()
-	}
-	return
-}
-
-func (c *CommonRedisWrapper) LRange(ctx context.Context, listName string, start, stop int64) ([]string, error) {
-	return c.RawClient.LRange(ctx, listName, start, stop).Result()
-}
-
-func (c *CommonRedisWrapper) LIndex(ctx context.Context, listName string, index int64) (string, error) {
-	return c.RawClient.LIndex(ctx, listName, index).Result()
-}
-
-func (c *CommonRedisWrapper) LLen(ctx context.Context, listName string) (int64, error) {
-	return c.RawClient.LLen(ctx, listName).Result()
 }
