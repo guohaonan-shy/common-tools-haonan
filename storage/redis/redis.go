@@ -30,14 +30,14 @@ func CommonRedisWrapperInit(address string) *CommonRedisWrapper {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	return NewCommonRedisWrapper(CommonRedisClient)
+	return NewCommonRedis(CommonRedisClient)
 }
 
 type CommonRedisWrapper struct {
 	RawClient *redis.Client
 }
 
-func NewCommonRedisWrapper(client *redis.Client) *CommonRedisWrapper {
+func NewCommonRedis(client *redis.Client) *CommonRedisWrapper {
 	return &CommonRedisWrapper{
 		RawClient: client,
 	}
