@@ -21,7 +21,7 @@ func (ls *ListDataClass) GetRawRedis() *redis.Client {
 
 func (ls *ListDataClass) NewListDataClass() *ListDataClass {
 	return &ListDataClass{
-		cw: NewCommonRedisWrapper(CommonRedisClient),
+		cw: NewCommonRedis(CommonRedisClient),
 	}
 }
 

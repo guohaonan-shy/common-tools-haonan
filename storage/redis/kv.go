@@ -24,7 +24,7 @@ func (kv *KVDataClass) GetRawRedis() *redis.Client {
 
 func (kv *KVDataClass) NewKVDataClass() *KVDataClass {
 	return &KVDataClass{
-		cw: NewCommonRedisWrapper(CommonRedisClient),
+		cw: NewCommonRedis(CommonRedisClient),
 	}
 }
 

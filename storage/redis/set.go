@@ -19,7 +19,7 @@ func (s *SetDataClass) GetRawRedis() *redis.Client {
 
 func (s *SetDataClass) NewListDataClass() *ListDataClass {
 	return &ListDataClass{
-		cw: NewCommonRedisWrapper(CommonRedisClient),
+		cw: NewCommonRedis(CommonRedisClient),
 	}
 }
 
