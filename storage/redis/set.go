@@ -17,8 +17,8 @@ func (s *SetDataClass) GetRawRedis() *redis.Client {
 	return s.cw.RawClient
 }
 
-func (s *SetDataClass) NewListDataClass() *ListDataClass {
-	return &ListDataClass{
+func (s *SetDataClass) NewSetDataClass() *SetDataClass {
+	return &SetDataClass{
 		cw: NewCommonRedis(CommonRedisClient),
 	}
 }

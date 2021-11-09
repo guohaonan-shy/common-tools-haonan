@@ -41,7 +41,7 @@ func (kv *KVDataClass) MSet(ctx context.Context, kvs map[string]interface{}, exp
 	for k, v := range kvs {
 		err := pipeline.Set(ctx, k, v, expiration).Err()
 		if err != nil {
-			Log.Warnf(fmt.Sprintf("Operation Set failef, err: %s", err))
+			Log.Warnf(fmt.Sprintf("Operation Set failed, err: %s", err))
 		}
 	}
 

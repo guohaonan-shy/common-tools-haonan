@@ -24,13 +24,20 @@ var (
 	Log = logrus.New()
 )
 
-func CommonRedisWrapperInit(address string) *CommonRedisWrapper {
+func CommonRedisWrapperInit(address string) (*CommonRedisWrapper, error) {
 	CommonRedisClient = redis.NewClient(&redis.Options{
 		Addr:     address,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	return NewCommonRedis(CommonRedisClient)
+
+	//通过 *redis.Client.Ping() 来检查是否成功连接到了redis服务器
+	_, err := CommonRedisClient.Ping(context.Background()).Result()
+	if err != nil {
+		panic(err)
+	}
+
+	return NewCommonRedis(CommonRedisClient), nil
 }
 
 type CommonRedisWrapper struct {
