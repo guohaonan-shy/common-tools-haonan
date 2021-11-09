@@ -15,7 +15,7 @@ type KVDataClass struct {
 }
 
 func (kv *KVDataClass) GetCommonRedis() *CommonRedisWrapper {
-	return kv.GetCommonRedis()
+	return kv.cw
 }
 
 func (kv *KVDataClass) GetRawRedis() *redis.Client {

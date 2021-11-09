@@ -12,7 +12,7 @@ type ListDataClass struct {
 }
 
 func (ls *ListDataClass) GetCommonRedis() *CommonRedisWrapper {
-	return ls.GetCommonRedis()
+	return ls.cw
 }
 
 func (ls *ListDataClass) GetRawRedis() *redis.Client {

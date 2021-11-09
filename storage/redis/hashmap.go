@@ -11,7 +11,7 @@ type HashmapDataClass struct {
 }
 
 func (h *HashmapDataClass) GetCommonRedis() *CommonRedisWrapper {
-	return h.GetCommonRedis()
+	return h.cw
 }
 
 func (h *HashmapDataClass) GetRawRedis() *redis.Client {

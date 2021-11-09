@@ -10,7 +10,7 @@ type SetDataClass struct {
 }
 
 func (s *SetDataClass) GetCommonRedis() *CommonRedisWrapper {
-	return s.GetCommonRedis()
+	return s.cw
 }
 
 func (s *SetDataClass) GetRawRedis() *redis.Client {
