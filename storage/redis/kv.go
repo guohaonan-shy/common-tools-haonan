@@ -46,8 +46,8 @@ func (kv *KVDataClass) MSet(ctx context.Context, kvs map[string]interface{}, exp
 	}
 
 	if _, err := pipeline.Exec(ctx); err != nil {
-		Log.Errorf(fmt.Sprintf("Pipeline commit error err: %v", err))
-		return errors.New(fmt.Sprintf("Pipeline commit error err: %v", err))
+		Log.Errorf(fmt.Sprintf("Pipeline commit errorh err: %v", err))
+		return errors.New(fmt.Sprintf("Pipeline commit errorh err: %v", err))
 	}
 
 	return nil
@@ -65,8 +65,8 @@ func (kv *KVDataClass) Get(ctx context.Context, key string) (*string, error) {
 func (kv *KVDataClass) MGet(ctx context.Context, keys []string) ([][]byte, error) {
 	vals, err := kv.GetRawRedis().MGet(ctx, keys...).Result()
 	if err != nil {
-		Log.Errorf("MGet error err: %v", err)
-		return nil, errors.New(fmt.Sprintf("MGet error err: %v", err))
+		Log.Errorf("MGet errorh err: %v", err)
+		return nil, errors.New(fmt.Sprintf("MGet errorh err: %v", err))
 	}
 
 	ret := make([][]byte, 0, len(vals))
@@ -86,8 +86,8 @@ func (kv *KVDataClass) MGet(ctx context.Context, keys []string) ([][]byte, error
 
 func (kv *KVDataClass) MDelete(ctx context.Context, keys []string) error {
 	if _, err := kv.GetRawRedis().Del(ctx, keys...).Result(); err != nil {
-		Log.Errorf("mDelete error err: %v", err)
-		return errors.New(fmt.Sprintf("mDelete error err: %v", err))
+		Log.Errorf("mDelete errorh err: %v", err)
+		return errors.New(fmt.Sprintf("mDelete errorh err: %v", err))
 	}
 	return nil
 }
@@ -110,7 +110,7 @@ func (kv *KVDataClass) MSetNx(ctx context.Context, kvs map[string]interface{}, e
 
 	_, err := pipeline.Exec(ctx)
 	if err != nil {
-		Log.Logf(logrus.ErrorLevel, "Commit error: %s", err)
+		Log.Logf(logrus.ErrorLevel, "Commit errorh: %s", err)
 		return nil, err
 	}
 

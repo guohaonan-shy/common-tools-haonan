@@ -6,6 +6,7 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/bytedance/sonic/decoder"
 	"github.com/sirupsen/logrus"
+	"reflect"
 )
 
 // StructBeautify ident handle
@@ -28,4 +29,23 @@ func BytesJsonDecode(data string, obj interface{}) error {
 	decodeObj := decoder.NewDecoder(data)
 	decodeObj.UseNumber()
 	return decodeObj.Decode(&obj)
+}
+
+func GetJSONString(object interface{}) string {
+	if object == nil {
+		logrus.Warnf("convert json string nil object")
+		return ""
+	}
+	if v := reflect.ValueOf(object); v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			logrus.Warnf("convert json string nil ptr")
+			return ""
+		}
+	}
+	jsonBytes, err := sonic.Marshal(object)
+	if err != nil {
+		logrus.Error("convert json string err=%v", err)
+		return "{}" //default empty json object string
+	}
+	return string(jsonBytes)
 }

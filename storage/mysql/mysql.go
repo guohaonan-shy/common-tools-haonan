@@ -25,3 +25,7 @@ func DBObjectInit(dsn string) *DBWrapper {
 		config: option,
 	}
 }
+
+func (dw *DBWrapper)GetDBInstance() *gorm.DB {
+	return dw.db
+}

@@ -35,7 +35,7 @@ func (ls *ListDataClass) Push(ctx context.Context, direction ListOperationDirect
 	case ListPushFromRight:
 		num, err = ls.GetRawRedis().RPush(ctx, listName, values...).Result()
 	default:
-		return 0, errors.New(fmt.Sprintf("Operation type error, operation: %v", direction))
+		return 0, errors.New(fmt.Sprintf("Operation type errorh, operation: %v", direction))
 	}
 	return
 }
@@ -47,7 +47,7 @@ func (ls *ListDataClass) Pop(ctx context.Context, direction ListOperationDirecti
 	case ListPushFromRight:
 		str, err = ls.GetRawRedis().RPop(ctx, listName).Result()
 	default:
-		return "", errors.New(fmt.Sprintf("Operation type error, operation: %v", direction))
+		return "", errors.New(fmt.Sprintf("Operation type errorh, operation: %v", direction))
 	}
 	return
 }
@@ -61,7 +61,7 @@ func (ls *ListDataClass) PushX(ctx context.Context, direction ListOperationDirec
 	case ListPushFromRight:
 		num, err = ls.GetRawRedis().RPushX(ctx, listName, values...).Result()
 	default:
-		return 0, errors.New(fmt.Sprintf("Operation type error, operation: %v", direction))
+		return 0, errors.New(fmt.Sprintf("Operation type errorh, operation: %v", direction))
 	}
 	return
 }
@@ -94,6 +94,6 @@ func (ls *ListDataClass) ListInsert(ctx context.Context, operation ListOperation
 	case ListInsertFromAfter:
 		return ls.GetRawRedis().LInsertAfter(ctx, key, pivot, value).Result()
 	default:
-		return 0, errors.New(fmt.Sprintf("Operation type error, operation: %v", operation))
+		return 0, errors.New(fmt.Sprintf("Operation type errorh, operation: %v", operation))
 	}
 }
