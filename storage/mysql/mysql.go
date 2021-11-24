@@ -14,7 +14,9 @@ type DBWrapper struct {
 // DBObjectInit
 // This function only offers the basic option for db connection, if you want some specific options, please use session change setting
 func DBObjectInit(dsn string) *DBWrapper {
-	option := &gorm.Config{}
+	option := &gorm.Config{
+		SkipDefaultTransaction: false,
+	}
 	DB, err := gorm.Open(sqlite.Open(dsn), option)
 	if err != nil {
 		logrus.Errorf("gorm.Open failed, err: %v", err)

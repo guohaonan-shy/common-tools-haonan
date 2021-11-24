@@ -9,6 +9,8 @@ const (
 
 	Errno_Mysql_Conn_Failed   = 1000
 	Errno_Mysql_Create_Failed = 1001
+	Errno_Mysql_Select_Failed = 1002
+	Errno_Mysql_Upsert_Failed = 1003
 )
 
 type CommonError struct {
