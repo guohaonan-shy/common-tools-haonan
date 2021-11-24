@@ -83,3 +83,22 @@ func TransactionUse() error {
 
 	return nil
 }
+
+func SessionUse() error {
+	DB := DBObjectInit("")
+
+	m := &MiniDemo{}
+
+	// initiate a new session including a new gorm.DB instance without previous conditions
+	// can pass config to this session
+	err := DB.GetDBInstance().Session(&gorm.Session{}).Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "a"}},
+		DoUpdates: clause.Assignments(map[string]interface{}{"status":1}),
+	}).Create(m).Error
+
+	if err != nil {
+		return errorh.WrapError(errorh.Errno_Mysql_Upsert_Failed, fmt.Sprintf("upsert failed, err: %s", err))
+	}
+
+	return nil
+}
