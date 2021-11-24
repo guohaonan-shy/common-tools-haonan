@@ -11,6 +11,11 @@ const (
 	Errno_Mysql_Create_Failed = 1001
 	Errno_Mysql_Select_Failed = 1002
 	Errno_Mysql_Upsert_Failed = 1003
+
+	Errno_MapStructure_Decode_failed = 2000
+
+	Error_Interface_Implement_failed = 3000
+	Error_Interface_Implement_Execute_failed = 3001
 )
 
 type CommonError struct {
