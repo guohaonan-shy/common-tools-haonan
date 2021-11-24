@@ -1,8 +1,6 @@
 package mysql
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
 	"github.com/ghn980421/common-tools-haonan/errorh"
 	"github.com/sirupsen/logrus"
