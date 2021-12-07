@@ -3,6 +3,7 @@ module github.com/ghn980421/common-tools-haonan
 go 1.15
 
 require (
+	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
 	github.com/bytedance/sonic v1.0.0-rc.1 // indirect
 	github.com/chyroc/go-ptr v1.4.0
 	github.com/go-redis/redis/v8 v8.11.5-0.20211027084822-25378ca292e5

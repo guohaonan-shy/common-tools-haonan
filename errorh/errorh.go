@@ -11,6 +11,7 @@ const (
 	Errno_Mysql_Create_Failed = 1001
 	Errno_Mysql_Select_Failed = 1002
 	Errno_Mysql_Upsert_Failed = 1003
+	Errno_Mysql_Update_Failed = 1004
 
 	Errno_MapStructure_Decode_failed = 2000
 
