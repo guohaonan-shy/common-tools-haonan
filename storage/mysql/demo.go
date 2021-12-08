@@ -48,22 +48,28 @@ func HookUse() error {
 
 	// GORM perform single create, update, delete operations in transactions by default to ensure database data integrity
 	// You can disable it by setting `SkipDefaultTransaction` to true
-	err := DB.GetDBInstance().Create(m).Error
+	conn, err := DB.GetDBHandler().GetConn()
 	if err != nil {
 		logrus.Errorf("before execute failed, error: %s", err)
 		return err
 	}
+
+	err = conn.Create(m).Error
 
 	return nil
 }
 
 func TransactionUse() error {
 	DB := DBObjectInit("")
+	conn, err := DB.GetDBHandler().GetConn()
+	if err != nil {
+		return err
+	}
 
 	m := &MiniDemo{}
 
 	upsertFunc := func(tx *gorm.DB) error {
-		err := DB.GetDBInstance().Clauses(clause.OnConflict{
+		err = conn.Clauses(clause.OnConflict{
 			Columns: []clause.Column{{Name: "a"}},
 			DoUpdates: clause.Assignments(map[string]interface{}{"status":1}),
 		}).Create(m).Error
@@ -75,7 +81,7 @@ func TransactionUse() error {
 		return nil
 	}
 	
-	err := DB.GetDBInstance().Transaction(upsertFunc)
+	err = conn.Transaction(upsertFunc)
 	
 	if err != nil {
 		return err
@@ -86,12 +92,16 @@ func TransactionUse() error {
 
 func SessionUse() error {
 	DB := DBObjectInit("")
+	conn, err := DB.GetDBHandler().GetConn()
+	if err != nil {
+		return err
+	}
 
 	m := &MiniDemo{}
 
 	// initiate a new session including a new gorm.DB instance without previous conditions
 	// can pass config to this session
-	err := DB.GetDBInstance().Session(&gorm.Session{}).Clauses(clause.OnConflict{
+	err = conn.Session(&gorm.Session{}).Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "a"}},
 		DoUpdates: clause.Assignments(map[string]interface{}{"status":1}),
 	}).Create(m).Error

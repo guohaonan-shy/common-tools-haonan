@@ -1,33 +1,39 @@
 package mysql
 
 import (
-	"github.com/sirupsen/logrus"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type DBWrapper struct {
-	db *gorm.DB
-	config *gorm.Config
+	handler *DBHandler
+	config  *gorm.Config
 }
 
 // DBObjectInit
 // This function only offers the basic option for db connection, if you want some specific options, please use session change setting
 func DBObjectInit(dsn string) *DBWrapper {
+
 	option := &gorm.Config{
 		SkipDefaultTransaction: false,
 	}
-	DB, err := gorm.Open(sqlite.Open(dsn), option)
-	if err != nil {
-		logrus.Errorf("gorm.Open failed, err: %v", err)
-		panic(err)
+
+	dbHandler := &DBHandler{}
+	dbHandler.ConnectDB(dsn, option)
+
+	if dbHandler.err != nil {
+		panic(dbHandler.err)
 	}
+
 	return &DBWrapper{
-		db: DB,
-		config: option,
+		handler: dbHandler,
+		config:  option,
 	}
 }
 
-func (dw *DBWrapper)GetDBInstance() *gorm.DB {
-	return dw.db
+func (dw *DBWrapper) GetDBHandler() *DBHandler {
+	return dw.handler
+}
+
+func (dw *DBWrapper) SetDBHandler(handler *DBHandler) {
+	dw.handler = handler
 }
