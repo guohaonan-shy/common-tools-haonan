@@ -1,6 +1,8 @@
 package mysql
 
 import (
+	"context"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -36,4 +38,17 @@ func (dw *DBWrapper) GetDBHandler() *DBHandler {
 
 func (dw *DBWrapper) SetDBHandler(handler *DBHandler) {
 	dw.handler = handler
+}
+
+// TxExecOrRollback rollback is function that can be implemented by developer
+func (dw *DBWrapper) TxExecOrRollback(ctx context.Context, tx *gorm.DB, rollback func() error) error {
+	// default tx has built up
+	if err := tx.Begin(); err == nil {
+		logrus.Infof("Transaction Exec success, commit")
+		tx.Commit()
+		return nil
+	}
+	logrus.Infof("Transaction Exec failed, rollback")
+	tx.Rollback()
+	return rollback()
 }

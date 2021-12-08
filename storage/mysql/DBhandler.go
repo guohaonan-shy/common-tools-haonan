@@ -20,7 +20,9 @@ func (handler *DBHandler) ConnectDB(dsn string, option *gorm.Config) {
 
 	handler.db = conn
 	handler.err = err
-	return
+	handler.connFunc = func() (*gorm.DB, error) {
+		return conn, err
+	}
 }
 
 func (handler *DBHandler) GetConn() (*gorm.DB, error) {
