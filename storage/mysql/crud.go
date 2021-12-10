@@ -8,9 +8,9 @@ import (
 )
 
 func (dw *DBWrapper) GetConn(model interface{}) (*gorm.DB, error) {
-	db := dw.GetDBInstance().Model(model)
+	db, err := dw.GetConn(model)
 
-	if db.Error != nil {
+	if err != nil {
 		return nil, errorh.WrapError(errorh.Errno_Mysql_Conn_Failed, fmt.Sprintf("GetDBInstance failed, err: %v", db.Error))
 	}
 	return db, nil
