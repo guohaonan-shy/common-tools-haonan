@@ -34,3 +34,26 @@ func SortByFunc[T comparable](quene []T, lessFn func(a, b T) bool) []T {
 	}
 	return quene
 }
+
+type Map[Key comparable, Value any] map[Key]Value
+
+// FilterByFunc self-define value函数
+func FilterByFunc(kv Map, fn func(value any) bool) Map {
+	for k, v := range kv {
+		if fn(v) {
+			delete(kv, k)
+		}
+	}
+	return kv
+}
+
+func FilterDuplicate[T comparable](list []T) []T {
+	res, set := make([]T, 0), make(map[T]struct{}, 0)
+	for _, element := range list {
+		if _, ok := set[element]; !ok {
+			res = append(res, element)
+			set[element] = struct{}{}
+		}
+	}
+	return res
+}
