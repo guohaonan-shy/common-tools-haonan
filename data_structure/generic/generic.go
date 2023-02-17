@@ -1,5 +1,7 @@
 package generic
 
+// generic try
+
 func Contains[T comparable](target T, quene []T) bool {
 	for _, element := range quene {
 		if target == element {
