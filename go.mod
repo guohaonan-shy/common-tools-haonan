@@ -1,6 +1,6 @@
 module github.com/ghn980421/common-tools-haonan
 
-go 1.15
+go 1.18
 
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
