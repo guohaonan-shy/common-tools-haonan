@@ -35,10 +35,8 @@ func SortByFunc[T comparable](quene []T, lessFn func(a, b T) bool) []T {
 	return quene
 }
 
-type Map[Key comparable, Value any] map[Key]Value
-
 // FilterByFunc self-define value函数
-func FilterByFunc(kv Map, fn func(value any) bool) Map {
+func FilterByFunc[Key comparable, Value any](kv map[Key]Value, fn func(value any) bool) map[Key]Value {
 	for k, v := range kv {
 		if fn(v) {
 			delete(kv, k)
