@@ -1,15 +1,30 @@
-module github.com/ghn980421/common-tools-haonan
+module github.com/common-tools-haonan
 
-go 1.15
+go 1.19
 
 require (
-	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
-	github.com/bytedance/sonic v1.0.0-rc.1 // indirect
-	github.com/chyroc/go-ptr v1.4.0
-	github.com/go-redis/redis/v8 v8.11.5-0.20211027084822-25378ca292e5
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
-	github.com/sirupsen/logrus v1.8.1
-	golang.org/x/sys v0.0.0-20211102192858-4dd72447c267 // indirect
-	gorm.io/driver/sqlite v1.2.3 // indirect
-	gorm.io/gorm v1.22.2 // indirect
+	github.com/bytedance/sonic v1.8.0
+	github.com/chyroc/go-ptr v1.7.0
+	github.com/ghn980421/common-tools-haonan v0.0.0-20211210092931-25d81a192a5c
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/sirupsen/logrus v1.9.0
+	github.com/stretchr/testify v1.8.1
+	gorm.io/driver/sqlite v1.4.4
+	gorm.io/gorm v1.24.5
+)
+
+require (
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
+	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
