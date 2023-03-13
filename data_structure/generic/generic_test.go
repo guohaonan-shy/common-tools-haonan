@@ -1,6 +1,7 @@
 package generic
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -64,4 +65,40 @@ func Test_ContainByFunc(t *testing.T) {
 
 	res3 := ContainsByFunc(fn1, s)
 	assert.Equal(t, true, res3, "should contain ghn")
+}
+
+func Test_FilterMap(t *testing.T) {
+
+	type BizModelEntity struct {
+		EntityId     int64 `json:"entity_id"`
+		IsNeedFilter bool  `json:"is_need_filter"`
+	}
+
+	in := map[int64]*BizModelEntity{
+		123: &BizModelEntity{EntityId: 123, IsNeedFilter: true},
+		234: &BizModelEntity{EntityId: 234, IsNeedFilter: false},
+		345: &BizModelEntity{EntityId: 345, IsNeedFilter: false},
+		456: &BizModelEntity{EntityId: 456, IsNeedFilter: true},
+		457: &BizModelEntity{EntityId: 457, IsNeedFilter: true},
+	}
+
+	fn := func(value *BizModelEntity) bool { // 业务函数
+		if value.IsNeedFilter == true {
+			return true
+		}
+		return false
+	}
+
+	bytesIn, _ := json.Marshal(in)
+	t.Logf("Before Filter: %s", bytesIn)
+
+	res := FilterByFunc[int64, *BizModelEntity](in, fn)
+
+	bytesOut, _ := json.Marshal(res)
+	t.Logf("After Filter: %s", bytesOut)
+
+	assert.Equal(t, map[int64]*BizModelEntity{
+		234: &BizModelEntity{EntityId: 234, IsNeedFilter: false},
+		345: &BizModelEntity{EntityId: 345, IsNeedFilter: false},
+	}, res)
 }
