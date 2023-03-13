@@ -102,3 +102,17 @@ func Test_FilterMap(t *testing.T) {
 		345: &BizModelEntity{EntityId: 345, IsNeedFilter: false},
 	}, res)
 }
+
+func Test_FilterDuplicate(t *testing.T) {
+	in := []int64{1234566, 213123421, 534654645, 1234566}
+
+	bytesIn, _ := json.Marshal(in)
+	t.Logf("Before Filter: %s", bytesIn)
+
+	res := FilterDuplicate(in)
+
+	bytesOut, _ := json.Marshal(res)
+	t.Logf("After Filter: %s", bytesOut)
+
+	assert.Equal(t, []int64{1234566, 213123421, 534654645}, res)
+}
