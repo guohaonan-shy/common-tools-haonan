@@ -27,32 +27,32 @@ func NewGoPool[args any, res any](workerNum int64, size int64) *GoPool[args, res
 	return pool
 }
 
-func (pool *GoPool[args, res]) SyncSubmit(handler func(args) res, args args) res {
-	result := pool.AsyncSubmit(handler, args)
+func (pool *GoPool[args, res]) SyncSubmit(handler func(args) res, param args) res {
+	result := pool.AsyncSubmit(handler, param)
 	return <-result
 }
 
-func (pool *GoPool[args, res]) AsyncSubmit(handler func(args) res, args args) chan res {
-	task := NewTask(handler, args)
+func (pool *GoPool[args, res]) AsyncSubmit(handler func(args) res, param args) chan res {
+	task := NewTask(handler, param)
 	pool.pipeline <- task
 	return task.result
 }
 
-func (pool *GoPool[args, res]) SyncMap(handler func(args) res, args []args) []res {
+func (pool *GoPool[args, res]) SyncMap(handler func(args) res, params []args) []res {
 
-	result := make([]res, len(args))
-	asyncRes := pool.AsyncMap(handler, args)
+	result := make([]res, len(params))
+	asyncRes := pool.AsyncMap(handler, params)
 
-	for i := 1; i <= len(args); i++ {
+	for i := 1; i <= len(params); i++ {
 		result[i] = <-asyncRes[i]
 	}
 	return result
 }
 
-func (pool *GoPool[args, res]) AsyncMap(handler func(args) res, args []args) []chan res {
-	result := make([]chan res, len(args))
-	for index := range args {
-		task := NewTask(handler, args[index])
+func (pool *GoPool[args, res]) AsyncMap(handler func(args) res, params []args) []chan res {
+	result := make([]chan res, len(params))
+	for index := range params {
+		task := NewTask(handler, params[index])
 		pool.pipeline <- task
 		result[index] = task.result
 	}
