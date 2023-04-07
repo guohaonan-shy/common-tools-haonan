@@ -8,6 +8,8 @@ type ShyHTTP struct {
 	router *Router
 }
 
+type HandleFunc func(ctx *Context)
+
 func NewShyHTTP() *ShyHTTP {
 	return &ShyHTTP{
 		router: NewRouter(),
