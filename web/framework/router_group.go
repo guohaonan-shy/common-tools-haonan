@@ -3,15 +3,15 @@ package framework
 type RouterGroup struct {
 	prefix     string
 	middleware []HandleFunc
-	parent     *RouterGroup
-	engine     *ShyHTTP
+	//parent     *RouterGroup
+	engine *ShyHTTP
 }
 
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	newPrefix := group.prefix + prefix
 	newGroup := &RouterGroup{
 		prefix: newPrefix,
-		parent: group,
+		//parent: group,
 		engine: group.engine,
 	}
 
