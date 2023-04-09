@@ -1,11 +1,13 @@
 package framework
 
 type TreeNode struct {
-	path     string
-	pattern  string
-	children []*TreeNode
+	path      string
+	pattern   string
+	children  []*TreeNode
+	isDynamic bool
 }
 
+// layer means the number of parts which the current insert has already operated at
 func (node *TreeNode) insert(path string, parts []string, layer int) {
 	// last part in path, no child
 	if layer == len(parts) {
@@ -15,10 +17,12 @@ func (node *TreeNode) insert(path string, parts []string, layer int) {
 	}
 
 	// normal
-	child := node.matchChild(parts[layer])
+	waitToMatchPart := parts[layer]
+	child := node.matchChild(waitToMatchPart)
 	if child == nil { // no child match
 		child = &TreeNode{
-			pattern: parts[layer],
+			pattern:   waitToMatchPart,
+			isDynamic: waitToMatchPart[0] == ':',
 		}
 		node.children = append(node.children, child)
 	}
@@ -27,7 +31,7 @@ func (node *TreeNode) insert(path string, parts []string, layer int) {
 
 func (node *TreeNode) matchChild(part string) *TreeNode {
 	for _, child := range node.children {
-		if child.pattern == part {
+		if child.pattern == part || child.isDynamic == true {
 			return child
 		}
 	}
@@ -37,7 +41,7 @@ func (node *TreeNode) matchChild(part string) *TreeNode {
 func (node *TreeNode) matchChildren(part string) []*TreeNode {
 	children := make([]*TreeNode, 0, len(node.children))
 	for _, child := range node.children {
-		if child.pattern == part {
+		if child.pattern == part || child.isDynamic == true {
 			children = append(children, child)
 		}
 	}

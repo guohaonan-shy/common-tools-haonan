@@ -69,7 +69,7 @@ func (r *Router) RouteFunc(method string, path string) (HandleFunc, bool) {
 	n := root.search(parts, 0)
 
 	if n != nil {
-		fn := r.router[genRouterKey(method, path)]
+		fn := r.router[genRouterKey(method, n.path)]
 		return fn, true
 	}
 

@@ -24,7 +24,7 @@ func main() {
 
 	engine := framework.NewShyHTTP()
 	engine.POST("/v1", V1Handler)
-	engine.GET("/v2", V2Handler)
+	engine.GET("/testing/dynamic/:username", V2Handler)
 	engine.GET("/v3", V3Handler)
 
 	engine.Run(":9999")
