@@ -1,5 +1,7 @@
 package framework
 
+import "strings"
+
 type TreeNode struct {
 	path      string
 	pattern   string
@@ -22,7 +24,7 @@ func (node *TreeNode) insert(path string, parts []string, layer int) {
 	if child == nil { // no child match
 		child = &TreeNode{
 			pattern:   waitToMatchPart,
-			isDynamic: waitToMatchPart[0] == ':',
+			isDynamic: waitToMatchPart[0] == ':' || waitToMatchPart[0] == '*',
 		}
 		node.children = append(node.children, child)
 	}
@@ -49,7 +51,7 @@ func (node *TreeNode) matchChildren(part string) []*TreeNode {
 }
 
 func (node *TreeNode) search(parts []string, layer int) *TreeNode {
-	if len(parts) == layer {
+	if len(parts) == layer || strings.HasPrefix(node.pattern, "*") {
 		return node
 	}
 

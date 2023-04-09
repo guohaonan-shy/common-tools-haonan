@@ -35,7 +35,8 @@ func Test_Router(t *testing.T) {
 		ctx.String(200, "URL.PATH=%q\n", ctx.Request.URL.Path)
 	}
 
-	router.AddRoute("GET", "/testing/dynamic/:username", fn)
+	//router.AddRoute("GET", "/testing/dynamic/:username", fn)
+	router.AddRoute("GET", "/testing/dynamic/*", fn)
 
 	router.RouteFunc("GET", "/testing/dynamic/ghn980421")
 
