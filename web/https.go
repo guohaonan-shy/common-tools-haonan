@@ -23,9 +23,14 @@ func main() {
 	//log.Fatal(http.ListenAndServe(":9999", engine))
 
 	engine := framework.NewShyHTTP()
-	engine.POST("/v1", V1Handler)
-	//engine.GET("/testing/dynamic/:username", V2Handler)
-	engine.GET("/testing/dynamic/*", V2Handler)
+	engine.GET("/testing/dynamic/:username", V2Handler)
+	//engine.GET("/testing/general_match/*", V3Handler)
+
+	category1 := engine.Group("/newly_testing")
+	{
+		category1.GET("/print_header", PrintHeader)
+		category1.GET("/user_info", V3Handler)
+	}
 
 	engine.Run(":9999")
 
@@ -85,4 +90,11 @@ func V3Handler(ctx *framework.Context) {
 	builder.WriteString(fmt.Sprintf("password:%s ", ctx.Query("password")))
 	builder.WriteString("<h1> \n")
 	ctx.HTML(200, builder.String())
+}
+
+func PrintHeader(ctx *framework.Context) {
+	//for key, value := range ctx.Request.Header {
+	//	fmt.Fprintf(ctx.Response, "[Header] key=%q, value=%q\n", key, value)
+	//}
+	ctx.JSON(200, ctx.Request.Header)
 }

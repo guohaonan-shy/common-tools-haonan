@@ -5,15 +5,20 @@ import (
 )
 
 type ShyHTTP struct {
+	*RouterGroup
 	router *Router
+	groups []*RouterGroup
 }
 
 type HandleFunc func(ctx *Context)
 
 func NewShyHTTP() *ShyHTTP {
-	return &ShyHTTP{
+	engine := &ShyHTTP{
 		router: NewRouter(),
 	}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	engine.groups = []*RouterGroup{engine.RouterGroup}
+	return engine
 }
 
 func (engine *ShyHTTP) GET(path string, fn HandleFunc) {
