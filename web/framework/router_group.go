@@ -19,9 +19,13 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	return newGroup
 }
 
+func (group *RouterGroup) GetEngine() *ShyHTTP {
+	return group.engine
+}
+
 func (group *RouterGroup) AddRouteGroup(method, path string, handler HandleFunc) {
 	pattern := group.prefix + path
-	group.engine.router.AddRoute(method, pattern, handler)
+	group.GetEngine().GetRouter().AddRoute(method, pattern, handler)
 }
 
 func (group *RouterGroup) GET(pattern string, handleFunc HandleFunc) {

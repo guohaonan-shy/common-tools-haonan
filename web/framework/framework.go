@@ -21,6 +21,10 @@ func NewShyHTTP() *ShyHTTP {
 	return engine
 }
 
+func (engine *ShyHTTP) GetRouter() *Router {
+	return engine.router
+}
+
 func (engine *ShyHTTP) GET(path string, fn HandleFunc) {
 	engine.router.AddRoute("GET", path, fn)
 }
