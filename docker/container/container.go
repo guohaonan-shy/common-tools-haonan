@@ -1,9 +1,11 @@
 package container
 
 import (
+	"github.com/common-tools-haonan/docker/container/subsystem"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
+	"strconv"
 	"syscall"
 )
 
@@ -41,4 +43,28 @@ func RunContainerInitProcess(cmd string, args []string) error {
 		logrus.Errorf(err.Error())
 	}
 	return nil
+}
+
+func RunContainerWithConfig(isStd bool, cmd string, namespace string, conf *subsystem.SubSystemConfig) {
+	parent := fork(isStd, cmd)
+	if err := parent.Start(); err != nil {
+		logrus.Fatal(err)
+	}
+
+	defer func() {
+		// 释放资源
+		for _, subIns := range subsystem.SubSystemFactory {
+			subIns.Remove(namespace)
+		}
+	}()
+
+	for _, subIns := range subsystem.SubSystemFactory {
+		// 创建cgroup，设置配置
+		err := subIns.Apply(namespace, conf)
+		// 设置pid到task
+		err = subIns.SetPid(namespace, strconv.Itoa(parent.Process.Pid))
+	}
+	RunContainer(isStd, cmd)
+
+	parent.Wait()
 }

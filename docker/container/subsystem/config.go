@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+var (
+	SubSystemFactory = []ContainerSubsystem{&MemoryConfig{}, &CpuNumberConfig{}}
+)
+
 type ContainerSubsystem interface {
 	// 返回对应子系统的名称
 	Name() string
