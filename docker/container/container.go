@@ -61,8 +61,14 @@ func RunContainerWithConfig(isStd bool, cmd string, namespace string, conf *subs
 	for _, subIns := range subsystem.SubSystemFactory {
 		// 创建cgroup，设置配置
 		err := subIns.Apply(namespace, conf)
+		if err != nil {
+			logrus.Fatal("apply failed")
+		}
 		// 设置pid到task
 		err = subIns.SetPid(namespace, strconv.Itoa(parent.Process.Pid))
+		if err != nil {
+			logrus.Fatal("SetPid failed")
+		}
 	}
 	RunContainer(isStd, cmd)
 
