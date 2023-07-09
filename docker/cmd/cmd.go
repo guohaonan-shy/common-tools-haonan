@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/common-tools-haonan/docker/cgroup/subsystem"
 	"github.com/common-tools-haonan/docker/container"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -32,7 +33,7 @@ func CmdInit() {
 
 var initCommand = cli.Command{
 	Name:  "init",
-	Usage: "Init container process run user's process in container. Don't call it outside",
+	Usage: "Init cgroup process run user's process in cgroup. Don't call it outside",
 	Action: func(context *cli.Context) error {
 		logrus.Infof("init start")
 		return container.RunContainerInitProcess()
@@ -41,12 +42,24 @@ var initCommand = cli.Command{
 
 var runCommand = cli.Command{
 	Name: "run",
-	Usage: "Create a container with namespace and cgroups limit " +
+	Usage: "Create a cgroup with namespace and cgroups limit " +
 		"ghndocker run -it [command] ",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "it",
 			Usage: "enable docker to run",
+		},
+		cli.StringFlag{
+			Name:  "memory",
+			Usage: "memory limit",
+		},
+		cli.StringFlag{
+			Name:  "cpushre",
+			Usage: "cpushare limit",
+		},
+		cli.StringFlag{
+			Name:  "cpuset",
+			Usage: "cpuset limit",
 		},
 	},
 	Action: func(context *cli.Context) error {
@@ -55,7 +68,14 @@ var runCommand = cli.Command{
 		}
 		cmd := context.Args().Get(0)
 		itFlag := context.Bool("it")
-		container.RunContainer(itFlag, cmd)
+
+		resConf := &subsystem.SubSystemConfig{
+			MemoryLimits: context.String("memory"),
+			CpuSet:       context.String("cpuset"),
+			CpuShare:     context.String("cpushare"),
+		}
+
+		container.RunContainer(itFlag, cmd, resConf)
 		return nil
 	},
 }

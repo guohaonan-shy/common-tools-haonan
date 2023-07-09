@@ -9,7 +9,11 @@ import (
 )
 
 var (
-	SubSystemFactory = []ContainerSubsystem{&MemoryConfig{}, &CpuNumberConfig{}}
+	SubSystemFactory = []ContainerSubsystem{
+		&MemoryConfig{},
+		&CpuShareConfig{},
+		&CpuSetConfig{},
+	}
 )
 
 type ContainerSubsystem interface {
@@ -25,7 +29,8 @@ type ContainerSubsystem interface {
 
 type SubSystemConfig struct {
 	MemoryLimits string
-	CpuNumber    string
+	CpuShare     string
+	CpuSet       string
 }
 
 func findRootPathBySubsystem(subsystem string) (string, error) {

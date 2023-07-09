@@ -48,7 +48,7 @@ func (memory *MemoryConfig) Apply(namespace string, conf *SubSystemConfig) error
 }
 
 func (memory *MemoryConfig) Remove(namespace string) error {
-	root, err := getCgroupPathWithCreateOption(memory.Name(), namespace, true)
+	root, err := getCgroupPathWithCreateOption(memory.Name(), namespace, false)
 	if err != nil {
 		return err
 	}
