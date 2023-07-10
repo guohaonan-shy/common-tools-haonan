@@ -8,11 +8,12 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
 
-func fork(isStd bool, cmd string) (cmds *exec.Cmd, write *os.File) {
+func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
 
 	cmds = exec.Command("/proc/self/exe", "init") // 子进程的启动命令：1.执行进程内的可执行文件，2.初始化
 	cmds.SysProcAttr = &syscall.SysProcAttr{
@@ -35,10 +36,10 @@ func fork(isStd bool, cmd string) (cmds *exec.Cmd, write *os.File) {
 
 }
 
-func RunContainer(isStd bool, cmd string, conf *subsystem.SubSystemConfig) {
+func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 	// 父进程执行内容
-	cmds, writePipe := fork(isStd, cmd)
-	if err := cmds.Start(); err != nil {
+	parent, writePipe := fork(isStd)
+	if err := parent.Start(); err != nil {
 		logrus.Error(err)
 	}
 
@@ -47,7 +48,7 @@ func RunContainer(isStd bool, cmd string, conf *subsystem.SubSystemConfig) {
 
 	// 资源限制
 	containManager := cgroup.NewCgroupManager(containerId, conf)
-	containManager.ProcessId = strconv.Itoa(cmds.Process.Pid)
+	containManager.ProcessId = strconv.Itoa(parent.Process.Pid)
 
 	err := containManager.ApplySubsystem()
 	if err != nil {
@@ -62,11 +63,13 @@ func RunContainer(isStd bool, cmd string, conf *subsystem.SubSystemConfig) {
 	defer containManager.Remove()
 
 	// 执行指令通过管道
-	if _, err := writePipe.WriteString(cmd); err != nil {
+	command := strings.Join(cmds, " ")
+	logrus.Infof("[write pipe]command all is %s", command)
+	if _, err := writePipe.WriteString(command); err != nil {
 		logrus.Fatal(err)
 	}
 
-	cmds.Wait()
+	parent.Wait()
 	os.Exit(-1)
 }
 

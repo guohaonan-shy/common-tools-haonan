@@ -3,6 +3,7 @@ package container
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -19,7 +20,10 @@ func RunContainerInitProcess() error {
 	)
 	// read pipe，无内容阻塞后面处理逻辑l
 	readPipe := os.NewFile(uintptr(3), "pipe")
-	if _, err := readPipe.Read(msg); err != nil {
+	defer readPipe.Close()
+	io.ReadAll(readPipe)
+	msg, err := io.ReadAll(readPipe)
+	if err != nil {
 		logrus.Errorf("read from read pipe failed, err:%s", err)
 		os.Exit(-1)
 	}

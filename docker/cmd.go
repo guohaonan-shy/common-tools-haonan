@@ -66,7 +66,12 @@ var runCommand = cli.Command{
 		if len(context.Args()) < 1 {
 			return fmt.Errorf("missing Container command")
 		}
-		cmd := context.Args().Get(0)
+		cmds := make([]string, 0)
+
+		for _, cmd := range context.Args() {
+			cmds = append(cmds, cmd)
+		}
+
 		itFlag := context.Bool("it")
 
 		resConf := &subsystem.SubSystemConfig{
@@ -75,7 +80,7 @@ var runCommand = cli.Command{
 			CpuShare:     context.String("cpushare"),
 		}
 
-		container.RunContainer(itFlag, cmd, resConf)
+		container.RunContainer(itFlag, cmds, resConf)
 		return nil
 	},
 }
