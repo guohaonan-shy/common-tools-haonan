@@ -68,7 +68,15 @@ var runCommand = cli.Command{
 		}
 		cmds := make([]string, 0)
 
-		for _, cmd := range context.Args() {
+		for i, cmd := range context.Args() {
+			if i == 0 {
+				dir, err := os.Stat(cmd)
+				if err != nil {
+					logrus.Fatal(err)
+				} else {
+					logrus.Info(dir)
+				}
+			}
 			cmds = append(cmds, cmd)
 		}
 
@@ -79,6 +87,7 @@ var runCommand = cli.Command{
 			CpuSet:       context.String("cpuset"),
 			CpuShare:     context.String("cpushare"),
 		}
+		logrus.Info(cmds)
 
 		container.RunContainer(itFlag, cmds, resConf)
 		return nil

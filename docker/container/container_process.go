@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"strings"
 	"syscall"
@@ -14,6 +15,11 @@ import (
 )
 
 func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
+
+	read, write, err := os.Pipe()
+	if err != nil {
+		logrus.Fatal("the process of creating a pipe failed occurring fork, err:%s ", err)
+	}
 
 	cmds = exec.Command("/proc/self/exe", "init") // 子进程的启动命令：1.执行进程内的可执行文件，2.初始化
 	cmds.SysProcAttr = &syscall.SysProcAttr{
@@ -24,10 +30,6 @@ func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
 		cmds.Stdin = os.Stdin
 		cmds.Stdout = os.Stdout
 		cmds.Stderr = os.Stderr
-	}
-	read, write, err := os.Pipe()
-	if err != nil {
-		logrus.Fatal("the process of creating a pipe failed occurring fork, err:%s ", err)
 	}
 
 	cmds.ExtraFiles = []*os.File{read}
@@ -44,7 +46,7 @@ func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 	}
 
 	// id
-	containerId := randStringBytes(18)
+	containerId := randStringBytes(10)
 
 	// 资源限制
 	containManager := cgroup.NewCgroupManager(containerId, conf)
@@ -67,6 +69,7 @@ func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 
 	if isStd {
 		parent.Wait()
+		os.Remove(path.Join("./" + containerId))
 	}
 }
 

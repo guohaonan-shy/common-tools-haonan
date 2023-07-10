@@ -29,8 +29,8 @@ func RunContainerInitProcess() error {
 	// 寻找命令行工具的可执行文件
 	execPath, err := exec.LookPath(cmds[0])
 	if err != nil {
-		logrus.Errorf("find cmd binary path failed, err:%s", err)
-		os.Exit(-1)
+		logrus.Errorf("Exec loop path error %v", err)
+		return err
 	}
 
 	if err := syscall.Exec(execPath, cmds[0:], os.Environ()); err != nil {
