@@ -63,14 +63,18 @@ func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 	defer containManager.Remove()
 
 	// 执行指令通过管道
-	command := strings.Join(cmds, " ")
-	logrus.Infof("[write pipe]command all is %s", command)
-	if _, err := writePipe.WriteString(command); err != nil {
-		logrus.Fatal(err)
-	}
+	sendInitCommand(cmds, writePipe)
 
-	parent.Wait()
-	os.Exit(-1)
+	if isStd {
+		parent.Wait()
+	}
+}
+
+func sendInitCommand(comArray []string, writePipe *os.File) {
+	command := strings.Join(comArray, " ")
+	logrus.Infof("command all is %s", command)
+	writePipe.WriteString(command)
+	writePipe.Close()
 }
 
 func randStringBytes(n int) string {
