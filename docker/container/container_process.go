@@ -24,7 +24,7 @@ func fork(isStd bool, cmd string) (cmds *exec.Cmd, write *os.File) {
 		cmds.Stdout = os.Stdout
 		cmds.Stderr = os.Stderr
 	}
-	write, read, err := os.Pipe()
+	read, write, err := os.Pipe()
 	if err != nil {
 		logrus.Fatal("the process of creating a pipe failed occurring fork, err:%s ", err)
 	}

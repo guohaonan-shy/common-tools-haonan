@@ -34,7 +34,7 @@ type SubSystemConfig struct {
 }
 
 func findRootPathBySubsystem(subsystem string) (string, error) {
-	file, err := os.Open("proc/self/mountinfo")
+	file, err := os.Open("/proc/self/mountinfo")
 	if err != nil {
 		return "", fmt.Errorf("[FindRootPathBySubsystem] io open files failed, err:%s", err)
 	}
@@ -61,21 +61,16 @@ func findRootPathBySubsystem(subsystem string) (string, error) {
 }
 
 func getCgroupPathWithCreateOption(subsystem string, namespace string, autoCreate bool) (string, error) {
-	root, err := findRootPathBySubsystem(subsystem)
-	if err != nil {
-		return "", err
-	}
-	if _, err := os.Stat(path.Join(root, namespace)); err != nil {
+	root, _ := findRootPathBySubsystem(subsystem)
+	if _, err := os.Stat(path.Join(root, namespace)); err == nil || (autoCreate && os.IsNotExist(err)) {
 		if os.IsNotExist(err) {
-			if autoCreate {
-				if mkErr := os.Mkdir(path.Join(root, namespace), 0755); mkErr != nil {
-					return "", fmt.Errorf("[GetCgroupPathWithCreateOption] os stat failed, err:%s", err)
-				}
+			if err := os.Mkdir(path.Join(root, namespace), 0755); err == nil {
+			} else {
+				return "", fmt.Errorf("error create cgroup %v", err)
 			}
-			return "", fmt.Errorf("[GetCgroupPathWithCreateOption] namespace cannot be find under subsystem root, err:%s", err)
-		} else {
-			return "", fmt.Errorf("[GetCgroupPathWithCreateOption] os stat failed, err:%s", err)
 		}
+		return path.Join(root, namespace), nil
+	} else {
+		return "", fmt.Errorf("cgroup path error %v", err)
 	}
-	return path.Join(root, namespace), nil
 }
