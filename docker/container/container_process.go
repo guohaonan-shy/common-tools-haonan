@@ -7,12 +7,19 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
 
-func fork(isStd bool, cmd string) (cmds *exec.Cmd, write *os.File) {
+func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
+
+	read, write, err := os.Pipe()
+	if err != nil {
+		logrus.Fatal("the process of creating a pipe failed occurring fork, err:%s ", err)
+	}
 
 	cmds = exec.Command("/proc/self/exe", "init") // 子进程的启动命令：1.执行进程内的可执行文件，2.初始化
 	cmds.SysProcAttr = &syscall.SysProcAttr{
@@ -24,10 +31,6 @@ func fork(isStd bool, cmd string) (cmds *exec.Cmd, write *os.File) {
 		cmds.Stdout = os.Stdout
 		cmds.Stderr = os.Stderr
 	}
-	write, read, err := os.Pipe()
-	if err != nil {
-		logrus.Fatal("the process of creating a pipe failed occurring fork, err:%s ", err)
-	}
 
 	cmds.ExtraFiles = []*os.File{read}
 
@@ -35,19 +38,19 @@ func fork(isStd bool, cmd string) (cmds *exec.Cmd, write *os.File) {
 
 }
 
-func RunContainer(isStd bool, cmd string, conf *subsystem.SubSystemConfig) {
+func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 	// 父进程执行内容
-	cmds, writePipe := fork(isStd, cmd)
-	if err := cmds.Start(); err != nil {
+	parent, writePipe := fork(isStd)
+	if err := parent.Start(); err != nil {
 		logrus.Error(err)
 	}
 
 	// id
-	containerId := randStringBytes(18)
+	containerId := randStringBytes(10)
 
 	// 资源限制
 	containManager := cgroup.NewCgroupManager(containerId, conf)
-	containManager.ProcessId = strconv.Itoa(cmds.Process.Pid)
+	containManager.ProcessId = strconv.Itoa(parent.Process.Pid)
 
 	err := containManager.ApplySubsystem()
 	if err != nil {
@@ -62,12 +65,19 @@ func RunContainer(isStd bool, cmd string, conf *subsystem.SubSystemConfig) {
 	defer containManager.Remove()
 
 	// 执行指令通过管道
-	if _, err := writePipe.WriteString(cmd); err != nil {
-		logrus.Fatal(err)
-	}
+	sendInitCommand(cmds, writePipe)
 
-	cmds.Wait()
-	os.Exit(-1)
+	if isStd {
+		parent.Wait()
+		os.Remove(path.Join("./" + containerId))
+	}
+}
+
+func sendInitCommand(comArray []string, writePipe *os.File) {
+	command := strings.Join(comArray, " ")
+	logrus.Infof("command all is %s", command)
+	writePipe.WriteString(command)
+	writePipe.Close()
 }
 
 func randStringBytes(n int) string {
