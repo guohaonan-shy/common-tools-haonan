@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 	// 父进程执行内容
 	parent, writePipe := container.Fork(isStd)
 	if err := parent.Start(); err != nil {
@@ -25,6 +25,7 @@ func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 
 	// 资源限制
 	containManager := cgroup.NewCgroupManager(containerId, conf)
+	defer containManager.Remove()
 	containManager.ProcessId = strconv.Itoa(parent.Process.Pid)
 
 	err := containManager.ApplySubsystem()
@@ -36,8 +37,6 @@ func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
 	if err != nil {
 		logrus.Fatal("[containManager.SetPidIntoGroup] err failed, err:%s", err)
 	}
-
-	defer containManager.Remove()
 
 	// 执行指令通过管道
 	sendInitCommand(cmds, writePipe)

@@ -3,7 +3,7 @@ package container
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -15,16 +15,16 @@ import (
 // 这块我觉得有点巧合，在于github.com/urfave/cli这个包本身在run的过程中，就将系统输入的第一个参数自动默认为cli的name，所以这个init本质上是ghndocker init的实现
 func RunContainerInitProcess() error {
 
-	// read pipe，无内容阻塞后面处理逻辑l
+	// read pipe，无内容阻塞后面处理逻辑
 	cmds := readUserCommand()
 	if cmds == nil || len(cmds) == 0 {
 		return fmt.Errorf("Run container get user command error, cmdArray is nil")
 	}
 	logrus.Infof("command %s", cmds)
 
-	if err := setupMount(); err != nil {
-		os.Exit(-1)
-	}
+	//if err := setupMount(); err != nil {
+	//	os.Exit(-1)
+	//}
 
 	// 寻找命令行工具的可执行文件
 	execPath, err := exec.LookPath(cmds[0])
@@ -42,7 +42,7 @@ func RunContainerInitProcess() error {
 func readUserCommand() []string {
 	pipe := os.NewFile(uintptr(3), "pipe")
 	defer pipe.Close()
-	msg, err := io.ReadAll(pipe)
+	msg, err := ioutil.ReadAll(pipe)
 	if err != nil {
 		logrus.Errorf("init read pipe error %v", err)
 		return nil
