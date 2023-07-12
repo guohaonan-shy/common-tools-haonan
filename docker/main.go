@@ -61,6 +61,10 @@ var runCommand = cli.Command{
 			Name:  "cpuset",
 			Usage: "cpuset limit",
 		},
+		cli.StringFlag{
+			Name:  "image",
+			Usage: "image type and name",
+		},
 	},
 	Action: func(context *cli.Context) error {
 		if len(context.Args()) < 1 {
@@ -80,7 +84,9 @@ var runCommand = cli.Command{
 			CpuShare:     context.String("cpushare"),
 		}
 
-		container.Run(itFlag, cmds, resConf)
+		image := context.String("image")
+
+		container.Run(itFlag, cmds, resConf, image)
 		return nil
 	},
 }

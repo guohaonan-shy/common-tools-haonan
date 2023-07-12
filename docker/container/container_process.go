@@ -1,6 +1,7 @@
 package container
 
 import (
+	"fmt"
 	"github.com/common-tools-haonan/docker/cgroup"
 	"github.com/common-tools-haonan/docker/cgroup/subsystem"
 	"github.com/sirupsen/logrus"
@@ -14,7 +15,11 @@ import (
 	"time"
 )
 
-func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
+var (
+	CGroupPathFormat = "/home/guohaonan/container/%s/cgroup"
+)
+
+func fork(isStd bool, image, containerId string) (cmds *exec.Cmd, write *os.File) {
 
 	read, write, err := os.Pipe()
 	if err != nil {
@@ -35,24 +40,28 @@ func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
 
 	cmds.ExtraFiles = []*os.File{read}
 	cmds.Env = os.Environ()
-	cmds.Dir = "/home/guohaonan/image/busybox" // 先写死
+	cmds.Dir = "/home/guohaonan/container/" // 先写死
+	if err := NewWorkSpace(image, containerId); err != nil {
+		return nil, nil
+	}
 
 	return cmds, write
 
 }
 
-func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
-	// 父进程执行内容
-	parent, writePipe := fork(isStd)
-	if err := parent.Start(); err != nil {
-		logrus.Fatalf("fork start failed err:%s", err)
-	}
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string) {
 
 	// id
 	containerId := randStringBytes(10)
 
+	// 父进程执行内容
+	parent, writePipe := fork(isStd, image, containerId)
+	if err := parent.Start(); err != nil {
+		logrus.Fatalf("fork start failed err:%s", err)
+	}
+
 	// 资源限制
-	containManager := cgroup.NewCgroupManager(containerId, conf)
+	containManager := cgroup.NewCgroupManager(fmt.Sprintf(CGroupPathFormat, containerId), conf)
 	defer containManager.Remove()
 	containManager.ProcessId = strconv.Itoa(parent.Process.Pid)
 

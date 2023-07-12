@@ -21,9 +21,9 @@ func RunContainerInitProcess() error {
 	}
 	logrus.Infof("command %s", cmds)
 
-	//if err := setupMount(); err != nil {
-	//	os.Exit(-1)
-	//}
+	if err := setupMount(); err != nil {
+		os.Exit(-1)
+	}
 
 	// 寻找命令行工具的可执行文件
 	execPath, err := exec.LookPath(cmds[0])
