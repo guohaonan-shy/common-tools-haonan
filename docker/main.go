@@ -79,9 +79,8 @@ var runCommand = cli.Command{
 			CpuSet:       context.String("cpuset"),
 			CpuShare:     context.String("cpushare"),
 		}
-		logrus.Info(cmds)
 
-		Run(itFlag, cmds, resConf)
+		container.Run(itFlag, cmds, resConf)
 		return nil
 	},
 }
