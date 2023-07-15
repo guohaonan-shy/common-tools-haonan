@@ -25,7 +25,6 @@ func main() {
 		logrus.SetOutput(os.Stdout)
 		return nil
 	}
-
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
 	}
