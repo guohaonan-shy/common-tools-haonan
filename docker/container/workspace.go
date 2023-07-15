@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	FileSystem_OverlayFormat = "lowerdir=%s,upperdir=%s,workdir=%s %s"
+	FileSystem_OverlayFormat = "lowerdir=%s,upperdir=%s,workdir=%s"
 
 	GhnDockerImageDir     = "/home/guohaonan/ghndocker/image/%s"
 	GhnDockerContainerDir = "/home/guohaonan/ghndocker/container/%s"
@@ -104,11 +104,11 @@ func CreateMountPoints(image string, containerId string) error {
 	imageUrl, containerUrl := fmt.Sprintf(GhnDockerImageDir, image), fmt.Sprintf(GhnDockerContainerDir, containerId)
 	tmpWorkUrl := fmt.Sprintf(GhnDockerWorkDir, containerId)
 
-	dirs := fmt.Sprintf(FileSystem_OverlayFormat, imageUrl, containerUrl, tmpWorkUrl, mountUrl)
+	dirs := fmt.Sprintf(FileSystem_OverlayFormat, imageUrl, containerUrl, tmpWorkUrl)
 
 	logrus.Infof("aufs dirs:%s", dirs)
 	// mount -t overlay -o lowerdir=./lower,upperdir=./upper,workdir=./work ./merged
-	if out, err := exec.Command("mount", "-t", "overlay", "overlay", "-o", dirs).CombinedOutput(); err != nil {
+	if out, err := exec.Command("mount", "-t", "overlay", "-o", dirs, "overlay", mountUrl).CombinedOutput(); err != nil {
 		logrus.Errorf("mount failed, err:%s \n stdout:%s", err, string(out))
 		return err
 	}

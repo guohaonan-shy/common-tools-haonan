@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	CGroupPathFormat = "/home/guohaonan/container/%s/cgroup"
+	CGroupPathFormat = "/home/guohaonan/ghndocker/container/%s/cgroup"
 )
 
 func fork(isStd bool, image, containerId string) (cmds *exec.Cmd, write *os.File) {
@@ -40,7 +40,7 @@ func fork(isStd bool, image, containerId string) (cmds *exec.Cmd, write *os.File
 
 	cmds.ExtraFiles = []*os.File{read}
 	cmds.Env = os.Environ()
-	cmds.Dir = "/home/guohaonan/container/" // 先写死
+	cmds.Dir = "/mnt/" + containerId
 	if err := NewWorkSpace(image, containerId); err != nil {
 		return nil, nil
 	}
@@ -67,12 +67,12 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 
 	err := containManager.ApplySubsystem()
 	if err != nil {
-		logrus.Fatal("[containManager.ApplySubsystem] err failed, err:%s", err)
+		logrus.Fatalf("[containManager.ApplySubsystem] err failed, err:%s", err)
 	}
 
 	err = containManager.SetPidIntoGroup()
 	if err != nil {
-		logrus.Fatal("[containManager.SetPidIntoGroup] err failed, err:%s", err)
+		logrus.Fatalf("[containManager.SetPidIntoGroup] err failed, err:%s", err)
 	}
 
 	// 执行指令通过管道
