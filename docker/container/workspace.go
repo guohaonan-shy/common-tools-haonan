@@ -136,20 +136,19 @@ func MountVolume(containerId, volume string) error {
 
 	hostPath, containerPath := volumeMapping[0], volumeMapping[1]
 
-	if err := os.Mkdir(hostPath, 0777); err != nil {
+	if err := os.MkdirAll(hostPath, 0777); err != nil {
 		logrus.Errorf("[MountVolume] mk host path failed, err:%s", err)
 		return err
 	}
 
 	containerPath = fmt.Sprintf(GhnDockerMountPoint, containerId) + containerPath
-	if err := os.Mkdir(containerPath, 0777); err != nil {
+	if err := os.MkdirAll(containerPath, 0777); err != nil {
 		logrus.Errorf("[MountVolume] mk container path failed, err:%s", err)
 		return err
 	}
 
-	cmd := exec.Command("mount", hostPath, containerPath)
-	if err := cmd.Run(); err != nil {
-		logrus.Errorf("[MountVolume] mount host to container failed, err:%s", err)
+	if res, err := exec.Command("mount", hostPath, containerPath, "--bind").CombinedOutput(); err != nil {
+		logrus.Errorf("[MountVolume] mount host to container failed, err:%s \n output:%s", err, string(res))
 		return err
 	}
 
