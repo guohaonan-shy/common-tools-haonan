@@ -16,6 +16,7 @@ func main() {
 	app.Commands = []cli.Command{
 		initCommand,
 		runCommand,
+		listCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -105,6 +106,15 @@ var runCommand = cli.Command{
 		name := context.String("name")
 
 		container.Run(itFlag, cmds, resConf, image, volume, name)
+		return nil
+	},
+}
+
+var listCommand = cli.Command{
+	Name:  "show",
+	Usage: "show all containers in this host",
+	Action: func(context *cli.Context) error {
+		container.ListAllContainers()
 		return nil
 	},
 }

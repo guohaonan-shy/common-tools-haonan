@@ -6,12 +6,14 @@ import (
 	"github.com/common-tools-haonan/docker/cgroup"
 	"github.com/common-tools-haonan/docker/cgroup/subsystem"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
 	"syscall"
+	"text/tabwriter"
 	"time"
 )
 
@@ -179,4 +181,64 @@ func deleteContainerInfo(containerId string) error {
 		return err
 	}
 	return nil
+}
+
+// 将当前host内所有的容器信息输出到标准输出流
+func ListAllContainers() {
+
+	files, err := ioutil.ReadDir("/home/guohaonan/ghndocker/run/")
+	if err != nil {
+		logrus.Errorf("[ListAllContainers] Read Dir failed, err:%s", err)
+		return
+	}
+
+	containers := make([]*ContainerInfo, 0)
+	for _, file := range files {
+
+		var (
+			container *ContainerInfo
+			tmpErr    error
+		)
+
+		container, tmpErr = handleContainerDir(file.Name())
+		if tmpErr != nil {
+			logrus.Errorf("container:%s handle failed, err:%s", file.Name(), tmpErr)
+			continue
+		}
+		containers = append(containers, container)
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 12, 1, 3, ' ', 0)
+	fmt.Fprint(w, "ID\tNAME\tIMAGE\tPID\tSTATUS\tCREATE_TIME\tCMDS\n")
+
+	for _, container := range containers {
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+			container.Id,
+			container.ContainerName,
+			container.Image,
+			container.Pid,
+			container.Status,
+			container.CreateTime,
+			container.Commands)
+	}
+
+	if err := w.Flush(); err != nil {
+		logrus.Fatalf("[ListAllContainers] Flush to buffered zone failed, err:%s", err)
+	}
+	return
+}
+
+func handleContainerDir(dir string) (*ContainerInfo, error) {
+	path := fmt.Sprintf(GhnDockerRunningContainerDir, dir) + "/" + ConfFileName
+	record, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	container := &ContainerInfo{}
+	if err = sonic.Unmarshal(record, container); err != nil {
+		return nil, err
+	}
+	return container, nil
+
 }
