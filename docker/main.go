@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
+	"syscall"
 )
 
 func main() {
@@ -48,6 +49,10 @@ var runCommand = cli.Command{
 			Name:  "it",
 			Usage: "enable docker to run",
 		},
+		cli.BoolFlag{
+			Name: "detach",
+			Usage: "run container on background"
+		},
 		cli.StringFlag{
 			Name:  "memory",
 			Usage: "memory limit",
@@ -80,6 +85,11 @@ var runCommand = cli.Command{
 		}
 
 		itFlag := context.Bool("it")
+		detachFlag := context.Bool("detach")
+
+		if itFlag && detachFlag {
+			logrus.Fatalf("itFlag and detachFlag cannot exist at the same time")
+		}
 
 		resConf := &subsystem.SubSystemConfig{
 			MemoryLimits: context.String("memory"),

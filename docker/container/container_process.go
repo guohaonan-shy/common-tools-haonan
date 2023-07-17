@@ -78,6 +78,9 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	// 执行指令通过管道
 	sendInitCommand(cmds, writePipe)
 
+	//原来parent.Wait（）主要是用于父进程等待子进程结束，这在交互式创建容器的步骤里面是没问题的，
+	//但是在这里，如果detach创建了容器，就不能再去等待，创建容器之后，父进程就已经退出了。
+	// 因此，这里只是将容器内的init进程启动起来，就已经完成工作，紧接着就可以退出，然后由操作系统进程ID为1的init进程去接管容器进程。
 	if isStd {
 		parent.Wait()
 		os.Remove(path.Join("./" + containerId))
