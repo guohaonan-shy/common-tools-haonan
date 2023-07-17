@@ -3,7 +3,7 @@ package container
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -12,10 +12,9 @@ import (
 )
 
 // 创建子进程是否，命令行输入是/proc/self/exe init;即先执行父进程的所有可执行内容，然后执行init
-// 这块我觉得有点巧合，在于github.com/urfave/cli这个包本身在run的过程中，就将系统输入的第一个参数自动默认为cli的name，所以这个init本质上是ghndocker init的实现
 func RunContainerInitProcess() error {
 
-	// read pipe，无内容阻塞后面处理逻辑l
+	// read pipe，无内容阻塞后面处理逻辑
 	cmds := readUserCommand()
 	if cmds == nil || len(cmds) == 0 {
 		return fmt.Errorf("Run container get user command error, cmdArray is nil")
@@ -42,7 +41,7 @@ func RunContainerInitProcess() error {
 func readUserCommand() []string {
 	pipe := os.NewFile(uintptr(3), "pipe")
 	defer pipe.Close()
-	msg, err := io.ReadAll(pipe)
+	msg, err := ioutil.ReadAll(pipe)
 	if err != nil {
 		logrus.Errorf("init read pipe error %v", err)
 		return nil
@@ -58,6 +57,7 @@ func setupMount() error {
 		return fmt.Errorf("when container is initing, get current work directory failed, err:%s", err)
 	}
 
+	logrus.Infof("current location:%s", wd)
 	err = pivotRoot(wd)
 	if err != nil {
 		return fmt.Errorf("[setupMount] pivot root failed, err:%s", err)
@@ -94,7 +94,7 @@ func pivotRoot(root string) error {
 	}
 
 	// 切换工作的根目录
-	if err := os.Chdir("/"); err != nil {
+	if err := syscall.Chdir("/"); err != nil {
 		logrus.Errorf("[pivotRoot] change failed, err:%s", err)
 		return fmt.Errorf("pivot_root failed, err:%s", err)
 	}

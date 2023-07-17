@@ -1,6 +1,7 @@
 package container
 
 import (
+	"fmt"
 	"github.com/common-tools-haonan/docker/cgroup"
 	"github.com/common-tools-haonan/docker/cgroup/subsystem"
 	"github.com/sirupsen/logrus"
@@ -14,14 +15,19 @@ import (
 	"time"
 )
 
-func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
+var (
+	CGroupPathFormat = "/home/guohaonan/ghndocker/container/%s/cgroup"
+)
+
+func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write *os.File) {
 
 	read, write, err := os.Pipe()
 	if err != nil {
 		logrus.Fatal("the process of creating a pipe failed occurring fork, err:%s ", err)
 	}
+	initSymbol, _ := os.Readlink("/proc/self/exe")
 
-	cmds = exec.Command("/proc/self/exe", "init") // 子进程的启动命令：1.执行进程内的可执行文件，2.初始化
+	cmds = exec.Command(initSymbol, "init") // 子进程的启动命令：1.执行进程内的可执行文件，2.初始化
 	cmds.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS | syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,
 	}
@@ -33,36 +39,41 @@ func fork(isStd bool) (cmds *exec.Cmd, write *os.File) {
 	}
 
 	cmds.ExtraFiles = []*os.File{read}
+	cmds.Env = os.Environ()
+	cmds.Dir = "/mnt/" + containerId
+	if err := NewWorkSpace(image, containerId, volume); err != nil {
+		return nil, nil
+	}
 
 	return cmds, write
 
 }
 
-func RunContainer(isStd bool, cmds []string, conf *subsystem.SubSystemConfig) {
-	// 父进程执行内容
-	parent, writePipe := fork(isStd)
-	if err := parent.Start(); err != nil {
-		logrus.Error(err)
-	}
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string) {
 
 	// id
 	containerId := randStringBytes(10)
 
+	// 父进程执行内容
+	parent, writePipe := fork(isStd, image, containerId, volume)
+	if err := parent.Start(); err != nil {
+		logrus.Fatalf("fork start failed err:%s", err)
+	}
+
 	// 资源限制
-	containManager := cgroup.NewCgroupManager(containerId, conf)
+	containManager := cgroup.NewCgroupManager(fmt.Sprintf(CGroupPathFormat, containerId), conf)
+	defer containManager.Remove()
 	containManager.ProcessId = strconv.Itoa(parent.Process.Pid)
 
 	err := containManager.ApplySubsystem()
 	if err != nil {
-		logrus.Fatal("[containManager.ApplySubsystem] err failed, err:%s", err)
+		logrus.Fatalf("[containManager.ApplySubsystem] err failed, err:%s", err)
 	}
 
 	err = containManager.SetPidIntoGroup()
 	if err != nil {
-		logrus.Fatal("[containManager.SetPidIntoGroup] err failed, err:%s", err)
+		logrus.Fatalf("[containManager.SetPidIntoGroup] err failed, err:%s", err)
 	}
-
-	defer containManager.Remove()
 
 	// 执行指令通过管道
 	sendInitCommand(cmds, writePipe)
