@@ -64,6 +64,10 @@ var runCommand = cli.Command{
 			Name:  "image",
 			Usage: "image type and name",
 		},
+		cli.StringFlag{
+			Name: "volume",
+			Usage: "mount volume between host and container"
+		}
 	},
 	Action: func(context *cli.Context) error {
 		if len(context.Args()) < 1 {
@@ -85,7 +89,9 @@ var runCommand = cli.Command{
 
 		image := context.String("image")
 
-		container.Run(itFlag, cmds, resConf, image)
+		volume := context.String("volume")
+
+		container.Run(itFlag, cmds, resConf, image, volume)
 		return nil
 	},
 }

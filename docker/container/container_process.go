@@ -19,7 +19,7 @@ var (
 	CGroupPathFormat = "/home/guohaonan/ghndocker/container/%s/cgroup"
 )
 
-func fork(isStd bool, image, containerId string) (cmds *exec.Cmd, write *os.File) {
+func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write *os.File) {
 
 	read, write, err := os.Pipe()
 	if err != nil {
@@ -41,7 +41,7 @@ func fork(isStd bool, image, containerId string) (cmds *exec.Cmd, write *os.File
 	cmds.ExtraFiles = []*os.File{read}
 	cmds.Env = os.Environ()
 	cmds.Dir = "/mnt/" + containerId
-	if err := NewWorkSpace(image, containerId); err != nil {
+	if err := NewWorkSpace(image, containerId, volume); err != nil {
 		return nil, nil
 	}
 
@@ -49,13 +49,13 @@ func fork(isStd bool, image, containerId string) (cmds *exec.Cmd, write *os.File
 
 }
 
-func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string) {
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string) {
 
 	// id
 	containerId := randStringBytes(10)
 
 	// 父进程执行内容
-	parent, writePipe := fork(isStd, image, containerId)
+	parent, writePipe := fork(isStd, image, containerId, volume)
 	if err := parent.Start(); err != nil {
 		logrus.Fatalf("fork start failed err:%s", err)
 	}

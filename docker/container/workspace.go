@@ -1,10 +1,12 @@
 package container
 
 import (
+	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 const (
@@ -16,10 +18,10 @@ const (
 	GhnDockerMountPoint   = "/mnt/%s"
 )
 
-func NewWorkSpace(image string, containerId string) error {
+func NewWorkSpace(image string, containerId string, volume string) error {
 
 	var (
-		imageErr, containerErr, mntErr error
+		imageErr, containerErr, mntErr, volumeErr error
 	)
 
 	defer func() {
@@ -46,6 +48,10 @@ func NewWorkSpace(image string, containerId string) error {
 
 	if mntErr = CreateMountPoints(image, containerId); mntErr != nil {
 		return mntErr
+	}
+
+	if volumeErr = MountVolume(containerId, volume); volumeErr != nil {
+		return volumeErr
 	}
 
 	return nil
@@ -116,6 +122,40 @@ func CreateMountPoints(image string, containerId string) error {
 	return nil
 }
 
+func MountVolume(containerId, volume string) error {
+	if volume == "" {
+		logrus.Infof("[MountVolume] Volume is nil, no need to exec mount volume, skip")
+		return nil
+	}
+
+	volumeMapping := strings.Split(volume, ":")
+	if len(volumeMapping) != 2 {
+		logrus.Errorf("[MountVolume] Volume Mapping's length is not 2, failed")
+		return errors.New("Volume Mapping's length is not 2")
+	}
+
+	hostPath, containerPath := volumeMapping[0], volumeMapping[1]
+
+	if err := os.Mkdir(hostPath, 0777); err != nil {
+		logrus.Errorf("[MountVolume] mk host path failed, err:%s", err)
+		return err
+	}
+
+	containerPath = fmt.Sprintf(GhnDockerMountPoint, containerId) + containerPath
+	if err := os.Mkdir(containerPath, 0777); err != nil {
+		logrus.Errorf("[MountVolume] mk container path failed, err:%s", err)
+		return err
+	}
+
+	cmd := exec.Command("mount", hostPath, containerPath)
+	if err := cmd.Run(); err != nil {
+		logrus.Errorf("[MountVolume] mount host to container failed, err:%s", err)
+		return err
+	}
+
+	return nil
+}
+
 func PathExist(url string) (bool, error) {
 	_, err := os.Stat(url)
 	if err == nil {
@@ -146,6 +186,13 @@ func RemoveContainerLayer(containerId string) error {
 
 func RemoveMountPoints(containerId string) error {
 	mountUrl := fmt.Sprintf(GhnDockerMountPoint, containerId)
+
+	umountCmd := exec.Command("umount", mountUrl)
+	if err := umountCmd.Run(); err != nil {
+		logrus.Errorf("[RemoveMountPoints] umount mountPoint failed, err:%s", err)
+		return err
+	}
+
 	if err := os.RemoveAll(mountUrl); err != nil {
 		logrus.Errorf("[RemoveMountPoints] rm mnt dir failed, err:%s", err)
 		return err
