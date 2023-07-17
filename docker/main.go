@@ -66,7 +66,7 @@ var runCommand = cli.Command{
 		},
 		cli.StringFlag{
 			Name: "volume",
-			Usage: "mount volume between host and container"
+			Usage: "mount volume between host and container",
 		}
 	},
 	Action: func(context *cli.Context) error {
