@@ -2,22 +2,42 @@ package container
 
 import (
 	"fmt"
+	"github.com/bytedance/sonic"
 	"github.com/common-tools-haonan/docker/cgroup"
 	"github.com/common-tools-haonan/docker/cgroup/subsystem"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
 	"os/exec"
-	"path"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
 )
 
-var (
-	CGroupPathFormat = "/home/guohaonan/ghndocker/container/%s/cgroup"
+const (
+	CGroupPathFormat             = "/home/guohaonan/ghndocker/container/%s/cgroup"
+	GhnDockerRunningContainerDir = "/home/guohaonan/ghndocker/run/%s"
+	ConfFileName                 = "config.json"
 )
+
+type ContainerStatus string
+
+const (
+	ContainerStatus_Running ContainerStatus = "RUNNING"
+	ContainerStatus_Stop    ContainerStatus = "STOP"
+	ContainerStatus_Exit    ContainerStatus = "EXIT"
+)
+
+type ContainerInfo struct {
+	Id            string          `json:"id"`
+	ContainerName string          `json:"container_name"`
+	Pid           string          `json:"pid"`
+	Image         string          `json:"image"`
+	Status        ContainerStatus `json:"status"`
+	Commands      string          `json:"commands"`
+	CreateTime    string          `json:"create_time"`
+}
 
 func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write *os.File) {
 
@@ -49,7 +69,7 @@ func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write 
 
 }
 
-func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string) {
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string, name string) {
 
 	// id
 	containerId := randStringBytes(10)
@@ -58,6 +78,11 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	parent, writePipe := fork(isStd, image, containerId, volume)
 	if err := parent.Start(); err != nil {
 		logrus.Fatalf("fork start failed err:%s", err)
+	}
+
+	// 持久化单host上的container信息
+	if err := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds); err != nil {
+		logrus.Fatalf("record container failed, err:%s", err)
 	}
 
 	// 资源限制
@@ -83,7 +108,7 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	// 因此，这里只是将容器内的init进程启动起来，就已经完成工作，紧接着就可以退出，然后由操作系统进程ID为1的init进程去接管容器进程。
 	if isStd {
 		parent.Wait()
-		os.Remove(path.Join("./" + containerId))
+		deleteContainerInfo(containerId)
 	}
 }
 
@@ -102,4 +127,56 @@ func randStringBytes(n int) string {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
 	}
 	return string(b)
+}
+
+func recordContainerInfo(containerId, image, name, pid string, cmds []string) error {
+	if name == "" {
+		name = containerId
+	}
+	containerInfo := &ContainerInfo{
+		Id:            containerId,
+		ContainerName: name,
+		Image:         image,
+		Pid:           pid,
+		Commands:      strings.Join(cmds, " "),
+		Status:        ContainerStatus_Running,
+		CreateTime:    time.Now().Format("2006-01-02 15:04:05"),
+	}
+
+	// 序列化
+	str, err := sonic.Marshal(containerInfo)
+	if err != nil {
+		logrus.Errorf("[recordContainerInfo] json marshal failed, err:%s", err)
+		return err
+	}
+
+	docUrl := fmt.Sprintf(GhnDockerRunningContainerDir, containerId)
+	if err = os.MkdirAll(docUrl, 0777); err != nil {
+		logrus.Errorf("[recordContainerInfo] mkdir failed, err:%s", err)
+		return err
+	}
+
+	docUrl = docUrl + "/" + ConfFileName
+
+	file, err := os.Create(docUrl)
+	defer file.Close()
+	if err != nil {
+		logrus.Errorf("[recordContainerInfo] create new file failed, err:%s", err)
+		return err
+	}
+
+	if _, err = file.WriteString(string(str)); err != nil {
+		logrus.Errorf("[recordContainerInfo] write container record info failed, err:%s", err)
+		return err
+	}
+
+	return nil
+}
+
+func deleteContainerInfo(containerId string) error {
+	if err := os.RemoveAll(fmt.Sprintf(GhnDockerRunningContainerDir, containerId)); err != nil {
+		logrus.Errorf("delete container Info failed, err:%s", err)
+		return err
+	}
+	return nil
 }

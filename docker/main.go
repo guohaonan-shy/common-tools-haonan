@@ -7,7 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
-	"syscall"
 )
 
 func main() {
@@ -50,8 +49,8 @@ var runCommand = cli.Command{
 			Usage: "enable docker to run",
 		},
 		cli.BoolFlag{
-			Name: "detach",
-			Usage: "run container on background"
+			Name:  "detach",
+			Usage: "run container on background",
 		},
 		cli.StringFlag{
 			Name:  "memory",
@@ -72,6 +71,10 @@ var runCommand = cli.Command{
 		cli.StringFlag{
 			Name:  "volume",
 			Usage: "mount volume between host and container",
+		},
+		cli.StringFlag{
+			Name:  "name",
+			Usage: "container name",
 		},
 	},
 	Action: func(context *cli.Context) error {
@@ -98,10 +101,10 @@ var runCommand = cli.Command{
 		}
 
 		image := context.String("image")
-
 		volume := context.String("volume")
+		name := context.String("name")
 
-		container.Run(itFlag, cmds, resConf, image, volume)
+		container.Run(itFlag, cmds, resConf, image, volume, name)
 		return nil
 	},
 }
