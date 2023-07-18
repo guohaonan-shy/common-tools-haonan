@@ -200,7 +200,7 @@ func deleteContainerInfo(containerId string) error {
 	return nil
 }
 
-// 将当前host内所有的容器信息输出到标准输出流
+// ListAllContainers 将当前host内所有的容器信息输出到标准输出流
 func ListAllContainers() {
 
 	files, err := ioutil.ReadDir("/home/guohaonan/ghndocker/run/")
@@ -260,7 +260,7 @@ func handleContainerDir(dir string) (*ContainerInfo, error) {
 
 }
 
-// 根据容器id寻找对应的日志文件，并输出到标准输出流
+// FindContainerLog 根据容器id寻找对应的日志文件，并输出到标准输出流
 func FindContainerLog(containerId string) {
 	path := fmt.Sprintf(GhnDockerRunningContainerDir, containerId) + "/" + LogFileName
 	logFile, err := ioutil.ReadFile(path)
@@ -268,4 +268,40 @@ func FindContainerLog(containerId string) {
 		logrus.Fatalf("read log from file failed, err:%s", err)
 	}
 	fmt.Fprint(os.Stdout, string(logFile))
+}
+
+// StopContainer 根据容器id kill对应的进程，并修改持久化存储文件
+func StopContainer(containerId string) error {
+	path := fmt.Sprintf(GhnDockerRunningContainerDir, containerId) + "/" + ConfFileName
+	recordFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		logrus.Errorf("[StopContainer] read record file failed, err:%s", err)
+		return err
+	}
+
+	container := &ContainerInfo{}
+	if err = sonic.Unmarshal(recordFile, container); err != nil {
+		return err
+	}
+
+	pid, _ := strconv.Atoi(container.Pid)
+	// 杀死容器进程
+	if err = syscall.Kill(pid, syscall.SIGTERM); err != nil {
+		logrus.Errorf("[StopContainer] kill proc failed, err:%s", err)
+		return err
+	}
+
+	// 更新容器记录
+	container.Status = ContainerStatus_Stop
+	container.Pid = " "
+
+	bytes, err := sonic.Marshal(container)
+	if err != nil {
+		return err
+	}
+
+	if err = ioutil.WriteFile(path, bytes, 0622); err != nil {
+		return err
+	}
+	return nil
 }

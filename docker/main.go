@@ -18,6 +18,7 @@ func main() {
 		runCommand,
 		listCommand,
 		logCommand,
+		stopCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -133,5 +134,20 @@ var logCommand = cli.Command{
 		id := ctx.String("container_id")
 		container.FindContainerLog(id)
 		return
+	},
+}
+
+var stopCommand = cli.Command{
+	Name:  "stop",
+	Usage: "stop container",
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "container_id",
+			Usage: "stop container by container_id",
+		},
+	},
+	Action: func(ctx *cli.Context) error {
+		id := ctx.String("container_id")
+		return container.StopContainer(id)
 	},
 }
