@@ -3,7 +3,9 @@ package container
 import (
 	"errors"
 	"fmt"
+	"github.com/bytedance/sonic"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -31,6 +33,13 @@ func NewWorkSpace(image string, containerId string, volume string) error {
 		}
 
 		if mntErr != nil {
+			RemoveContainerLayer(containerId)
+			RemoveMountPoints(containerId)
+			return
+		}
+
+		if volumeErr != nil {
+			RemoveMountVolume(containerId)
 			RemoveContainerLayer(containerId)
 			RemoveMountPoints(containerId)
 			return
@@ -194,6 +203,42 @@ func RemoveMountPoints(containerId string) error {
 
 	if err := os.RemoveAll(mountUrl); err != nil {
 		logrus.Errorf("[RemoveMountPoints] rm mnt dir failed, err:%s", err)
+		return err
+	}
+
+	return nil
+}
+
+func RemoveMountVolume(containerId string) error {
+
+	path := fmt.Sprintf(GhnDockerRunningContainerDir, containerId) + "/" + ConfFileName
+	recordFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		logrus.Errorf("[RemoveMountVolume] read record file failed, err:%s", err)
+		return err
+	}
+
+	container := &ContainerInfo{}
+	if err = sonic.Unmarshal(recordFile, container); err != nil {
+		return err
+	}
+
+	volume := strings.Split(container.Volume, ":")
+	if len(volume) != 2 {
+		logrus.Infof("[RemoveMountVolume] no mount volume, skip")
+		return nil
+	}
+
+	containerUrl := volume[1]
+	mountUrl := fmt.Sprintf(GhnDockerMountPoint, containerId) + containerUrl
+
+	if output, err := exec.Command("umount", mountUrl).CombinedOutput(); err != nil {
+		logrus.Errorf("[RemoveMountVolume] umount mountPoint failed, err:%s,\noutput:%s", err, string(output))
+		return err
+	}
+
+	if err := os.Remove(mountUrl); err != nil {
+		logrus.Errorf("[RemoveMountVolume] rm mnt dir failed, err:%s", err)
 		return err
 	}
 

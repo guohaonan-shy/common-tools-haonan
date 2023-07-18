@@ -19,6 +19,7 @@ func main() {
 		listCommand,
 		logCommand,
 		stopCommand,
+		removeCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -149,5 +150,24 @@ var stopCommand = cli.Command{
 	Action: func(ctx *cli.Context) error {
 		id := ctx.String("container_id")
 		return container.StopContainer(id)
+	},
+}
+
+var removeCommand = cli.Command{
+	Name:  "remove",
+	Usage: "remove container and its' documents",
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "container_id",
+			Usage: "remove container by container_id",
+		},
+		cli.BoolFlag{
+			Name:  "f",
+			Usage: "remove container and its' documents forcibly",
+		},
+	},
+	Action: func(ctx *cli.Context) error {
+		force := ctx.Bool("f")
+		return container.RemoveContainer(ctx.String("container_id"), force)
 	},
 }

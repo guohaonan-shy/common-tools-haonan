@@ -40,6 +40,7 @@ type ContainerInfo struct {
 	Status        ContainerStatus `json:"status"`
 	Commands      string          `json:"commands"`
 	CreateTime    string          `json:"create_time"`
+	Volume        string          `json:"volume"`
 }
 
 func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write *os.File) {
@@ -100,7 +101,7 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	}
 
 	// 持久化单host上的container信息
-	if err := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds); err != nil {
+	if err := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds, volume); err != nil {
 		logrus.Fatalf("record container failed, err:%s", err)
 	}
 
@@ -127,7 +128,6 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	// 因此，这里只是将容器内的init进程启动起来，就已经完成工作，紧接着就可以退出，然后由操作系统进程ID为1的init进程去接管容器进程。
 	if isStd {
 		parent.Wait()
-		deleteContainerInfo(containerId)
 	}
 }
 
@@ -148,7 +148,7 @@ func randStringBytes(n int) string {
 	return string(b)
 }
 
-func recordContainerInfo(containerId, image, name, pid string, cmds []string) error {
+func recordContainerInfo(containerId, image, name, pid string, cmds []string, volume string) error {
 	if name == "" {
 		name = containerId
 	}
@@ -160,6 +160,7 @@ func recordContainerInfo(containerId, image, name, pid string, cmds []string) er
 		Commands:      strings.Join(cmds, " "),
 		Status:        ContainerStatus_Running,
 		CreateTime:    time.Now().Format("2006-01-02 15:04:05"),
+		Volume:        volume,
 	}
 
 	// 序列化
@@ -192,8 +193,8 @@ func recordContainerInfo(containerId, image, name, pid string, cmds []string) er
 	return nil
 }
 
-func deleteContainerInfo(containerId string) error {
-	if err := os.RemoveAll(fmt.Sprintf(GhnDockerRunningContainerDir, containerId)); err != nil {
+func deleteContainerInfo(path string) error {
+	if err := os.RemoveAll(path); err != nil {
 		logrus.Errorf("delete container Info failed, err:%s", err)
 		return err
 	}
@@ -301,6 +302,52 @@ func StopContainer(containerId string) error {
 	}
 
 	if err = ioutil.WriteFile(path, bytes, 0622); err != nil {
+		return err
+	}
+	return nil
+}
+
+func RemoveContainer(containerId string, isForce bool) error {
+	path := fmt.Sprintf(GhnDockerRunningContainerDir, containerId)
+	recordUrl := fmt.Sprintf(GhnDockerRunningContainerDir, containerId) + "/" + ConfFileName
+	recordFile, err := ioutil.ReadFile(recordUrl)
+	if err != nil {
+		logrus.Errorf("[RemoveContainer] read record file failed, err:%s", err)
+		return err
+	}
+
+	container := &ContainerInfo{}
+	if err = sonic.Unmarshal(recordFile, container); err != nil {
+		return err
+	}
+
+	if !isForce && container.Status != ContainerStatus_Stop {
+		logrus.Infof("[RemoveContainer] unforcibly remove only apply for container which has been stop")
+		return nil
+	}
+
+	// 卸除挂载点
+	if err = RemoveMountVolume(containerId); err != nil {
+		logrus.Infof("[RemoveContainer] RemoveMountVolume failed, err:%s", err)
+		return err
+	}
+
+	// 移除容器记录+容器日志
+	if err = deleteContainerInfo(path); err != nil {
+		return err
+	}
+
+	// 删除容器可写层以及work层
+	if err = deleteContainerInfo(fmt.Sprintf(GhnDockerContainerDir, containerId)); err != nil {
+		return err
+	}
+
+	if err = deleteContainerInfo(fmt.Sprintf(GhnDockerWorkDir, containerId)); err != nil {
+		return err
+	}
+
+	if err = RemoveMountPoints(containerId); err != nil {
+		logrus.Infof("[RemoveContainer] RemoveMountPoints failed, err:%s", err)
 		return err
 	}
 	return nil
