@@ -17,6 +17,7 @@ func main() {
 		initCommand,
 		runCommand,
 		listCommand,
+		logCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -116,5 +117,21 @@ var listCommand = cli.Command{
 	Action: func(context *cli.Context) error {
 		container.ListAllContainers()
 		return nil
+	},
+}
+
+var logCommand = cli.Command{
+	Name:  "logs",
+	Usage: "show exec logs in container",
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "container_id",
+			Usage: "find log by container_id",
+		},
+	},
+	Action: func(ctx *cli.Context) {
+		id := ctx.String("container_id")
+		container.FindContainerLog(id)
+		return
 	},
 }

@@ -21,6 +21,7 @@ const (
 	CGroupPathFormat             = "/home/guohaonan/ghndocker/container/%s/cgroup"
 	GhnDockerRunningContainerDir = "/home/guohaonan/ghndocker/run/%s"
 	ConfFileName                 = "config.json"
+	LogFileName                  = "container.log"
 )
 
 type ContainerStatus string
@@ -58,6 +59,22 @@ func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write 
 		cmds.Stdin = os.Stdin
 		cmds.Stdout = os.Stdout
 		cmds.Stderr = os.Stderr
+	} else {
+		// 创建日志文件
+		dir := fmt.Sprintf(GhnDockerRunningContainerDir, containerId)
+		if mkdirErr := os.MkdirAll(dir, 0622); mkdirErr != nil {
+			logrus.Errorf("mk container log dir failed, err:%s", err)
+			return nil, nil
+		}
+		docUrl := dir + "/" + LogFileName
+
+		file, createErr := os.Create(docUrl)
+		if createErr != nil {
+			logrus.Errorf("create log file failed, err:%s", err)
+			return nil, nil
+		}
+
+		cmds.Stdout = file
 	}
 
 	cmds.ExtraFiles = []*os.File{read}
@@ -241,4 +258,14 @@ func handleContainerDir(dir string) (*ContainerInfo, error) {
 	}
 	return container, nil
 
+}
+
+// 根据容器id寻找对应的日志文件，并输出到标准输出流
+func FindContainerLog(containerId string) {
+	path := fmt.Sprintf(GhnDockerRunningContainerDir, containerId) + "/" + LogFileName
+	logFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		logrus.Fatalf("read log from file failed, err:%s", err)
+	}
+	fmt.Fprint(os.Stdout, string(logFile))
 }
