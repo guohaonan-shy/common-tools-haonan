@@ -21,6 +21,7 @@ func main() {
 		stopCommand,
 		removeCommand,
 		execCommand,
+		commitCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -198,5 +199,24 @@ var execCommand = cli.Command{
 		}
 		container.ExecContainer(containerName, commandArray)
 		return nil
+	},
+}
+
+var commitCommand = cli.Command{
+	Name:  "commit",
+	Usage: "commit a image based on a existed container filesystem",
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "container_id",
+			Usage: "container filesystem based on",
+		},
+		cli.StringFlag{
+			Name:  "image",
+			Usage: "image name",
+		},
+	},
+	Action: func(context *cli.Context) error {
+		containerId, image := context.String("container_id"), context.String("image")
+		return container.CommitToMakeAImage(containerId, image)
 	},
 }
