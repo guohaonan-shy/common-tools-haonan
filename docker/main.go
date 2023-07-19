@@ -20,6 +20,7 @@ func main() {
 		logCommand,
 		stopCommand,
 		removeCommand,
+		execCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -169,5 +170,28 @@ var removeCommand = cli.Command{
 	Action: func(ctx *cli.Context) error {
 		force := ctx.Bool("f")
 		return container.RemoveContainer(ctx.String("container_id"), force)
+	},
+}
+
+var execCommand = cli.Command{
+	Name:  "exec",
+	Usage: "exec a command into container",
+	Action: func(context *cli.Context) error {
+		//This is for callback
+		if os.Getenv(container.ENV_EXEC_PID) != "" {
+			logrus.Infof("pid callback pid %s", os.Getgid())
+			return nil
+		}
+
+		if len(context.Args()) < 2 {
+			return fmt.Errorf("Missing container name or command")
+		}
+		containerName := context.Args().Get(0)
+		var commandArray []string
+		for _, arg := range context.Args().Tail() {
+			commandArray = append(commandArray, arg)
+		}
+		container.ExecContainer(containerName, commandArray)
+		return nil
 	},
 }
