@@ -43,7 +43,7 @@ type ContainerInfo struct {
 	Volume        string          `json:"volume"`
 }
 
-func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write *os.File) {
+func fork(isStd bool, image, containerId, volume string, env []string) (cmds *exec.Cmd, write *os.File) {
 
 	read, write, err := os.Pipe()
 	if err != nil {
@@ -79,7 +79,7 @@ func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write 
 	}
 
 	cmds.ExtraFiles = []*os.File{read}
-	cmds.Env = os.Environ()
+	cmds.Env = append(env, os.Environ()...)
 	cmds.Dir = "/mnt/" + containerId
 	if err := NewWorkSpace(image, containerId, volume); err != nil {
 		return nil, nil
@@ -89,13 +89,13 @@ func fork(isStd bool, image, containerId, volume string) (cmds *exec.Cmd, write 
 
 }
 
-func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string, name string) {
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string, name string, env []string) {
 
 	// id
 	containerId := randStringBytes(10)
 
 	// 父进程执行内容
-	parent, writePipe := fork(isStd, image, containerId, volume)
+	parent, writePipe := fork(isStd, image, containerId, volume, env)
 	if err := parent.Start(); err != nil {
 		logrus.Fatalf("fork start failed err:%s", err)
 	}

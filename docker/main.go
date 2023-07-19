@@ -81,6 +81,10 @@ var runCommand = cli.Command{
 			Name:  "name",
 			Usage: "container name",
 		},
+		cli.StringSliceFlag{
+			Name:  "env",
+			Usage: "environment from stdin",
+		},
 	},
 	Action: func(context *cli.Context) error {
 		if len(context.Args()) < 1 {
@@ -108,8 +112,9 @@ var runCommand = cli.Command{
 		image := context.String("image")
 		volume := context.String("volume")
 		name := context.String("name")
+		env := context.StringSlice("env")
 
-		container.Run(itFlag, cmds, resConf, image, volume, name)
+		container.Run(itFlag, cmds, resConf, image, volume, name, env)
 		return nil
 	},
 }
