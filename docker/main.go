@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/common-tools-haonan/docker/cgroup/subsystem"
 	"github.com/common-tools-haonan/docker/container"
+	"github.com/common-tools-haonan/docker/network"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
@@ -218,5 +219,37 @@ var commitCommand = cli.Command{
 	Action: func(context *cli.Context) error {
 		containerId, image := context.String("container_id"), context.String("image")
 		return container.CommitToMakeAImage(containerId, image)
+	},
+}
+
+var networkCommand = cli.Command{
+	Name:  "network",
+	Usage: "tools about container network, for example, create network(LAN)",
+	Subcommands: []cli.Command{
+		{
+			Name:  "create",
+			Usage: "Create Network based on the specific driver",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:     "name",
+					Usage:    "network name",
+					Required: true,
+				},
+				cli.StringFlag{
+					Name:     "driver",
+					Usage:    "driver name, network config based on driver",
+					Required: true,
+				},
+				cli.StringFlag{
+					Name:     "subnet",
+					Usage:    "subnet",
+					Required: true,
+				},
+			},
+			Action: func(ctx *cli.Context) error {
+				name, driver, subnet := ctx.String("name"), ctx.String("driver"), ctx.String("subnet")
+				return network.CreateNetwork(name, driver, subnet)
+			},
+		},
 	},
 }
