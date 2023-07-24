@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bytedance/sonic"
+	"github.com/common-tools-haonan/docker/network/driver"
 	"github.com/sirupsen/logrus"
 	"net"
 	"os"
@@ -84,17 +85,17 @@ func CreateNetwork(networkName, driverName string, subnet string) error {
 	ipRange.IP = gatewayIP
 
 	var (
-		driverInterface Driver
+		driverInterface driver.Driver
 		isExist         bool
 	)
 
-	driverInterface, isExist = NetworkDrivers[driverName]
+	driverInterface, isExist = driver.NetworkDrivers[driverName]
 	if !isExist {
 		logrus.Errorf("[CreateWork] driver:%s doesn't implement", driverName)
 		return errors.New(fmt.Sprintf("driver:%s doesn't implement", driverName))
 	}
 
-	network, err := driverInterface.CreateNetwork(subnet, networkName)
+	network, err := driverInterface.CreateNetwork(ipRange, networkName)
 	if err != nil {
 		logrus.Errorf("[CreateNetwork] driver:%v create failed, err:%s", reflect.ValueOf(driverInterface).Interface(), err)
 		return err
