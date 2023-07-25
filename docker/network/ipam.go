@@ -123,19 +123,17 @@ func (manager *LocalIPManager) Allocate(subnet *net.IPNet) (net.IP, error) {
 }
 
 func (manager *LocalIPManager) Release(subnet *net.IPNet, ip *net.IP) error {
+	var (
+		err error
+	)
 	// 从宿主机内部读取ip分配信息
 	if _, err := os.Stat(manager.IpamDefaultStoragePath); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 	}
-
-	ipamFile, err := os.Open(manager.IpamDefaultStoragePath)
-	if err != nil {
-		return err
-	}
 	var contentBytes []byte
-	if _, err = ipamFile.Read(contentBytes); err != nil {
+	if contentBytes, err = os.ReadFile(manager.IpamDefaultStoragePath); err != nil {
 		return err
 	}
 
@@ -147,12 +145,17 @@ func (manager *LocalIPManager) Release(subnet *net.IPNet, ip *net.IP) error {
 
 	c := 0
 	ipFor4 := ip.To4()
-	ipFor4[3] -= 1
+	//ipFor4[3] -= 1
 	for t := uint(4); t > 0; t -= 1 {
-		c += int(ipFor4[t-1] - subnet.IP[t-1]<<((4-t)*8))
+		c += int(ipFor4[t-1]-subnet.IP[t-1]) << ((4 - t) * 8)
 	}
 
-	ipPool[subnet.String()][c] = 0
+	// 计算bit位数
+	bytesNum, bitNum := (c-1)/8, (c-1)%8
+
+	tmpByte := ipPool[subnet.String()][bytesNum]
+	tmpByte &= ^(0x80 >> bitNum)
+	ipPool[subnet.String()][bytesNum] = tmpByte
 
 	manager.IpamStorage = ipPool
 

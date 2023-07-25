@@ -49,5 +49,21 @@ func TestLocalIPManager_Allocate(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(ip)
+}
 
+func TestLocalIPManager_Release(t *testing.T) {
+	manager := &LocalIPManager{
+		IpamDefaultStoragePath: "/home/guohaonan/code/src/common-tools-haonan/docker/network/ipam.json",
+		IpamStorage:            map[string][]byte{},
+	}
+	_, ipRange, err := net.ParseCIDR("100.0.0.0/12")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ip := net.IPv4(100, 0, 0, 1)
+	err = manager.Release(ipRange, &ip)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
