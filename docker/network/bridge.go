@@ -1,8 +1,7 @@
-package driver
+package network
 
 import (
 	"fmt"
-	"github.com/common-tools-haonan/docker/network"
 	"github.com/sirupsen/logrus"
 	"github.com/vishvananda/netlink"
 	"net"
@@ -17,8 +16,8 @@ func (bridge *BridgeDriver) Name() string {
 	return "bridge"
 }
 
-func (bridge *BridgeDriver) CreateNetwork(subnet *net.IPNet, networkName string) (*network.Network, error) {
-	n := &network.Network{
+func (bridge *BridgeDriver) CreateNetwork(subnet *net.IPNet, networkName string) (*Network, error) {
+	n := &Network{
 		NetworkName: networkName,
 		IPRange:     subnet,
 	}
@@ -79,7 +78,7 @@ func (bridge *BridgeDriver) CreateNetwork(subnet *net.IPNet, networkName string)
 		fmt.Sprintf("-t nat -A POSTROUTING -s %s ! -o %s -j MASQUERATE", subnet.String(), networkName),
 	).CombinedOutput()
 	if err != nil {
-		logrus.Errorf("[Bridge Driver] Create Network, exec iptables failed, err:%s, output:%s", string(output))
+		logrus.Errorf("[Bridge Driver] Create Network, exec iptables failed, err:%s, output:%s", err, string(output))
 		return nil, err
 	}
 
@@ -87,7 +86,7 @@ func (bridge *BridgeDriver) CreateNetwork(subnet *net.IPNet, networkName string)
 }
 
 // DeleteNetwork 删除网络
-func (bridge *BridgeDriver) DeleteNetwork(network *network.Network) error {
+func (bridge *BridgeDriver) DeleteNetwork(network *Network) error {
 	name := network.NetworkName
 	br, err := netlink.LinkByName(name)
 	if err != nil {
@@ -97,11 +96,11 @@ func (bridge *BridgeDriver) DeleteNetwork(network *network.Network) error {
 }
 
 // Connect 容器连接
-func (bridge *BridgeDriver) Connect(network *network.Network, endPoint *network.EndPoint) error {
+func (bridge *BridgeDriver) Connect(network *Network, endPoint *EndPoint) error {
 	return nil
 }
 
 // Disconnect 容器断连
-func (bridge *BridgeDriver) Disconnect(network *network.Network, endPoint *network.EndPoint) error {
+func (bridge *BridgeDriver) Disconnect(network *Network, endPoint *EndPoint) error {
 	return nil
 }

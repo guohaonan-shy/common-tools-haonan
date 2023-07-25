@@ -16,32 +16,33 @@ func Init() {
 }
 
 type LocalIPManager struct {
-	ipamDefaultStoragePath string
-	ipamStorage            map[string][]byte
+	IpamDefaultStoragePath string            `json:"ipam_default_storage_path"`
+	IpamStorage            map[string][]byte `json:"ipam_storage"`
 }
 
 func (manager *LocalIPManager) Allocate(subnet *net.IPNet) (net.IP, error) {
+
+	var (
+		contentBytes = make([]byte, 0)
+		err          error
+		ip           net.IP
+	)
 	// 从宿主机内部读取ip分配信息
-	if _, err := os.Stat(manager.ipamDefaultStoragePath); err != nil {
+	if _, err = os.Stat(manager.IpamDefaultStoragePath); err != nil {
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
 	}
 
-	ipamFile, err := os.Open(manager.ipamDefaultStoragePath)
-	if err != nil {
-		return nil, err
-	}
-	var contentBytes []byte
-	if _, err = ipamFile.Read(contentBytes); err != nil {
+	if contentBytes, err = os.ReadFile(manager.IpamDefaultStoragePath); err != nil {
 		return nil, err
 	}
 
-	if err = sonic.Unmarshal(contentBytes, &manager.ipamStorage); err != nil {
+	if err = sonic.Unmarshal(contentBytes, &manager); err != nil {
 		return nil, err
 	}
 
-	ipPool := manager.ipamStorage
+	ipPool := manager.IpamStorage
 
 	// ip 分配
 	// 初始化bitmap
@@ -51,41 +52,60 @@ func (manager *LocalIPManager) Allocate(subnet *net.IPNet) (net.IP, error) {
 		byteNum, rest := avaiableIpNum/8, avaiableIpNum%8
 
 		pool := bytes.Repeat([]byte{0x00}, byteNum)
-		pool = append(pool, 0xff>>rest)
+		// rest非0，需要添加rest个可用位置
+		if rest != 0 {
+			pool = append(pool, 0xff>>rest)
+		}
 
 		ipPool[subnet.String()] = pool
-
 	}
 
 	// 分配
 	subnetIpPool := ipPool[subnet.String()]
 
 	for i := range subnetIpPool {
-		if subnetIpPool[i] == 0 {
-
-			subnetIpPool[i] = 1
-			ip := subnet.IP
-
-			for t := uint(4); t > 0; t -= 1 {
-				[]byte(ip)[4-t] = uint8(i >> ((t - 1) * 8))
+		bit, base := subnetIpPool[i], byte(0x80)
+		isUnusedExisted, bitNum := false, 0
+		for j := 0; j < 8; j++ {
+			re := bit & (base >> j)
+			if re == base>>j {
+				// 该位已经被使用
+				continue
 			}
-			ip[3] += 1
+			isUnusedExisted = true
+			bitNum = j
+			// 修改为已占用
+			subnetIpPool[i] = bit | (base >> j)
 			break
 		}
+
+		if !isUnusedExisted {
+			continue
+		}
+
+		// 具体位数
+		index := i*8 + bitNum + 1
+		ip = subnet.IP
+
+		for t := uint(4); t > 0; t -= 1 {
+			[]byte(ip)[4-t] += uint8(index >> ((t - 1) * 8))
+		}
+		//ip[3] += 1
+		break
 	}
 
 	ipPool[subnet.String()] = subnetIpPool
 
-	manager.ipamStorage = ipPool
+	manager.IpamStorage = ipPool
 
 	// 重新dump
-	if _, err = os.Stat(manager.ipamDefaultStoragePath); err != nil {
+	if _, err = os.Stat(manager.IpamDefaultStoragePath); err != nil {
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
 	}
 
-	newfile, err := os.OpenFile(manager.ipamDefaultStoragePath, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
+	newfile, err := os.OpenFile(manager.IpamDefaultStoragePath, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, err
 	}
@@ -99,18 +119,18 @@ func (manager *LocalIPManager) Allocate(subnet *net.IPNet) (net.IP, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	return ip, nil
 }
 
 func (manager *LocalIPManager) Release(subnet *net.IPNet, ip *net.IP) error {
 	// 从宿主机内部读取ip分配信息
-	if _, err := os.Stat(manager.ipamDefaultStoragePath); err != nil {
+	if _, err := os.Stat(manager.IpamDefaultStoragePath); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 	}
 
-	ipamFile, err := os.Open(manager.ipamDefaultStoragePath)
+	ipamFile, err := os.Open(manager.IpamDefaultStoragePath)
 	if err != nil {
 		return err
 	}
@@ -119,11 +139,11 @@ func (manager *LocalIPManager) Release(subnet *net.IPNet, ip *net.IP) error {
 		return err
 	}
 
-	if err = sonic.Unmarshal(contentBytes, &manager.ipamStorage); err != nil {
+	if err = sonic.Unmarshal(contentBytes, &manager); err != nil {
 		return err
 	}
 
-	ipPool := manager.ipamStorage
+	ipPool := manager.IpamStorage
 
 	c := 0
 	ipFor4 := ip.To4()
@@ -134,16 +154,16 @@ func (manager *LocalIPManager) Release(subnet *net.IPNet, ip *net.IP) error {
 
 	ipPool[subnet.String()][c] = 0
 
-	manager.ipamStorage = ipPool
+	manager.IpamStorage = ipPool
 
 	// 重新dump
-	if _, err = os.Stat(manager.ipamDefaultStoragePath); err != nil {
+	if _, err = os.Stat(manager.IpamDefaultStoragePath); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 	}
 
-	newfile, err := os.OpenFile(manager.ipamDefaultStoragePath, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
+	newfile, err := os.OpenFile(manager.IpamDefaultStoragePath, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
