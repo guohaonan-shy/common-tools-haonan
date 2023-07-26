@@ -11,6 +11,10 @@ import (
 )
 
 func main() {
+
+	//
+	network.Init()
+
 	app := cli.NewApp()
 	app.Name = "ghndocker"
 	app.Usage = "ghndocker is a simple docker cmdline tool for guohaonan.Aatrox use"
@@ -23,6 +27,7 @@ func main() {
 		removeCommand,
 		execCommand,
 		commitCommand,
+		networkCommand,
 	}
 
 	app.Before = func(context *cli.Context) error {
@@ -87,6 +92,14 @@ var runCommand = cli.Command{
 			Name:  "env",
 			Usage: "environment from stdin",
 		},
+		cli.StringFlag{
+			Name:  "net",
+			Usage: "connect into the specific network",
+		},
+		cli.StringFlag{
+			Name:  "port",
+			Usage: "host port mapping with container port",
+		},
 	},
 	Action: func(context *cli.Context) error {
 		if len(context.Args()) < 1 {
@@ -115,8 +128,10 @@ var runCommand = cli.Command{
 		volume := context.String("volume")
 		name := context.String("name")
 		env := context.StringSlice("env")
+		net := context.String("net")
+		portMapping := context.String("port")
 
-		container.Run(itFlag, cmds, resConf, image, volume, name, env)
+		container.Run(itFlag, cmds, resConf, image, volume, name, env, net)
 		return nil
 	},
 }

@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bytedance/sonic"
+	"github.com/common-tools-haonan/docker/container"
 	"github.com/sirupsen/logrus"
 	"net"
 	"os"
 	"path"
+	"path/filepath"
 	"reflect"
 )
 
@@ -58,6 +60,16 @@ func (network *Network) Dump(dir string) error {
 	return nil
 }
 
+func (network *Network) Load(fileName string) error {
+
+	bytes, err := os.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+
+	return sonic.Unmarshal(bytes, &network)
+}
+
 //func (network *Network) Remove(networkName string) error {
 //	networkPath := path.Join(defaultNetworkPath, "/", network.NetworkName)
 //	_, err := os.Stat(networkPath)
@@ -105,4 +117,61 @@ func CreateNetwork(networkName, driverName string, subnet string) error {
 
 func DeleteNetwork(networkName string) error {
 	return nil
+}
+
+func ListAllNetwork() ([]*Network, error) {
+	// 读取默认目录
+	if _, err := os.Stat(defaultNetworkPath); err != nil {
+		if os.IsNotExist(err) {
+			os.MkdirAll(defaultNetworkPath, 0644)
+		} else {
+			return nil, err
+		}
+	}
+
+	networks := make([]*Network, 0)
+	err := filepath.Walk(defaultNetworkPath, func(networkPath string, file os.FileInfo, err error) error {
+		// 底层默认执行一次walkfc, 避免报错，这步过滤
+		if file.IsDir() {
+			return nil
+		}
+
+		_, networkFileName := path.Split(networkPath)
+		network := &Network{
+			NetworkName: networkFileName,
+		}
+
+		if err = network.Load(networkFileName); err != nil {
+			return err
+		}
+
+		networks = append(networks, network)
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+func Connect(networkName string, container *container.ContainerInfo) error {
+	network, ok := networkMapping[networkName]
+	if !ok {
+		return errors.New(fmt.Sprintf("network:%s not existed", networkName))
+	}
+
+	ipRange := network.IPRange
+	ip, err := ipAddressManager.Allocate(ipRange)
+	if err != nil {
+		return err
+	}
+
+	endpoint := &EndPoint{
+		ID:        fmt.Sprintf("%s-%s", container.Id, networkName),
+		IPAddress: &ip,
+		Network:   network,
+	}
+
 }

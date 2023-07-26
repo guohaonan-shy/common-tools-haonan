@@ -7,14 +7,6 @@ import (
 	"os"
 )
 
-var (
-	ipAddressManager *LocalIPManager
-)
-
-func Init() {
-	ipAddressManager = &LocalIPManager{}
-}
-
 type LocalIPManager struct {
 	IpamDefaultStoragePath string            `json:"ipam_default_storage_path"`
 	IpamStorage            map[string][]byte `json:"ipam_storage"`
