@@ -5,7 +5,6 @@ import "github.com/sirupsen/logrus"
 var (
 	ipAddressManager *LocalIPManager
 	networkMapping   = make(map[string]*Network)
-	driverMapping    = make(map[string]Driver)
 )
 
 func Init() {
@@ -27,6 +26,5 @@ func Init() {
 
 	// bridge
 	bridge := &BridgeDriver{}
-	driverMapping[bridge.Name()] = bridge
-
+	NetworkDrivers[bridge.Name()] = bridge
 }

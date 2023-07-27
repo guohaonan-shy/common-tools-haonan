@@ -21,7 +21,22 @@ func (manager *LocalIPManager) Allocate(subnet *net.IPNet) (net.IP, error) {
 	)
 	// 从宿主机内部读取ip分配信息
 	if _, err = os.Stat(manager.IpamDefaultStoragePath); err != nil {
-		if !os.IsNotExist(err) {
+		if os.IsNotExist(err) {
+			ipamFile, openErr := os.OpenFile(manager.IpamDefaultStoragePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+			if openErr != nil {
+				return nil, openErr
+			}
+			bytes, err := sonic.Marshal(manager)
+			if err != nil {
+				return nil, err
+			}
+			_, err = ipamFile.Write(bytes)
+			if err != nil {
+				return nil, err
+			}
+			ipamFile.Close()
+
+		} else {
 			return nil, err
 		}
 	}

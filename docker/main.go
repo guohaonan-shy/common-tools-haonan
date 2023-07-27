@@ -287,5 +287,18 @@ var networkCommand = cli.Command{
 				return w.Flush()
 			},
 		},
+		{
+			Name:  "delete",
+			Usage: "delete Network",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name: "name",
+				},
+			},
+			Action: func(ctx *cli.Context) error {
+				name := ctx.String("name")
+				return network.DeleteNetwork(name)
+			},
+		},
 	},
 }

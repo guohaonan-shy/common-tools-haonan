@@ -20,6 +20,7 @@ func (bridge *BridgeDriver) CreateNetwork(subnet *net.IPNet, networkName string)
 	n := &Network{
 		NetworkName: networkName,
 		IPRange:     subnet,
+		Driver:      bridge.Name(),
 	}
 
 	// 1. 创建网桥实例
@@ -74,9 +75,8 @@ func (bridge *BridgeDriver) CreateNetwork(subnet *net.IPNet, networkName string)
 	}
 	// 4. SNAT规则
 	// iptables -t nat -A POSTROUTING -s subnet ! -o name -j "MASQUERADE"
-	output, err := exec.Command("iptables",
-		fmt.Sprintf("-t nat -A POSTROUTING -s %s ! -o %s -j MASQUERATE", subnet.String(), networkName),
-	).CombinedOutput()
+	cmds := fmt.Sprintf("-t nat -A POSTROUTING -s %s ! -o %s -j MASQUERADE", subnet.String(), networkName)
+	output, err := exec.Command("iptables", strings.Split(cmds, " ")...).CombinedOutput()
 	if err != nil {
 		logrus.Errorf("[Bridge Driver] Create Network, exec iptables failed, err:%s, output:%s", err, string(output))
 		return nil, err

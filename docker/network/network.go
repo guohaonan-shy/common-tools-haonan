@@ -64,6 +64,7 @@ func (network *Network) Load(fileName string) error {
 
 	bytes, err := os.ReadFile(fileName)
 	if err != nil {
+		logrus.Errorf("[network Load]failed:%s", err)
 		return err
 	}
 
@@ -136,7 +137,7 @@ func DeleteNetwork(networkName string) error {
 		isDriverExist bool
 	)
 
-	driver, isDriverExist = driverMapping[network.Driver]
+	driver, isDriverExist = NetworkDrivers[network.Driver]
 	if !isDriverExist {
 		return errors.New(fmt.Sprintf("driver:%s not init", network.Driver))
 	}
@@ -154,6 +155,7 @@ func ListAllNetwork() ([]*Network, error) {
 		if os.IsNotExist(err) {
 			os.MkdirAll(defaultNetworkPath, 0644)
 		} else {
+			logrus.Error(err)
 			return nil, err
 		}
 	}
@@ -165,12 +167,16 @@ func ListAllNetwork() ([]*Network, error) {
 			return nil
 		}
 
+		if file.Name() == "ipam_config.json" {
+			return nil
+		}
+
 		_, networkFileName := path.Split(networkPath)
 		network := &Network{
 			NetworkName: networkFileName,
 		}
 
-		if err = network.Load(networkFileName); err != nil {
+		if err = network.Load(networkPath); err != nil {
 			return err
 		}
 
@@ -209,7 +215,7 @@ func Connect(networkName string, portMapping string, containerId string) error {
 		isDriverExist bool
 	)
 
-	driver, isDriverExist = driverMapping[network.Driver]
+	driver, isDriverExist = NetworkDrivers[network.Driver]
 	if !isDriverExist {
 		return errors.New(fmt.Sprintf("driver:%s not init", network.Driver))
 	}

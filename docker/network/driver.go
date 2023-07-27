@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	NetworkDrivers = map[string]Driver{}
+	NetworkDrivers = make(map[string]Driver)
 )
 
 type Driver interface {
