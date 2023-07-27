@@ -150,16 +150,15 @@ func (manager *LocalIPManager) Release(subnet *net.IPNet, ip *net.IP) error {
 
 	ipPool := manager.IpamStorage
 
-	c := 0
-	ipFor4 := ip.To4()
+	c := 1
+	ipFor4, gwFor4 := ip.To4(), subnet.IP.To4()
 	//ipFor4[3] -= 1
 	for t := uint(4); t > 0; t -= 1 {
-		c += int(ipFor4[t-1]-subnet.IP[t-1]) << ((4 - t) * 8)
+		c += int(ipFor4[t-1]-gwFor4[t-1]) << ((4 - t) * 8)
 	}
 
 	// 计算bit位数
 	bytesNum, bitNum := (c-1)/8, (c-1)%8
-
 	tmpByte := ipPool[subnet.String()][bytesNum]
 	tmpByte &= ^(0x80 >> bitNum)
 	ipPool[subnet.String()][bytesNum] = tmpByte
