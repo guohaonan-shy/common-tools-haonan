@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"os"
+	"text/tabwriter"
 )
 
 func main() {
@@ -131,7 +132,7 @@ var runCommand = cli.Command{
 		net := context.String("net")
 		portMapping := context.String("port")
 
-		container.Run(itFlag, cmds, resConf, image, volume, name, env, net)
+		container.Run(itFlag, cmds, resConf, image, volume, name, env, net, portMapping)
 		return nil
 	},
 }
@@ -264,6 +265,26 @@ var networkCommand = cli.Command{
 			Action: func(ctx *cli.Context) error {
 				name, driver, subnet := ctx.String("name"), ctx.String("driver"), ctx.String("subnet")
 				return network.CreateNetwork(name, driver, subnet)
+			},
+		},
+		{
+			Name:  "list",
+			Usage: "list all networks",
+			Action: func(ctx *cli.Context) error {
+				networks, err := network.ListAllNetwork()
+				if err != nil {
+					return err
+				}
+
+				w := tabwriter.NewWriter(os.Stdout, 12, 1, 3, ' ', 0)
+				fmt.Fprintf(w, "NETWORK\tIPRANGE\tDRIVER\n")
+
+				for i := range networks {
+					nw := networks[i]
+					fmt.Fprintf(w, "%s\t%s\t%s\n", nw.NetworkName, nw.IPRange.String(), nw.Driver)
+				}
+
+				return w.Flush()
 			},
 		},
 	},

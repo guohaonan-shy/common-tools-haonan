@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bytedance/sonic"
-	"github.com/common-tools-haonan/docker/container"
 	"github.com/sirupsen/logrus"
 	"net"
 	"os"
 	"path"
 	"path/filepath"
 	"reflect"
+	"strings"
 )
 
 const (
@@ -70,16 +70,20 @@ func (network *Network) Load(fileName string) error {
 	return sonic.Unmarshal(bytes, &network)
 }
 
-//func (network *Network) Remove(networkName string) error {
-//	networkPath := path.Join(defaultNetworkPath, "/", network.NetworkName)
-//	_, err := os.Stat(networkPath)
-//	if err != nil {
-//		logrus.Errorf("[Network Remove] stat(which is used to check whether the file is exised) failed, err:%s", err)
-//		return err
-//	}
-//
-//	return os.RemoveAll(networkPath)
-//}
+func (network *Network) Remove() error {
+	networkPath := path.Join(defaultNetworkPath, "/", network.NetworkName)
+	_, err := os.Stat(networkPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		} else {
+			logrus.Errorf("[Network Remove] stat(which is used to check whether the file is exised) failed, err:%s", err)
+			return err
+		}
+	}
+
+	return os.RemoveAll(networkPath)
+}
 
 func CreateNetwork(networkName, driverName string, subnet string) error {
 	_, ipRange, err := net.ParseCIDR(subnet)
@@ -116,7 +120,32 @@ func CreateNetwork(networkName, driverName string, subnet string) error {
 }
 
 func DeleteNetwork(networkName string) error {
-	return nil
+	network, ok := networkMapping[networkName]
+	if !ok {
+		return errors.New(fmt.Sprintf("network:%s not existed", networkName))
+	}
+
+	ipRange := network.IPRange
+	err := ipAddressManager.Release(ipRange, &ipRange.IP)
+	if err != nil {
+		return err
+	}
+
+	var (
+		driver        Driver
+		isDriverExist bool
+	)
+
+	driver, isDriverExist = driverMapping[network.Driver]
+	if !isDriverExist {
+		return errors.New(fmt.Sprintf("driver:%s not init", network.Driver))
+	}
+
+	if err = driver.DeleteNetwork(network); err != nil {
+		return err
+	}
+
+	return network.Remove()
 }
 
 func ListAllNetwork() ([]*Network, error) {
@@ -153,10 +182,10 @@ func ListAllNetwork() ([]*Network, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	return networks, nil
 }
 
-func Connect(networkName string, container *container.ContainerInfo) error {
+func Connect(networkName string, portMapping string, containerId string) error {
 	network, ok := networkMapping[networkName]
 	if !ok {
 		return errors.New(fmt.Sprintf("network:%s not existed", networkName))
@@ -169,9 +198,26 @@ func Connect(networkName string, container *container.ContainerInfo) error {
 	}
 
 	endpoint := &EndPoint{
-		ID:        fmt.Sprintf("%s-%s", container.Id, networkName),
-		IPAddress: &ip,
-		Network:   network,
+		ID:          fmt.Sprintf("%s-%s", containerId, networkName),
+		IPAddress:   &ip,
+		Network:     network,
+		PortMapping: strings.Split(portMapping, ":"),
 	}
 
+	var (
+		driver        Driver
+		isDriverExist bool
+	)
+
+	driver, isDriverExist = driverMapping[network.Driver]
+	if !isDriverExist {
+		return errors.New(fmt.Sprintf("driver:%s not init", network.Driver))
+	}
+
+	if err = driver.Connect(network, endpoint); err != nil {
+		return err
+	}
+
+	// 配置ip, route
+	return nil
 }

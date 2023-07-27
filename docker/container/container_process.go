@@ -5,6 +5,7 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/common-tools-haonan/docker/cgroup"
 	"github.com/common-tools-haonan/docker/cgroup/subsystem"
+	"github.com/common-tools-haonan/docker/network"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"math/rand"
@@ -41,6 +42,8 @@ type ContainerInfo struct {
 	Commands      string          `json:"commands"`
 	CreateTime    string          `json:"create_time"`
 	Volume        string          `json:"volume"`
+	Network       string          `json:"network"`
+	PortMapping   string          `json:"port_mapping"`
 }
 
 func fork(isStd bool, image, containerId, volume string, env []string) (cmds *exec.Cmd, write *os.File) {
@@ -89,7 +92,7 @@ func fork(isStd bool, image, containerId, volume string, env []string) (cmds *ex
 
 }
 
-func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string, name string, env []string, net string) {
+func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image string, volume string, name string, env []string, net string, portMapping string) {
 
 	// id
 	containerId := randStringBytes(10)
@@ -101,7 +104,7 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	}
 
 	// 持久化单host上的container信息
-	container, recordErr := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds, volume)
+	recordErr := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds, volume, net, portMapping)
 	if recordErr != nil {
 		logrus.Fatalf("record container failed, err:%s", recordErr)
 	}
@@ -121,6 +124,10 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 		logrus.Fatalf("[containManager.SetPidIntoGroup] err failed, err:%s", err)
 	}
 
+	// 联入指定网络
+	if err = network.Connect(net, portMapping, containerId); err != nil {
+		logrus.Fatal("[network.Connect] container connect network failed, err:%s", err)
+	}
 	// 执行指令通过管道
 	sendInitCommand(cmds, writePipe)
 
@@ -149,7 +156,7 @@ func randStringBytes(n int) string {
 	return string(b)
 }
 
-func recordContainerInfo(containerId, image, name, pid string, cmds []string, volume string) (*ContainerInfo, error) {
+func recordContainerInfo(containerId, image, name, pid string, cmds []string, volume string, net string, portMapping string) error {
 	if name == "" {
 		name = containerId
 	}
@@ -162,19 +169,21 @@ func recordContainerInfo(containerId, image, name, pid string, cmds []string, vo
 		Status:        ContainerStatus_Running,
 		CreateTime:    time.Now().Format("2006-01-02 15:04:05"),
 		Volume:        volume,
+		Network:       net,
+		PortMapping:   portMapping,
 	}
 
 	// 序列化
 	str, err := sonic.Marshal(containerInfo)
 	if err != nil {
 		logrus.Errorf("[recordContainerInfo] json marshal failed, err:%s", err)
-		return nil, err
+		return err
 	}
 
 	docUrl := fmt.Sprintf(GhnDockerRunningContainerDir, containerId)
 	if err = os.MkdirAll(docUrl, 0777); err != nil {
 		logrus.Errorf("[recordContainerInfo] mkdir failed, err:%s", err)
-		return nil, err
+		return err
 	}
 
 	docUrl = docUrl + "/" + ConfFileName
@@ -183,15 +192,15 @@ func recordContainerInfo(containerId, image, name, pid string, cmds []string, vo
 	defer file.Close()
 	if err != nil {
 		logrus.Errorf("[recordContainerInfo] create new file failed, err:%s", err)
-		return nil, err
+		return err
 	}
 
 	if _, err = file.WriteString(string(str)); err != nil {
 		logrus.Errorf("[recordContainerInfo] write container record info failed, err:%s", err)
-		return nil, err
+		return err
 	}
 
-	return containerInfo, nil
+	return nil
 }
 
 func deleteContainerInfo(path string) error {
