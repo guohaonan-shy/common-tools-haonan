@@ -254,8 +254,7 @@ func configInterfaceIpAndRoute(endpoint *EndPoint, containerInfo *container.Cont
 	}
 
 	defer enterContainerNetns(&peerLink, containerInfo)()
-	logrus.Info(interfaceIP)
-	if err = setInterfaceIp(endpoint.Device.PeerName, interfaceIP.String()); err != nil {
+	if err = setInterfaceIp(endpoint.Device.PeerName, interfaceIP); err != nil {
 		return err
 	}
 
@@ -287,25 +286,14 @@ func configInterfaceIpAndRoute(endpoint *EndPoint, containerInfo *container.Cont
 	return nil
 }
 
-func setInterfaceIp(name string, ipNet string) error {
+func setInterfaceIp(name string, subnet *net.IPNet) error {
 	interfaceDev, err := netlink.LinkByName(name)
 	if err != nil {
 		logrus.Errorf("[setInterfaceIp] interface:%s find failed, err:%s", name, err)
 		return err
 	}
 
-	subnet, err := netlink.ParseIPNet(ipNet)
-	if err != nil {
-		logrus.Errorf("[setInterfaceIp] ipnet:%s parse failed, err:%s", ipNet, err)
-		return err
-	}
-
-	addr := &netlink.Addr{
-		IPNet: subnet,
-		Label: "",
-		Flags: 0,
-		Scope: 0,
-	}
+	addr := &netlink.Addr{IPNet: subnet, Peer: subnet, Label: "", Flags: 0, Scope: 0, Broadcast: nil}
 
 	if err = netlink.AddrAdd(interfaceDev, addr); err != nil {
 		logrus.Errorf("[setInterfance] addr add failed, err:%s", err)
