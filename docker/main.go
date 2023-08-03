@@ -132,7 +132,7 @@ var runCommand = cli.Command{
 		net := context.String("net")
 		portMapping := context.String("port")
 
-		container.Run(itFlag, cmds, resConf, image, volume, name, env, net, portMapping)
+		Run(itFlag, cmds, resConf, image, volume, name, env, net, portMapping)
 		return nil
 	},
 }

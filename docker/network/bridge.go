@@ -95,8 +95,39 @@ func (bridge *BridgeDriver) DeleteNetwork(network *Network) error {
 	return netlink.LinkDel(br)
 }
 
-// Connect 容器连接
+// Connect 容器连接, 创建容器网路通信组件veth 并设置为up
 func (bridge *BridgeDriver) Connect(network *Network, endPoint *EndPoint) error {
+
+	// 获取具体驱动网络信息 通过网络的唯一标识
+	networkName := network.NetworkName
+	br, err := netlink.LinkByName(networkName)
+	if err != nil {
+		return err
+	}
+
+	// 容器veth的信息
+	la := netlink.NewLinkAttrs()
+	la.Name = endPoint.ID
+	la.MasterIndex = br.Attrs().Index
+
+	// 创捷veth
+	endPoint.Device = &netlink.Veth{
+		LinkAttrs: la,
+		PeerName:  "cif-" + endPoint.ID[:5],
+	}
+
+	// 创建接口
+	if err = netlink.LinkAdd(endPoint.Device); err != nil {
+		logrus.Errorf("[bridge] connect network failed, err:%s", err)
+		return err
+	}
+
+	// 打开
+	if err = netlink.LinkSetUp(endPoint.Device); err != nil {
+		logrus.Errorf("[bridge] veth set up failed, err:%s", err)
+		return err
+	}
+
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"net"
 )
 
+// EndPoint ghndocker server 针对容器网络通信的统一抽象
 type EndPoint struct {
 	ID          string
 	Device      *netlink.Veth

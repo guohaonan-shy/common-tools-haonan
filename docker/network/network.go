@@ -4,12 +4,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bytedance/sonic"
+	"github.com/common-tools-haonan/docker/container"
 	"github.com/sirupsen/logrus"
+	"github.com/vishvananda/netlink"
+	"github.com/vishvananda/netns"
 	"net"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 )
 
@@ -197,6 +202,7 @@ func Connect(networkName string, portMapping string, containerId string) error {
 		return errors.New(fmt.Sprintf("network:%s not existed", networkName))
 	}
 
+	// 接入容器的网络ip分配
 	ipRange := network.IPRange
 	ip, err := ipAddressManager.Allocate(ipRange)
 	if err != nil {
@@ -220,10 +226,157 @@ func Connect(networkName string, portMapping string, containerId string) error {
 		return errors.New(fmt.Sprintf("driver:%s not init", network.Driver))
 	}
 
+	// 容器网络设备veth创建
 	if err = driver.Connect(network, endpoint); err != nil {
 		return err
 	}
 
 	// 配置ip, route
+	if err = configInterfaceIpAndRoute(endpoint, containerId); err != nil {
+		return err
+	}
+
+	// port
+	if err = configPortMapping(endpoint); err != nil {
+		return err
+	}
+	return nil
+}
+
+func configInterfaceIpAndRoute(endpoint *EndPoint, containerId string) (err error) {
+
+	network := endpoint.Network
+
+	peerLink, err := netlink.LinkByName(endpoint.Device.PeerName)
+	if err != nil {
+		return fmt.Errorf("fail config endpoint: %v", err)
+	}
+
+	containerInfo, err := container.GetSpecificContainers(containerId)
+
+	defer enterContainerNetns(&peerLink, containerInfo)()
+
+	if err = setInterfaceIp(endpoint.Device.PeerName, network.IPRange.String()); err != nil {
+		return err
+	}
+
+	if err = setInterfaceUp(endpoint.Device.PeerName); err != nil {
+		return err
+	}
+
+	if err = setInterfaceUp("lo"); err != nil {
+		return err
+	}
+
+	interfaceDev, err := netlink.LinkByName(endpoint.Device.PeerName)
+	if err != nil {
+		logrus.Errorf("[configInterfaceIpAndRoute] interface:%s find failed, err:%s", endpoint.Device.PeerName, err)
+		return err
+	}
+	_, cidr, _ := net.ParseCIDR("0.0.0.0/0")
+	defaultRoute := &netlink.Route{
+		LinkIndex: interfaceDev.Attrs().Index,
+		Gw:        network.IPRange.IP,
+		Dst:       cidr,
+	}
+
+	if err = netlink.RouteAdd(defaultRoute); err != nil {
+		logrus.Errorf("[configInterfaceIpAndRoute] route add failed, err:%s", err)
+		return err
+	}
+
+	return nil
+}
+
+func setInterfaceIp(name string, ipNet string) error {
+	interfaceDev, err := netlink.LinkByName(name)
+	if err != nil {
+		logrus.Errorf("[setInterfaceIp] interface:%s find failed, err:%s", name, err)
+		return err
+	}
+
+	_, subnet, err := net.ParseCIDR(ipNet)
+	if err != nil {
+		logrus.Errorf("[serInterfaceIp] ipnet:%s parse failed, err:%s", ipNet, err)
+		return err
+	}
+
+	addr := &netlink.Addr{
+		IPNet: subnet,
+		Label: "",
+		Flags: 0,
+		Scope: 0,
+	}
+
+	if err = netlink.AddrAdd(interfaceDev, addr); err != nil {
+		logrus.Errorf("[setInterfance] addr add failed, err:%s", err)
+		return err
+	}
+	return nil
+}
+
+func setInterfaceUp(name string) error {
+	interfaceDev, err := netlink.LinkByName(name)
+	if err != nil {
+		logrus.Errorf("[setInterfaceUp] interface:%s find failed, err:%s", name, err)
+		return err
+	}
+
+	if err = netlink.LinkSetUp(interfaceDev); err != nil {
+		logrus.Errorf("[setInterfaceUp] Link set up failed, err:%s", err)
+		return err
+	}
+	return nil
+}
+
+func enterContainerNetns(enLink *netlink.Link, cinfo *container.ContainerInfo) func() {
+	f, err := os.OpenFile(fmt.Sprintf("/proc/%s/ns/net", cinfo.Pid), os.O_RDONLY, 0)
+	if err != nil {
+		logrus.Errorf("error get container net namespace, %v", err)
+	}
+
+	nsFD := f.Fd()
+	runtime.LockOSThread()
+
+	// 修改veth peer 另外一端移到容器的namespace中
+	if err = netlink.LinkSetNsFd(*enLink, int(nsFD)); err != nil {
+		logrus.Errorf("error set link netns , %v", err)
+	}
+
+	// 获取当前的网络namespace
+	origns, err := netns.Get()
+	if err != nil {
+		logrus.Errorf("error get current netns, %v", err)
+	}
+
+	// 设置当前进程到新的网络namespace，并在函数执行完成之后再恢复到之前的namespace
+	if err = netns.Set(netns.NsHandle(nsFD)); err != nil {
+		logrus.Errorf("error set netns, %v", err)
+	}
+	return func() {
+		netns.Set(origns)
+		origns.Close()
+		runtime.UnlockOSThread()
+		f.Close()
+	}
+}
+
+func configPortMapping(ep *EndPoint) error {
+	for _, pm := range ep.PortMapping {
+		portMapping := strings.Split(pm, ":")
+		if len(portMapping) != 2 {
+			logrus.Errorf("port mapping format error, %v", pm)
+			continue
+		}
+		iptablesCmd := fmt.Sprintf("-t nat -A PREROUTING -p tcp -m tcp --dport %s -j DNAT --to-destination %s:%s",
+			portMapping[0], ep.IPAddress.String(), portMapping[1])
+		cmd := exec.Command("iptables", strings.Split(iptablesCmd, " ")...)
+		//err := cmd.Run()
+		output, err := cmd.Output()
+		if err != nil {
+			logrus.Errorf("iptables Output, %v", output)
+			continue
+		}
+	}
 	return nil
 }
