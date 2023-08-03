@@ -75,7 +75,7 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	}
 
 	// 持久化单host上的container信息
-	recordErr := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds, volume, net, portMapping)
+	containerInfo, recordErr := recordContainerInfo(containerId, image, name, strconv.Itoa(parent.Process.Pid), cmds, volume, net, portMapping)
 	if recordErr != nil {
 		logrus.Fatalf("record container failed, err:%s", recordErr)
 	}
@@ -96,8 +96,7 @@ func Run(isStd bool, cmds []string, conf *subsystem.SubSystemConfig, image strin
 	}
 
 	// 联入指定网络
-	container.FindContainerLog(containerId)
-	if err = network.Connect(net, portMapping, containerId); err != nil {
+	if err = network.Connect(net, portMapping, containerInfo); err != nil {
 		logrus.Fatal("[network.Connect] container connect network failed, err:%s", err)
 	}
 	// 执行指令通过管道
@@ -128,7 +127,7 @@ func randStringBytes(n int) string {
 	return string(b)
 }
 
-func recordContainerInfo(containerId, image, name, pid string, cmds []string, volume string, net string, portMapping string) error {
+func recordContainerInfo(containerId, image, name, pid string, cmds []string, volume string, net string, portMapping string) (*container.ContainerInfo, error) {
 	if name == "" {
 		name = containerId
 	}
@@ -150,13 +149,13 @@ func recordContainerInfo(containerId, image, name, pid string, cmds []string, vo
 	str, err := sonic.Marshal(containerInfo)
 	if err != nil {
 		logrus.Errorf("[recordContainerInfo] json marshal failed, err:%s", err)
-		return err
+		return nil, err
 	}
 
 	docUrl := fmt.Sprintf(container.GhnDockerRunningContainerDir, containerId)
 	if err = os.MkdirAll(docUrl, 0777); err != nil {
 		logrus.Errorf("[recordContainerInfo] mkdir failed, err:%s", err)
-		return err
+		return nil, err
 	}
 
 	docUrl = docUrl + "/" + container.ConfFileName
@@ -165,13 +164,13 @@ func recordContainerInfo(containerId, image, name, pid string, cmds []string, vo
 	defer file.Close()
 	if err != nil {
 		logrus.Errorf("[recordContainerInfo] create new file failed, err:%s", err)
-		return err
+		return nil, err
 	}
 
 	if _, err = file.WriteString(string(str)); err != nil {
 		logrus.Errorf("[recordContainerInfo] write container record info failed, err:%s", err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return containerInfo, nil
 }

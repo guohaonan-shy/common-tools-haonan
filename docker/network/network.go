@@ -196,7 +196,7 @@ func ListAllNetwork() ([]*Network, error) {
 	return networks, nil
 }
 
-func Connect(networkName string, portMapping string, containerId string) error {
+func Connect(networkName string, portMapping string, containerInfo *container.ContainerInfo) error {
 	network, ok := networkMapping[networkName]
 	if !ok {
 		return errors.New(fmt.Sprintf("network:%s not existed", networkName))
@@ -210,7 +210,7 @@ func Connect(networkName string, portMapping string, containerId string) error {
 	}
 
 	endpoint := &EndPoint{
-		ID:          fmt.Sprintf("%s-%s", containerId, networkName),
+		ID:          fmt.Sprintf("%s-%s", containerInfo.Id, networkName),
 		IPAddress:   &ip,
 		Network:     network,
 		PortMapping: strings.Split(portMapping, ":"),
@@ -232,7 +232,7 @@ func Connect(networkName string, portMapping string, containerId string) error {
 	}
 
 	// 配置ip, route
-	if err = configInterfaceIpAndRoute(endpoint, containerId); err != nil {
+	if err = configInterfaceIpAndRoute(endpoint, containerInfo); err != nil {
 		return err
 	}
 
@@ -243,20 +243,19 @@ func Connect(networkName string, portMapping string, containerId string) error {
 	return nil
 }
 
-func configInterfaceIpAndRoute(endpoint *EndPoint, containerId string) (err error) {
+func configInterfaceIpAndRoute(endpoint *EndPoint, containerInfo *container.ContainerInfo) (err error) {
 
-	network := endpoint.Network
+	interfaceIP := endpoint.Network.IPRange
+	interfaceIP.IP = endpoint.IPAddress.To4()
 
 	peerLink, err := netlink.LinkByName(endpoint.Device.PeerName)
 	if err != nil {
 		return fmt.Errorf("fail config endpoint: %v", err)
 	}
 
-	containerInfo, err := container.GetSpecificContainers(containerId)
-
 	defer enterContainerNetns(&peerLink, containerInfo)()
-
-	if err = setInterfaceIp(endpoint.Device.PeerName, network.IPRange.String()); err != nil {
+	logrus.Info(interfaceIP)
+	if err = setInterfaceIp(endpoint.Device.PeerName, interfaceIP.String()); err != nil {
 		return err
 	}
 
@@ -276,7 +275,7 @@ func configInterfaceIpAndRoute(endpoint *EndPoint, containerId string) (err erro
 	_, cidr, _ := net.ParseCIDR("0.0.0.0/0")
 	defaultRoute := &netlink.Route{
 		LinkIndex: interfaceDev.Attrs().Index,
-		Gw:        network.IPRange.IP,
+		Gw:        endpoint.Network.IPRange.IP,
 		Dst:       cidr,
 	}
 
@@ -295,9 +294,9 @@ func setInterfaceIp(name string, ipNet string) error {
 		return err
 	}
 
-	_, subnet, err := net.ParseCIDR(ipNet)
+	subnet, err := netlink.ParseIPNet(ipNet)
 	if err != nil {
-		logrus.Errorf("[serInterfaceIp] ipnet:%s parse failed, err:%s", ipNet, err)
+		logrus.Errorf("[setInterfaceIp] ipnet:%s parse failed, err:%s", ipNet, err)
 		return err
 	}
 

@@ -107,7 +107,7 @@ func (bridge *BridgeDriver) Connect(network *Network, endPoint *EndPoint) error 
 
 	// 容器veth的信息
 	la := netlink.NewLinkAttrs()
-	la.Name = endPoint.ID
+	la.Name = endPoint.ID[:5]
 	la.MasterIndex = br.Attrs().Index
 
 	// 创捷veth
