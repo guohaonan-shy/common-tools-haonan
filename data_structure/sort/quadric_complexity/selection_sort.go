@@ -1,4 +1,4 @@
-package sort
+package compared_based
 
 import "math"
 

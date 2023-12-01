@@ -1,4 +1,4 @@
-package sort
+package compared_based
 
 // BubbleSort non-decreasing sort
 func BubbleSort(list []int) {

@@ -1,4 +1,4 @@
-package sort
+package compared_based
 
 import (
 	"github.com/v2pro/plz/test/testify/assert"
@@ -7,14 +7,21 @@ import (
 )
 
 func Test_Sort(t *testing.T) {
-	test_case := []int{5, 4, 3, 2, 1}
 	t.Run("bubble_test", func(t *testing.T) {
+		test_case := []int{5, 4, 3, 2, 1}
 		BubbleSort(test_case)
 		assert.Equal(t, []int{1, 2, 3, 4, 5}, test_case)
 	})
 
-	t.Run("select_test", func(t *testing.T) {
+	t.Run("select_sort_test", func(t *testing.T) {
+		test_case := []int{5, 4, 3, 2, 1}
 		SelectionSort(test_case)
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, test_case)
+	})
+
+	t.Run("insert_sort_test", func(t *testing.T) {
+		test_case := []int{5, 4, 3, 2, 1}
+		InsertSort(test_case)
 		assert.Equal(t, []int{1, 2, 3, 4, 5}, test_case)
 	})
 
