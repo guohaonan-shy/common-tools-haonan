@@ -6,15 +6,22 @@ import (
 	"testing"
 )
 
-func Test_BubbleSort(t *testing.T) {
+func Test_Sort(t *testing.T) {
 	test_case := []int{5, 4, 3, 2, 1}
-	BubbleSort(test_case)
-	assert.Equal(t, []int{1, 2, 3, 4, 5}, test_case)
+	t.Run("bubble_test", func(t *testing.T) {
+		BubbleSort(test_case)
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, test_case)
+	})
+
+	t.Run("select_test", func(t *testing.T) {
+		SelectionSort(test_case)
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, test_case)
+	})
+
 }
 
 func BenchmarkBubbleSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-
 		test_case := make([]int, 0, 1000)
 		for i := 0; i < 1000; i++ {
 			test_case = append(test_case, rand.Intn(1000))
