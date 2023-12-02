@@ -1,4 +1,4 @@
-package logarithm_complexity
+package sort
 
 func MergeSort(list []int) []int {
 	if len(list) == 1 {

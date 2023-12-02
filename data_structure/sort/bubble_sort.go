@@ -1,4 +1,4 @@
-package quadric_complexity
+package sort
 
 // BubbleSort non-decreasing sort
 func BubbleSort(list []int) {

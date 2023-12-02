@@ -1,4 +1,4 @@
-package quadric_complexity
+package sort
 
 func InsertSort(list []int) {
 	for i := 1; i < len(list); i++ {

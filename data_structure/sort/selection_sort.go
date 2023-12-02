@@ -1,4 +1,4 @@
-package quadric_complexity
+package sort
 
 import "math"
 
