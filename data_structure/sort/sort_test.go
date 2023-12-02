@@ -62,3 +62,24 @@ func Test_MergeSort(t *testing.T) {
 	})
 
 }
+
+func Test_QuickSort(t *testing.T) {
+	t.Run("quick_sort_case1", func(t *testing.T) {
+		test_case := []int{5, 4, 3, 2, 1}
+		result := QuickSort(test_case)
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, result)
+	})
+
+	t.Run("quick_sort_case2", func(t *testing.T) {
+		test_case := []int{4, 2, 5, 1, 3}
+		result := QuickSort(test_case)
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, result)
+	})
+	////
+	//t.Run("merge_sort_case3", func(t *testing.T) {
+	//	test_case := []int{5, 1, 2, 4, 3}
+	//	result := MergeSort(test_case)
+	//	assert.Equal(t, []int{1, 2, 3, 4, 5}, result)
+	//})
+
+}
