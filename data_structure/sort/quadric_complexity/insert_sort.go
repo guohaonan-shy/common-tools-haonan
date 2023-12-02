@@ -1,4 +1,4 @@
-package compared_based
+package quadric_complexity
 
 func InsertSort(list []int) {
 	for i := 1; i < len(list); i++ {

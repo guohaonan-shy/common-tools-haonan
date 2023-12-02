@@ -1,4 +1,4 @@
-package compared_based
+package quadric_complexity
 
 import (
 	"github.com/v2pro/plz/test/testify/assert"
