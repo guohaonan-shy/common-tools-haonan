@@ -5,12 +5,6 @@ import (
 	"testing"
 )
 
-func Test_88(t *testing.T) {
-	num1 := []int{1, 2, 3, 0, 0, 0}
-	merge(num1, 3, []int{2, 5, 6}, 3)
-	assert.Equal(t, []int{1, 2, 2, 3, 5, 6}, num1)
-}
-
 func Test_26(t *testing.T) {
 
 	t.Run("case1", func(t *testing.T) {
@@ -52,4 +46,52 @@ func Test_27(t *testing.T) {
 		assert.Equal(t, []int{3}, special_case)
 	})
 
+}
+
+func Test_80(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 1, 1, 2, 2, 3}
+		k1 := removeDuplicates_atMostTwice(case1)
+		assert.Equal(t, 5, k1)
+		assert.Equal(t, []int{1, 1, 2, 2, 3, 3}, case1)
+		case11 := []int{1, 1, 1, 2, 2, 3}
+		k11 := removeDuplicates_atMostTwice_standard(case11)
+		assert.Equal(t, 5, k11)
+		assert.Equal(t, []int{1, 1, 2, 2, 3, 3}, case11)
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{0, 0, 1, 1, 1, 1, 2, 3, 3}
+		k2 := removeDuplicates_atMostTwice(case2)
+		assert.Equal(t, 7, k2)
+		assert.Equal(t, []int{0, 0, 1, 1, 2, 3, 3, 3, 3}, case2)
+	})
+
+	t.Run("special_case1", func(t *testing.T) {
+		special_case1 := []int{1}
+		k3 := removeDuplicates_atMostTwice(special_case1)
+		assert.Equal(t, 1, k3)
+		assert.Equal(t, []int{1}, special_case1)
+	})
+
+	t.Run("special_case2", func(t *testing.T) {
+		special_case2 := []int{2, 2}
+		k4 := removeDuplicates_atMostTwice(special_case2)
+		assert.Equal(t, 2, k4)
+		assert.Equal(t, []int{2, 2}, special_case2)
+	})
+
+	t.Run("special_case3", func(t *testing.T) {
+		special_case3 := []int{2, 3}
+		k5 := removeDuplicates_atMostTwice(special_case3)
+		assert.Equal(t, 2, k5)
+		assert.Equal(t, []int{2, 3}, special_case3)
+	})
+
+}
+
+func Test_88(t *testing.T) {
+	num1 := []int{1, 2, 3, 0, 0, 0}
+	merge(num1, 3, []int{2, 5, 6}, 3)
+	assert.Equal(t, []int{1, 2, 2, 3, 5, 6}, num1)
 }
