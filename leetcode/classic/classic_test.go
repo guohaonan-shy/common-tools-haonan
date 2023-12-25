@@ -95,3 +95,34 @@ func Test_88(t *testing.T) {
 	merge(num1, 3, []int{2, 5, 6}, 3)
 	assert.Equal(t, []int{1, 2, 2, 3, 5, 6}, num1)
 }
+
+func Test_189(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 4, 5, 6, 7}
+		k := 3
+		rotate(case1, k)
+		assert.Equal(t, []int{5, 6, 7, 1, 2, 3, 4}, case1)
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{-1}
+		k := 2
+		rotate(case2, k)
+		assert.Equal(t, []int{-1}, case2)
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		case3 := []int{1, 2}
+		k := 3
+		rotate(case3, k)
+		assert.Equal(t, []int{2, 1}, case3)
+	})
+
+	t.Run("case4", func(t *testing.T) {
+		case4 := []int{1, 2, 3, 4, 5, 6}
+		k := 1
+		rotate(case4, k)
+		assert.Equal(t, []int{6, 1, 2, 3, 4, 5}, case4)
+	})
+
+}
