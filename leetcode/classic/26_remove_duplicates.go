@@ -1,5 +1,6 @@
 package classic
 
+// nums是有序的，即对任意的i,j, i<=k<=j, 如果nums[i]==nums[j], 则一定nums[i] == nums[k] == nums[j]
 func removeDuplicates(nums []int) int {
 	if len(nums) == 1 {
 		return 1
@@ -8,7 +9,7 @@ func removeDuplicates(nums []int) int {
 	// 1,1,2
 	// 0,1,2,1,1,2,2,3,3,4
 
-	slow := 1
+	slow := 1 // 下一个递增元素插入位置
 	//prev := nums[0]
 	for fast := 1; fast < len(nums); fast++ {
 		//if nums[i] <= prev {

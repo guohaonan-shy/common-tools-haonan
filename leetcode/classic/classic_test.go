@@ -45,4 +45,11 @@ func Test_27(t *testing.T) {
 		assert.Equal(t, []int{0, 1, 3, 0, 4, 0, 4, 2}, case2)
 	})
 
+	t.Run("special_case", func(t *testing.T) {
+		special_case := []int{3}
+		k3 := removeElement2(special_case, 3)
+		assert.Equal(t, 0, k3)
+		assert.Equal(t, []int{3}, special_case)
+	})
+
 }

@@ -17,7 +17,7 @@ func removeElement(nums []int, val int) int {
 }
 
 func removeElement2(nums []int, val int) int {
-	slow := 0
+	slow := 0 // slow 表示下一个非删除元素的插入位置，同时暗含表示当前进程中满足条件的元素数目;
 	for fast := 0; fast < len(nums); fast++ {
 		if nums[fast] != val {
 			nums[slow] = nums[fast]
