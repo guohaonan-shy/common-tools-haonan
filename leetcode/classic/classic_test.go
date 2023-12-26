@@ -125,4 +125,56 @@ func Test_189(t *testing.T) {
 		assert.Equal(t, []int{6, 1, 2, 3, 4, 5}, case4)
 	})
 
+	t.Run("gcd_test_case", func(t *testing.T) {
+		a, b := 15, 9
+		c := gcd(a, b)
+		assert.Equal(t, 3, c)
+
+		d, e := 9, 15
+		f := gcd(d, e)
+		assert.Equal(t, 3, f)
+	})
+
+	t.Run("cycle_method_test_case1", func(*testing.T) {
+		case1 := []int{1, 2, 3, 4, 5, 6, 7}
+		k := 3
+		rotate_cycle(case1, k)
+		assert.Equal(t, []int{5, 6, 7, 1, 2, 3, 4}, case1)
+	})
+
+	t.Run("cycle_method_test_case2", func(t *testing.T) {
+		case2 := []int{-1}
+		k := 2
+		rotate_cycle(case2, k)
+		assert.Equal(t, []int{-1}, case2)
+	})
+
+	t.Run("cycle_method_test_case3", func(t *testing.T) {
+		case3 := []int{1, 2}
+		k := 3
+		rotate_cycle(case3, k)
+		assert.Equal(t, []int{2, 1}, case3)
+	})
+
+	t.Run("reverse_test_case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 4, 5, 6, 7}
+		k := 3
+		rotate_reverse(case1, k)
+		assert.Equal(t, []int{5, 6, 7, 1, 2, 3, 4}, case1)
+	})
+
+	t.Run("reverse_test_case2", func(t *testing.T) {
+		case2 := []int{-1}
+		k := 2
+		rotate_reverse(case2, k)
+		assert.Equal(t, []int{-1}, case2)
+	})
+
+	t.Run("reverse_test_case2", func(t *testing.T) {
+		case3 := []int{1, 2}
+		k := 3
+		rotate_reverse(case3, k)
+		assert.Equal(t, []int{2, 1}, case3)
+	})
+
 }
