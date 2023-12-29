@@ -48,6 +48,18 @@ func Test_27(t *testing.T) {
 
 }
 
+func Test_42(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
+		assert.Equal(t, 6, trap(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{4, 2, 0, 3, 2, 5}
+		assert.Equal(t, 9, trap(case2))
+	})
+}
+
 func Test_80(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{1, 1, 1, 2, 2, 3}
