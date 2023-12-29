@@ -125,6 +125,13 @@ func Test_122(t *testing.T) {
 	})
 }
 
+func Test_134(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		gas1, cost1 := []int{6, 1, 4, 3, 5}, []int{3, 8, 2, 4, 2}
+		assert.Equal(t, 2, canCompleteCircuit(gas1, cost1))
+	})
+}
+
 func Test_189(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{1, 2, 3, 4, 5, 6, 7}
@@ -206,4 +213,26 @@ func Test_189(t *testing.T) {
 		assert.Equal(t, []int{2, 1}, case3)
 	})
 
+}
+
+func Test_274(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{3, 0, 6, 1, 5}
+		assert.Equal(t, 3, hIndex(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{1, 3, 1}
+		assert.Equal(t, 1, hIndex(case2))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		case3 := []int{100}
+		assert.Equal(t, 1, hIndex(case3))
+	})
+
+	t.Run("case4", func(t *testing.T) {
+		case4 := []int{11, 15}
+		assert.Equal(t, 2, hIndex(case4))
+	})
 }
