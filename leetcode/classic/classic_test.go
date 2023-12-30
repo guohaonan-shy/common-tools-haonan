@@ -72,6 +72,18 @@ func Test_27(t *testing.T) {
 
 }
 
+func Test_28(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		haystack1, needle1 := "mississippi", "issip"
+		assert.Equal(t, 4, strStr(haystack1, needle1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		haystack2, needle2 := "sadbutsad", "sad"
+		assert.Equal(t, 0, strStr(haystack2, needle2))
+	})
+}
+
 func Test_42(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
@@ -170,7 +182,7 @@ func Test_134(t *testing.T) {
 	})
 }
 
-func Test_153(t *testing.T) {
+func Test_151(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := "the sky is blue"
 		assert.Equal(t, "blue is sky the", reverseWords(case1))
