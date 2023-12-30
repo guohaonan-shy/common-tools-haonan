@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func Test_12(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, "III", intToRoman(3))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		assert.Equal(t, "LVIII", intToRoman(58))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		assert.Equal(t, "MCMXCIV", intToRoman(1994))
+	})
+}
+
 func Test_13(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		assert.Equal(t, 3, romanToInt("III"))
@@ -153,6 +167,13 @@ func Test_134(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		gas1, cost1 := []int{6, 1, 4, 3, 5}, []int{3, 8, 2, 4, 2}
 		assert.Equal(t, 2, canCompleteCircuit(gas1, cost1))
+	})
+}
+
+func Test_153(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := "the sky is blue"
+		assert.Equal(t, "blue is sky the", reverseWords(case1))
 	})
 }
 
