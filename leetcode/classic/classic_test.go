@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func Test_13(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, 3, romanToInt("III"))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		assert.Equal(t, 58, romanToInt("LVIII"))
+	})
+}
+
 func Test_26(t *testing.T) {
 
 	t.Run("case1", func(t *testing.T) {
@@ -52,11 +62,13 @@ func Test_42(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
 		assert.Equal(t, 6, trap(case1))
+		assert.Equal(t, 6, trap_stack(case1))
 	})
 
 	t.Run("case2", func(t *testing.T) {
 		case2 := []int{4, 2, 0, 3, 2, 5}
 		assert.Equal(t, 9, trap(case2))
+		assert.Equal(t, 9, trap_stack(case2))
 	})
 }
 
