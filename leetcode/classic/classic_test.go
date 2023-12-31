@@ -98,6 +98,20 @@ func Test_42(t *testing.T) {
 	})
 }
 
+func Test_68(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []string{"This", "is", "an", "example", "of", "text", "justification."}
+		max_width1 := 16
+		assert.Equal(t, []string{"This    is    an", "example  of text", "justification.  "}, fullJustify(case1, max_width1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []string{"What", "must", "be", "acknowledgment", "shall", "be"}
+		max_width2 := 16
+		assert.Equal(t, []string{"What   must   be", "acknowledgment  ", "shall be        "}, fullJustify(case2, max_width2))
+	})
+}
+
 func Test_80(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{1, 1, 1, 2, 2, 3}
