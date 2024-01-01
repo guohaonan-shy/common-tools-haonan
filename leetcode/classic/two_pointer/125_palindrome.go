@@ -17,7 +17,7 @@ func isPalindrome(s string) bool {
 		}
 
 		left_element := s[left]
-		if s[left] >= 65 && s[left] <= 90 {
+		if s[left] >= 65 && s[left] <= 90 { // 大写字母的ASCII码
 			left_element = s[left] + 32
 		}
 
@@ -46,7 +46,7 @@ func isAlphaNumeric(s rune) bool {
 		return true
 	}
 
-	if s >= 48 && s <= 57 {
+	if s >= 48 && s <= 57 { // 数字0-9的ASCII码
 		return true
 	}
 
