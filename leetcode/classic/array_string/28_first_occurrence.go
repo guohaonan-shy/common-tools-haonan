@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 func strStr(haystack string, needle string) int {
 	start, j := 0, 0

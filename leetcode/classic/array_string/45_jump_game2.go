@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 func jump(nums []int) int {
 	max_pos, end := 0, 0

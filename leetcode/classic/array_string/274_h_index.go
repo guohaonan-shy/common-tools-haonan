@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 import (
 	"sort"

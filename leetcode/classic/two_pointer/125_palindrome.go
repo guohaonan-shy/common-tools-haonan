@@ -1,4 +1,4 @@
-package classic
+package two_pointer
 
 func isPalindrome(s string) bool {
 	left, right := 0, len(s)-1

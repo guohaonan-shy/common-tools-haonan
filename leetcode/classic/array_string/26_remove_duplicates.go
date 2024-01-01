@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 // nums是有序的，即对任意的i,j, i<=k<=j, 如果nums[i]==nums[j], 则一定nums[i] == nums[k] == nums[j]
 func removeDuplicates(nums []int) int {

@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 // 首先，本题可以求解的是总收益，即经过多次的股票交易的最大收益；但限定手上只能有一张股票
 // 因此首先想到的思路是dynamic programming 或者贪心

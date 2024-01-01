@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 func canCompleteCircuit(gas []int, cost []int) int {
 	temp := make([]int, len(gas)) // temp[i]表示i作为起点，抵达i+1时的剩余油量

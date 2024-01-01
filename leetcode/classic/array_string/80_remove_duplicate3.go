@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 func removeDuplicates_atMostTwice(nums []int) int {
 	duplicates, slow := 1, 1

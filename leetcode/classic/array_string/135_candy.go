@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 // 思路点：分数高的学生获取的糖的数目一定要比相邻的多 => 左右两边两次遍历
 func candy(ratings []int) int {

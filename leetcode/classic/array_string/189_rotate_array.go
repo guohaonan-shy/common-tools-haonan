@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 // 类似deque
 func rotate(nums []int, k int) {

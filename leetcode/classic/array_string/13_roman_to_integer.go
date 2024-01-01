@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 func romanToInt(s string) int {
 	var dict = map[string]int{

@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -186,18 +186,6 @@ func Test_122(t *testing.T) {
 	t.Run("case3", func(t *testing.T) {
 		case3 := []int{1, 2, 3, 4, 5}
 		assert.Equal(t, 4, maxProfit_DP(case3))
-	})
-}
-
-func Test_125(t *testing.T) {
-	t.Run("case1", func(t *testing.T) {
-		case1 := "A man, a plan, a canal: Panama"
-		assert.Equal(t, true, isPalindrome(case1))
-	})
-
-	t.Run("case2", func(t *testing.T) {
-		case2 := "0P"
-		assert.Equal(t, false, isPalindrome(case2))
 	})
 }
 

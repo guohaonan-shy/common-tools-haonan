@@ -1,4 +1,4 @@
-package classic
+package array_string
 
 // 需要比较左右两边元素，因此左右两次遍历
 func trap(height []int) int {
