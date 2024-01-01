@@ -189,6 +189,18 @@ func Test_122(t *testing.T) {
 	})
 }
 
+func Test_125(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := "A man, a plan, a canal: Panama"
+		assert.Equal(t, true, isPalindrome(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := "0P"
+		assert.Equal(t, false, isPalindrome(case2))
+	})
+}
+
 func Test_134(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		gas1, cost1 := []int{6, 1, 4, 3, 5}, []int{3, 8, 2, 4, 2}

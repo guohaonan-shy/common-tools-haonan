@@ -1,6 +1,8 @@
 package classic
 
-import "strings"
+import (
+	"strings"
+)
 
 func fullJustify(words []string, maxWidth int) []string {
 	cur_length := 0
