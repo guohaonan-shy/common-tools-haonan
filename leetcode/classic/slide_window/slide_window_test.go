@@ -25,6 +25,23 @@ func Test_3(t *testing.T) {
 	})
 }
 
+func Test_30(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1, words := "barfoothefoobarman", []string{"foo", "bar"}
+		assert.Equal(t, []int{0, 9}, findSubstring(case1, words))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2, words := "wordgoodgoodgoodbestword", []string{"word", "good", "best", "word"}
+		assert.Equal(t, []int{}, findSubstring(case2, words))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		case3, words := "a", []string{"a"}
+		assert.Equal(t, []int{0}, findSubstring(case3, words))
+	})
+}
+
 func Test_209(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		target1, case1 := 7, []int{2, 3, 1, 2, 4, 3}
