@@ -74,33 +74,33 @@ func merge(nums1 []int, m int, nums2 []int, n int) {
 
 }
 
-type IntSlice []int
-
-func (r IntSlice) Len() int {
-	return len(r)
-}
-
-func (r IntSlice) Less(i, j int) bool {
-	return r[i] < r[j]
-}
-
-func (r IntSlice) Swap(i, j int) {
-	temp := r[i]
-	r[i] = r[j]
-	r[j] = temp
-}
-
-func (r *IntSlice) Push(x any) {
-	*r = append(*r, x.(int))
-}
-
-func (r *IntSlice) Pop() any {
-	old := *r
-	n := len(old)
-	x := old[n-1]
-	*r = old[0 : n-1]
-	return x
-}
+//type IntSlice []int
+//
+//func (r IntSlice) Len() int {
+//	return len(r)
+//}
+//
+//func (r IntSlice) Less(i, j int) bool {
+//	return r[i] < r[j]
+//}
+//
+//func (r IntSlice) Swap(i, j int) {
+//	temp := r[i]
+//	r[i] = r[j]
+//	r[j] = temp
+//}
+//
+//func (r *IntSlice) Push(x any) {
+//	*r = append(*r, x.(int))
+//}
+//
+//func (r *IntSlice) Pop() any {
+//	old := *r
+//	n := len(old)
+//	x := old[n-1]
+//	*r = old[0 : n-1]
+//	return x
+//}
 
 //// has some problems
 
