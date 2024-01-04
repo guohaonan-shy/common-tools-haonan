@@ -1,4 +1,4 @@
-package goroutine
+package _go
 
 import "testing"
 

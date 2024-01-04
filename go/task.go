@@ -1,4 +1,4 @@
-package goroutine
+package _go
 
 type Task[args any, res any] struct {
 	handler func(args) res

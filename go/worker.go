@@ -1,4 +1,4 @@
-package goroutine
+package _go
 
 type Worker[args any, res any] struct {
 	taskPipeline chan *Task[args, res]
