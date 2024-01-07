@@ -2,6 +2,7 @@ package _go
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -34,4 +35,30 @@ func Test_Defer(t *testing.T) {
 		a++
 		print(&a)
 	}(1)
+}
+
+type TestInterface interface {
+	Test(a, b int)
+
+	Insert(a int) bool
+}
+
+type TestStruct struct {
+}
+
+func (t TestStruct) Test(a, b int) {
+
+}
+
+func (t TestStruct) Insert(a int) bool {
+	return false
+}
+
+func Test_Interface(t *testing.T) {
+	var s TestInterface = TestStruct{}
+	ty := reflect.TypeOf(s)
+
+	print(ty)
+
+	print(s)
 }
