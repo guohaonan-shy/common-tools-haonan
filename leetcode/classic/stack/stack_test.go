@@ -28,3 +28,34 @@ func Test_71(t *testing.T) {
 		assert.Equal(t, "/home/foo", simplifyPath(case3))
 	})
 }
+
+func Test_224(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := "1 + 1"
+		assert.Equal(t, 2, calculate(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := " 2-1 + 2 "
+		assert.Equal(t, 3, calculate(case2))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		case3 := "(1+(4+5+2)-3)+(6+8)"
+		assert.Equal(t, 23, calculate(case3))
+	})
+	t.Run("case4", func(t *testing.T) {
+		case4 := "2147483647"
+		assert.Equal(t, 2147483647, calculate(case4))
+	})
+
+	for _, test := range []struct {
+		case1    string
+		expected int
+	}{{"1 + 1", 2}, {" 2-1 + 2 ", 3}, {"(1+(4+5+2)-3)+(6+8)", 23}, {"2147483647", 2147483647}, {"0", 0}} {
+		t.Run("case", func(t *testing.T) {
+			assert.Equal(t, test.expected, calculate_standard(test.case1))
+		})
+	}
+
+}
