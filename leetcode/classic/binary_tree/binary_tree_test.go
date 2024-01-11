@@ -2,6 +2,8 @@ package binary_tree
 
 import (
 	"github.com/stretchr/testify/assert"
+	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -35,30 +37,6 @@ func Test_treeify(t *testing.T) {
 	}
 }
 
-func Test_104(t *testing.T) {
-	type testCase struct {
-		input    string
-		expected int
-	}
-
-	tcs := []*testCase{
-		{
-			input:    "[3,9,20,null,null,15,7]",
-			expected: 3,
-		},
-		{
-			input:    "[1,null,2]",
-			expected: 2,
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.input, func(t *testing.T) {
-			assert.Equal(t, tc.expected, maxDepth(treeify(tc.input)))
-		})
-	}
-}
-
 func Test_100(t *testing.T) {
 	type testCase struct {
 		inputA   string
@@ -87,6 +65,63 @@ func Test_100(t *testing.T) {
 	for _, tc := range tcs {
 		t.Run(tc.inputA+string('\t')+string('\t')+tc.inputB, func(t *testing.T) {
 			assert.Equal(t, tc.expected, isSameTree(treeify(tc.inputA), treeify(tc.inputB)))
+		})
+	}
+}
+
+func Test_104(t *testing.T) {
+	type testCase struct {
+		input    string
+		expected int
+	}
+
+	tcs := []*testCase{
+		{
+			input:    "[3,9,20,null,null,15,7]",
+			expected: 3,
+		},
+		{
+			input:    "[1,null,2]",
+			expected: 2,
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.input, func(t *testing.T) {
+			assert.Equal(t, tc.expected, maxDepth(treeify(tc.input)))
+		})
+	}
+}
+
+func Test_114(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		input := "[1,2,5,3,4,null,6]"
+		tree := treeify(input)
+		flatten(tree)
+		print("done")
+	})
+}
+
+func Test_226(t *testing.T) {
+	testCases := []struct {
+		input string
+	}{
+		{input: "[4,2,7,1,3,6,9]"},
+	}
+
+	for _, tc := range testCases {
+		formetInput := strings.TrimLeft(tc.input, "[")
+		formetInput = strings.TrimRight(formetInput, "]")
+		elements := strings.Split(formetInput, ",")
+		t.Run(tc.input, func(t *testing.T) {
+			inverted := invertTree(treeify(tc.input))
+
+			assert.Equal(t, elements[0], strconv.Itoa(inverted.Val))
+			assert.Equal(t, elements[2], strconv.Itoa(inverted.Left.Val))
+			assert.Equal(t, elements[1], strconv.Itoa(inverted.Right.Val))
+
+			assert.Equal(t, elements[3], strconv.Itoa(inverted.Right.Right.Val))
+			assert.Equal(t, elements[4], strconv.Itoa(inverted.Right.Left.Val))
 		})
 	}
 }
