@@ -2,6 +2,7 @@ package _go
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 	"testing"
 )
@@ -61,4 +62,19 @@ func Test_Interface(t *testing.T) {
 	print(ty)
 
 	print(s)
+}
+
+func DiGui(mapping map[int]struct{}) {
+	key := rand.Intn(5)
+	if _, ok := mapping[key]; ok {
+		return
+	}
+	mapping[key] = struct{}{}
+	DiGui(mapping)
+	return
+}
+
+func Test_Map(t *testing.T) {
+	dict := make(map[int]struct{}, 0)
+	DiGui(dict)
 }
