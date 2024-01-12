@@ -102,6 +102,29 @@ func Test_114(t *testing.T) {
 	})
 }
 
+func Test_129(t *testing.T) {
+	for _, tc := range []struct {
+		input    string
+		expected int
+	}{
+		{
+			input:    "[1,2,3]",
+			expected: 25,
+		},
+		{
+			input:    "[4,9,0,5,1]",
+			expected: 1026,
+		},
+	} {
+
+		t.Run(tc.input, func(t *testing.T) {
+			res := sumNumbers(treeify(tc.input))
+			assert.Equal(t, tc.expected, res)
+		})
+
+	}
+}
+
 func Test_226(t *testing.T) {
 	testCases := []struct {
 		input string

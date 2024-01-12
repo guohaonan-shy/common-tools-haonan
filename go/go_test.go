@@ -78,3 +78,13 @@ func Test_Map(t *testing.T) {
 	dict := make(map[int]struct{}, 0)
 	DiGui(dict)
 }
+
+func sliceParam(s []int) {
+	println(&s)
+}
+
+func Test_Slice(t *testing.T) {
+	s1 := make([]int, 0, 100)
+	println(&s1)
+	sliceParam(append(s1, 1))
+}
