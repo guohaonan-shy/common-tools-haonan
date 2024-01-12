@@ -80,11 +80,14 @@ func Test_Map(t *testing.T) {
 }
 
 func sliceParam(s []int) {
-	println(&s)
+	if len(s) == 5 {
+		return
+	}
+	sliceParam(append(s, 1))
+	s = append(s, 2)
 }
 
 func Test_Slice(t *testing.T) {
 	s1 := make([]int, 0, 100)
-	println(&s1)
 	sliceParam(append(s1, 1))
 }

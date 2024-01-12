@@ -102,6 +102,29 @@ func Test_114(t *testing.T) {
 	})
 }
 
+func Test_124(t *testing.T) {
+	for _, tc := range []struct {
+		input    string
+		expected int
+	}{
+		{
+			input:    "[1,2,3]",
+			expected: 6,
+		},
+		{
+			input:    "[-10,9,20,null,null,15,7]",
+			expected: 42,
+		},
+	} {
+
+		t.Run(tc.input, func(t *testing.T) {
+			res := maxPathSum(treeify(tc.input))
+			assert.Equal(t, tc.expected, res)
+		})
+
+	}
+}
+
 func Test_129(t *testing.T) {
 	for _, tc := range []struct {
 		input    string
@@ -122,6 +145,35 @@ func Test_129(t *testing.T) {
 			assert.Equal(t, tc.expected, res)
 		})
 
+	}
+}
+
+func Test_173(t *testing.T) {
+	for _, tc := range []struct {
+		cmds     []string
+		tree     string
+		expected []string
+	}{
+		{
+			cmds:     []string{"BSTIterator", "next", "next", "hasNext", "next", "hasNext", "next", "hasNext", "next", "hasNext"},
+			tree:     "[7, 3, 15, null, null, 9, 20]",
+			expected: []string{"null", "3", "7", "true", "9", "true", "15", "true", "20", "false"},
+		},
+	} {
+		t.Run("case", func(t *testing.T) {
+			var bst BSTIterator
+			for i, cmd := range tc.cmds {
+				if cmd == "BSTIterator" {
+					bst = Constructor(treeify(tc.tree))
+				} else if cmd == "next" {
+					expect, _ := strconv.Atoi(tc.expected[i])
+					assert.Equal(t, bst.Next(), expect)
+				} else {
+					expect, _ := strconv.ParseBool(tc.expected[i])
+					assert.Equal(t, bst.HasNext(), expect)
+				}
+			}
+		})
 	}
 }
 
