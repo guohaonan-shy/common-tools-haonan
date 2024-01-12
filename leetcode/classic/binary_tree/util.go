@@ -21,11 +21,18 @@ func treeify(tree string) *TreeNode {
 
 func madeup(root int, elements []string) *TreeNode {
 
-	if root >= len(elements) || elements[root] == "null" {
+	if root >= len(elements) {
 		return nil
 	}
 
-	val, _ := strconv.Atoi(elements[root])
+	str := strings.TrimSpace(elements[root])
+
+	if str == "null" {
+		return nil
+	}
+
+	val, _ := strconv.Atoi(str)
+
 	left, right := 2*root+1, 2*root+2
 	rootNode := &TreeNode{
 		Val:   val,

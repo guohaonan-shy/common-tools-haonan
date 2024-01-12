@@ -177,6 +177,29 @@ func Test_173(t *testing.T) {
 	}
 }
 
+func Test_222(t *testing.T) {
+	for _, tc := range []struct {
+		input    string
+		expected int
+	}{
+		{
+			input:    "[1,2,3,4,5,6]",
+			expected: 6,
+		},
+		{
+			input:    "[]",
+			expected: 0,
+		},
+	} {
+
+		t.Run(tc.input, func(t *testing.T) {
+			res := countNodes(treeify(tc.input))
+			assert.Equal(t, tc.expected, res)
+		})
+
+	}
+}
+
 func Test_226(t *testing.T) {
 	testCases := []struct {
 		input string
