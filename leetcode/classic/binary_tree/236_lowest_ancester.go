@@ -23,3 +23,41 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 	}
 	return left
 }
+
+func lowestCommonAncestor_Parent(root, p, q *TreeNode) *TreeNode {
+
+	parent := make(map[*TreeNode]*TreeNode, 0)
+	var dfs func(*TreeNode)
+	dfs = func(cur *TreeNode) {
+		if cur == nil {
+			return
+		}
+
+		if cur.Left != nil {
+			parent[cur.Left] = cur
+			dfs(cur.Left)
+		}
+
+		if cur.Right != nil {
+			parent[cur.Right] = cur
+			dfs(cur.Right)
+		}
+		return
+	}
+
+	dfs(root)
+
+	visited := make(map[*TreeNode]bool, 0)
+	for p != nil {
+		visited[p] = true
+		p = parent[p]
+	}
+
+	for q != nil {
+		if visited[q] {
+			return q
+		}
+		q = parent[q]
+	}
+	return root
+}
