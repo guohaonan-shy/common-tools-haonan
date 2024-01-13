@@ -23,6 +23,31 @@ func Test_Toy(t *testing.T) {
 	print(toy2)
 }
 
+func a1() (i int) {
+	defer func() {
+		i++
+		fmt.Println("defer2:", i)
+	}()
+	defer func() {
+		i++
+		fmt.Println("defer1:", i)
+	}()
+	return i //或者直接写成return
+}
+
+func a2() int {
+	var i int
+	defer func() {
+		i++
+		fmt.Println("defer2:", i)
+	}()
+	defer func() {
+		i++
+		fmt.Println("defer1:", i)
+	}()
+	return i
+}
+
 func Test_Defer(t *testing.T) {
 	func(a int) {
 		defer fmt.Printf("\n1. defer a=%d\n", a) // 一样， 将入参作为值传递给对应方法
@@ -37,6 +62,7 @@ func Test_Defer(t *testing.T) {
 		a++
 		print(&a)
 	}(1)
+
 }
 
 type TestInterface interface {
@@ -84,8 +110,10 @@ func sliceParam(s []int) {
 	if len(s) == 5 {
 		return
 	}
+	println(len(s))
 	sliceParam(append(s, 1))
 	s = append(s, 2)
+	println(len(s))
 }
 
 func Test_Slice(t *testing.T) {
