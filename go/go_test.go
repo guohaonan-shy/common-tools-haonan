@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
+	"unicode/utf8"
 )
 
 type Object struct {
@@ -165,4 +166,17 @@ func Test_NewMake(t *testing.T) {
 			val: 0,
 		},
 	}, *s7)
+}
+
+func Test_String(t *testing.T) {
+	var str = "abcdefg中国"
+	for i, s := range str {
+
+		buffer1 := make([]byte, utf8.UTFMax)
+		_ = utf8.EncodeRune(buffer1, s)
+		println(i)
+		fmt.Printf("byte unicode: %b, utf-8: %b\n", str[i], buffer1)
+		fmt.Printf("rune unicode: %b, utf-8: %b\n", s, buffer1)
+
+	}
 }
