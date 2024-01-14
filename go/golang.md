@@ -176,5 +176,52 @@ s = append(s, 3)
 但是s的len是1，就代表切片s无法索引到data[1]，之后s的append操作，按照s的长度为1，容量为4进行操作，将3放入data[1]的位置，覆盖了s1[1]
 
 ## 5. map: 
+map底层数据结构
+```
+type hmap struct {     //hashmap
+    count     int                  // 元素个数     
+    flags     uint8     
+    B         uint8                // 扩容常量相关字段B是buckets数组的长度的对数 2^B     
+    noverflow uint16               // 溢出的bucket个数     
+    hash0     uint32               // hash seed     
+    buckets    unsafe.Pointer      // buckets 数组指针     
+    oldbuckets unsafe.Pointer      // 结构扩容的时候用于赋值的buckets数组     
+    nevacuate  uintptr             // 搬迁进度     
+    extra *mapextra                // 用于扩容的结构，里面存有新旧桶里面溢出的bmap指针
+}
+
+type bmap struct { // bucket的数据结构
+    topbits  [8]uint8 // hash(key)的高8位
+    keys     [8]keytype // 8个key
+    values   [8]valuetype // 8个value
+    pad      uintptr
+    overflow uintptr 如果相同该bmap无空位，会新建bmap与该bmap相连
+}
+```
+数据结构类似于C的hashmap，不同于C的一个bmap存储一个kv键值对，go的bmap一个结构存储8个kv键值  
+先不考虑扩容，map是如何查找和写入的？  
+#### 查找逻辑：
+1. 根据hashmap内的hash种子计算出key的hash 
+2. has值与bucket数目取模确认bucket位置
+3. bucket内的bmap结点进行遍历，先比较高位的hash是否相同，若相同在比较key是否相同，知道找到目标key或者遍历完仍未发现目标key
+
+#### 写入逻辑：
+1. 根据key值算出哈希值
+2. 哈希值与bucket数目取模确定bucket位置
+3. 查找该key是否已经存在，如果存在则直接更新值
+4. 如果没找到将key，将key插入
+
+当map经过多次的增删改之后，会出现两种极端情况，一种是bucket内极度紧致，负载因子过大，导致hashmap的查找退化成了链表；另一种则是bucket内极度稀疏，导致空间使用率很低；因此map需要进行增量扩容和等量扩容来不断调整map的内容
+
+#### 增量扩容(负载因子过大，需要rehash):
+1. 每当添加元素的过程中，hashmap会根据`负载因子 = 元素个数 / bucket数目>6.5`判断是否需要增量扩容
+2. 当扩容开始，首先`B+1`，则新的map的bucket数目为`2^(B+1)`, 申请新的bucket内存，并将原来的指针设置为oldbuckets
+3. 新的key根据写入逻辑，写入新的buckets存储内，同时更新flag和nevacuate这两个变量，表示map正在进行迁移；
+4. 扩容期间，每次map的读写都会先访问oldBucket，如果oldbucket的tophash[0]是正常的hash填充值，则说明该buckets没有迁移，将该bucket内所有的kv rehash至新桶(保证一个bucket要不然包含全部的key，要不然全是空)
+5. 当迁移完成后，oldBuckets为空,buckets是新的bucket空间
+
+#### 等量扩容 (overflow的个数很大，但负载因子较低):
+1. 当hmap中的nonoverflow数目过大时，触发扩容，只不过新申请的buckets个数同原先一样，flag添加一个新的标签sameSizeGrow
+2. 其他步骤同上述扩容过程
 
 ## 6. channel
