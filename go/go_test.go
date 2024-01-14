@@ -111,15 +111,48 @@ func sliceParam(s []int) {
 	if len(s) == 5 {
 		return
 	}
-	println(len(s))
 	sliceParam(append(s, 1))
+
+	v := reflect.ValueOf(s).Pointer()
+	fmt.Println(v)
 	s = append(s, 2)
-	println(len(s))
 }
 
 func Test_Slice(t *testing.T) {
-	s1 := make([]int, 0, 100)
-	sliceParam(append(s1, 1))
+	t.Run("case1", func(t *testing.T) {
+		s1 := make([]int, 0, 100)
+		sliceParam(append(s1, 1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		s := make([]int, 0, 0)
+		println(reflect.ValueOf(s).Pointer())
+		s = append(s, 1000)
+		println(reflect.ValueOf(s).Pointer())
+		println(cap(s))
+		s = append(s, 1)
+		println(reflect.ValueOf(s).Pointer())
+		println(cap(s))
+		s = append(s, 2)
+		println(reflect.ValueOf(s).Pointer())
+		println(cap(s))
+
+		s1 := append(s, 3)
+		fmt.Printf("s1[3]:%d\n", s1[3])
+		println(reflect.ValueOf(s1).Pointer())
+		println(len(s1))
+		println(reflect.ValueOf(s).Pointer())
+		println(len(s))
+
+		s = append(s, 4)
+		println(reflect.ValueOf(s1).Pointer())
+		fmt.Printf("s1:%d\n", s1[3])
+
+		//s1 = append(s1, 4)
+		//println(reflect.ValueOf(s1).Pointer())
+		//println(len(s1))
+
+	})
 }
 
 type TestObject struct {
