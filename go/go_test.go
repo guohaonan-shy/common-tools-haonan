@@ -213,3 +213,22 @@ func Test_String(t *testing.T) {
 
 	}
 }
+
+func Test_channel(t *testing.T) {
+	c := make(chan int, 2)
+	c <- 1
+	c <- 2
+	close(c)
+
+	v := <-c
+	println(v)
+	v = <-c
+	println(v)
+
+	v = <-c
+	println(v)
+
+	for _ = range c {
+		println("lll")
+	}
+}

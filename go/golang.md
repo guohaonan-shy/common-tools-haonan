@@ -225,3 +225,47 @@ type bmap struct { // bucket的数据结构
 2. 其他步骤同上述扩容过程
 
 ## 6. channel
+channel底层数据结构：
+```
+type hchan struct {
+	qcount   uint           // current number of elements in this channel
+	dataqsiz uint           // the total length of this channel
+	buf      unsafe.Pointer // mem unit that points to an array of dataqsiz elements
+	elemsize uint16         // element size(eg.int, string, struct{})
+	closed   uint32
+	elemtype *_type // element type
+	sendx    uint   // send index if this channel has buffer 
+	recvx    uint   // receive index if this channel has buffer 
+	recvq    waitq  // list of recv waiters
+	sendq    waitq  // list of send waiters
+	
+	lock mutex // 防止其他的receive或者并发的send事件
+}
+```
+channel整体由一个环型数组和两个队列(接收事件+发送事件)组成，如果channel是一个无缓冲通道，那环形数组不会用到；同时用锁避免channel出现race condition   
+#### channel的创建：
+当创建channel时，make函数会根据size判断是否需要给buf分配内存空间；如果size不为0，那么程序会在固定的channelSize基础上，加上`元素类型大小 * 元素个数`的内存空间  
+
+假设我们初始化一个channel
+`c := make(chan int, 5)` 即c是一个长度为5，元素类型为int的channel
+#### send:
+1. 当缓冲队列还没满时，程序将入队的元素变量`复制`到队列下一个可插入位置(即channel不是共享内存，而是通信)，更新可插入位置和元素数目  
+2. 当缓冲队列满了，程序会将sudog(同步元素以及其关联的goroutine的实体)放入sendq末尾，然后调用gopark使goroutine陷入等待，同时p调度一个新的goroutine执行
+#### receive:
+1. 当缓冲队列没满时，程序将recvx的元素，复制到目标对象，迭代recx和元素数目;  
+2. 当缓冲队列满了，程序将recvx的元素，复制到目标对象；然后将接收等待队列中队尾对象复制到buf内，然后迭代recx和元素数目
+3. 当缓冲队列为空，将接收事件添加等待队列，并调用gopark切换执行goroutine  
+##### 接收事件有个细节: 接收事件`<-chan`的左边可能有写入变量也可能没有；
+##### 如果有目标变量(eg.`for task := range chan`), 则channel会将recev的对象复制到目标对象，并清空对应位置的内存，迭代recvx)
+##### 如果无目标变量(eg.`for _ := range chan`)，则省略目标变量复制的步骤
+
+当channel长度为0，即无buf缓冲，则按照send队列满和receive队列为空来处理
+
+#### close:
+设置为关闭状态，将两个事件的等待队列内所有sudog更新为runnable的状态(但不清空缓冲队列的元素)，等待对应p的调度  
+因此，当关闭之后，如果仍往channel继续添加元素，`会直接panic；`  
+接收元素会消费完队列内所有的元素，之后每次`<-c`都只会得到空值，但是`for _ = range c`不再执行
+
+#### channel为nil的情况：
+channel为nil，send和recv事件会直接将对应的goroutine挂起，p一直无法调度这些goroutine，从而造成goroutine泄漏  
+close(channel)也无法解决，因为nil的channel关闭会直接panic
