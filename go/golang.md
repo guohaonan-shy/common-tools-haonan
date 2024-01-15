@@ -267,5 +267,5 @@ channel整体由一个环型数组和两个队列(接收事件+发送事件)组�
 接收元素会消费完队列内所有的元素，之后每次`<-c`都只会得到空值，但是`for _ = range c`不再执行
 
 #### channel为nil的情况：
-channel为nil，send和recv事件会直接将对应的goroutine挂起，p一直无法调度这些goroutine，从而造成goroutine泄漏  
+channel为nil，send和recv事件会直接将对应的goroutine挂起，同时fatal
 close(channel)也无法解决，因为nil的channel关闭会直接panic
