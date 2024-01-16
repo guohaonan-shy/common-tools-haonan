@@ -269,3 +269,41 @@ channel整体由一个环型数组和两个队列(接收事件+发送事件)组�
 #### channel为nil的情况：
 channel为nil，send和recv事件会直接将对应的goroutine挂起，同时fatal
 close(channel)也无法解决，因为nil的channel关闭会直接panic
+
+## Go的调度模型(GMP)
+关于GMP分别是什么: goroutine(调度单位)、processor(处理器)以及machine(工作线程)  
+1. OS level的工作线程m不再关注线程之间切换调度的细节，而是通过处理器来获取下一个goroutine  
+2. user level的协程goroutine, 只关注当前自己关联的是哪个m以及自己的祖先g，不关心其他g的状态与关系
+3. p维护多个本地处理器以及一个全局处理器，通过本地对象和全局对象的交互，提升go程序的工作效率  
+
+首先，在讨论go的调度模型之前，我们必须要了解甚至明白runtime调度的基本单位goroutine以及其生命周期
+### 创建
+都知道goroutine怎么用  
+`go func() {...}`  
+runtime先为该goroutine申请一个栈空间，初始化goroutine的状态和上下文，然后放入队列等待调度
+### 销毁
+整体上，goroutine的状态更新为dead，然后进行下一轮调度，执行下一个runnable的goroutine
+### 调度
+首先从本地队列了获取runnable的goroutine进行执行，如果本地队列g的数目不足，p会去其他p的本地队列或者全局队列获取一半的goroutine执行
+
+看到着，有几个问题对程序如何运行至关重要
+1. 当goroutine很多的时候，goroutine的内存申请和释放都要切换到内核态，由操作系统对内存进行处理，效率会有损耗，怎么解决？
+2. GMP中哪些状态和上下文，需要engineers了解呢?  
+3. 放入队列的goroutine 怎么配合本地和全局队列从而保证调度的公平性呢？
+
+关于第一个问题：  
+其实每个processor以及全局scheduler都维护了一个协程池(cache),当goroutine销毁时，内存空间并不会被os回收，而是放入本地或者全局的协程池；
+本地只会维护size为64的池子，一旦超过会将一半的的协程单元放入全局协程池，供其他proc复用，进一步提升资源利用；这样创建和销毁goroutine可以直接复用之前已经申请过的空间，减少内核切换的频率；
+这里还有一个细节，如果栈的大小不是startingStackSize，会将空间清零；本地队列统一一个队列维护，但是全局队列需要维护在NstackQ(无栈队列)；后续看到gc关注这块
+
+关于第二个问题：  
+新创建的goroutine优先放入对应m的p上的本地队列，并且当caller goroutine的时间片结束后，会优先调度执行该g；
+p上有个指针runnext(should be run next instead of what's in runq if there's time remaining in the running G's time slice),
+即会优先执行runnext的协程，而非runq队列内的，如果当前g的事件片还有剩余  
+
+更好的局部性: 
+1. 因为这两个goroutine是父子关系，访问统一处理器可以提升处理器缓存的命中率，提升响应速度；
+2. 减少同其他goroutine的竞争，更快的启动和响应
+
+关于第三个问题：  
+本地队列的存在极大减少了全局队列的锁冲突，同时调度过程，定期会从全局队列获取goroutine，避免全局队列内的g饥饿；
