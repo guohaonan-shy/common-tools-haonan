@@ -4,6 +4,7 @@ type Pos struct {
 	X, Y int
 }
 
+// 使用bfs
 func numIslands(grid [][]byte) int {
 
 	reached := make([][]bool, len(grid))
@@ -54,6 +55,63 @@ func numIslands(grid [][]byte) int {
 			f(rowIdx, columnIdx)
 			ans++
 
+		}
+	}
+	return ans
+}
+
+// 使用dfs
+func numIslands_DFS(grid [][]byte) int {
+
+	rowN, colN := len(grid), len(grid[0])
+	//reached := make([][]int, len(grid))
+	//for i := range reached {
+	//	reached[i] = make([]int, len(grid[0]))
+	//}
+
+	var dfs func(rowIdx int, colIdx int)
+	dfs = func(rowIdx int, colIdx int) {
+
+		//if reached[rowIdx][colIdx] != 0 {
+		//	return
+		//}
+
+		//reached[rowIdx][colIdx] = 1
+
+		//if rowIdx-1 >= 0 && grid[rowIdx-1][colIdx] == '1' && reached[rowIdx-1][colIdx] == 0 {
+		//	dfs(rowIdx-1, colIdx)
+		//}
+		//
+		//if rowIdx+1 < rowN && grid[rowIdx+1][colIdx] == '1' && reached[rowIdx+1][colIdx] == 0 {
+		//	dfs(rowIdx+1, colIdx)
+		//}
+		//
+		//if colIdx-1 >= 0 && grid[rowIdx][colIdx-1] == '1' && reached[rowIdx][colIdx-1] == 0 {
+		//	dfs(rowIdx, colIdx-1)
+		//}
+		//
+		//if colIdx+1 < colN && grid[rowIdx][colIdx+1] == '1' && reached[rowIdx][colIdx+1] == 0 {
+		//	dfs(rowIdx, colIdx+1)
+		//}
+
+		if rowIdx < 0 || rowIdx >= rowN || colIdx < 0 || colIdx >= colN || grid[rowIdx][colIdx] != '1' {
+			return
+		}
+		grid[rowIdx][colIdx] = '0'
+		dfs(rowIdx-1, colIdx)
+		dfs(rowIdx+1, colIdx)
+		dfs(rowIdx, colIdx-1)
+		dfs(rowIdx, colIdx+1)
+		//reached[rowIdx][colIdx] = 2
+	}
+
+	ans := 0
+	for rowIdx, row := range grid {
+		for colIdx, _ := range row {
+			if grid[rowIdx][colIdx] == '1' {
+				dfs(rowIdx, colIdx)
+				ans++
+			}
 		}
 	}
 	return ans
