@@ -37,3 +37,93 @@ func Test_130(t *testing.T) {
 			case2)
 	})
 }
+
+func Test_399(t *testing.T) {
+	for _, tc := range []struct {
+		Equation [][]string
+		Values   []float64
+		Queries  [][]string
+		Expected []float64
+	}{
+		{
+			Equation: [][]string{{"a", "b"}, {"b", "c"}},
+			Values:   []float64{2.0, 3.0},
+			Queries:  [][]string{{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}},
+			Expected: []float64{6.00000, 0.50000, -1.00000, 1.00000, -1.00000},
+		},
+		{
+			Equation: [][]string{{"a", "b"}, {"b", "c"}, {"bc", "cd"}},
+			Values:   []float64{1.5, 2.5, 5.0},
+			Queries:  [][]string{{"a", "c"}, {"c", "b"}, {"bc", "cd"}, {"cd", "bc"}},
+			Expected: []float64{3.75000, 0.40000, 5.00000, 0.20000},
+		},
+		{
+			Equation: [][]string{{"a", "b"}},
+			Values:   []float64{0.5},
+			Queries:  [][]string{{"a", "b"}, {"b", "a"}, {"a", "c"}, {"x", "y"}},
+			Expected: []float64{0.50000, 2.00000, -1.00000, -1.00000},
+		},
+		{
+			Equation: [][]string{{"a", "aa"}},
+			Values:   []float64{9.0},
+			Queries:  [][]string{{"aa", "a"}, {"aa", "aa"}},
+			Expected: []float64{0.11111, 1.0},
+		},
+	} {
+		t.Run("case", func(t *testing.T) {
+			assert.Equal(t, tc.Expected, calcEquation(tc.Equation, tc.Values, tc.Queries))
+			Graph = make(map[string][]*Neibor, 0)
+		})
+	}
+}
+
+func Test_207(t *testing.T) {
+	for _, tc := range []struct {
+		numCourses    int
+		prerequisites [][]int
+		expected      bool
+	}{
+		{
+			numCourses:    2,
+			prerequisites: [][]int{{1, 0}},
+			expected:      true,
+		},
+		{
+			numCourses:    2,
+			prerequisites: [][]int{{1, 0}, {0, 1}},
+			expected:      false,
+		},
+		{
+			numCourses:    20,
+			prerequisites: [][]int{{0, 10}, {3, 18}, {5, 5}, {6, 11}, {11, 14}, {13, 1}, {15, 1}, {17, 4}},
+			expected:      false,
+		},
+		{
+			numCourses:    3,
+			prerequisites: [][]int{{0, 2}, {1, 2}, {2, 0}},
+		},
+		{
+			numCourses:    5,
+			prerequisites: [][]int{{1, 4}, {2, 4}, {3, 1}, {3, 2}},
+			expected:      true,
+		},
+		{
+			numCourses:    4,
+			prerequisites: [][]int{{0, 1}, {3, 1}, {1, 3}, {3, 2}},
+			expected:      false,
+		},
+		{
+			numCourses:    7,
+			prerequisites: [][]int{{1, 0}, {0, 3}, {0, 2}, {3, 2}, {2, 5}, {4, 5}, {5, 6}, {2, 4}},
+			expected:      true,
+		},
+	} {
+		//t.Run("case", func(t *testing.T) {
+		//	assert.Equal(t, tc.expected, canFinish(tc.numCourses, tc.prerequisites))
+		//})
+
+		t.Run("standard", func(t *testing.T) {
+			assert.Equal(t, tc.expected, canFinish_Standard(tc.numCourses, tc.prerequisites))
+		})
+	}
+}
