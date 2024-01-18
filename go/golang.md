@@ -333,3 +333,17 @@ sizeClass: 每个mspan和每个object都有对应的sizeClass，每个mspan按�
 如果某种资源的申请和回收是昂贵的，我们都可以通过建立资源池的方式来解决，其他比如连接池，内存池等等，都是一个思路
 
 ### Golang的内存池：
+首先golang的内存池是在程序启动时，申请了一大块虚拟内存存入一个mheap的结构，mheap一方面跟os交互进行内存的申请和释放；一方面以mspan为单位对go程序内的内存进行管理
+
+为了提升性能和减少锁冲突，mheap分配了一块空间叫mcentral，同时每个processor内又一个mcache结构，给goroutine分配heap空间，大幅减少了访问中心化的mcentral和mheap的概率
+
+当一个对象申请内存空间，首先根据其大小判断sizeClass，根据sizeClass(外加该对象是否为指针)去mcache获取指定的mspan，如果mspan根据objectSize和freeIdx判断是否还有可分配的object；如果没有向mcentral对应的class申请获取更多mspan
+
+mcentral每个classSize分有partial和free两个span set，优先从partial分配指定classSize的page大小；若无再从空的span裁剪出合适的pages给到mcache
+
+如果mcentral也没有合适的空间，那就只能从mheap获取，或者从os申请更大的内存
+
+总之，Go在程序启动时，会向操作系统申请一大块内存，之后自行管理。
+Go内存管理的基本单元是mspan，它由若干个页组成，每种mspan可以分配特定大小的object。
+mcache, mcentral, mheap是Go内存管理的三大组件，层层递进。mcache管理线程在本地缓存的mspan；mcentral管理全局的mspan供所有线程使用；mheap管理Go的所有动态分配内存。
+极小对象会分配在一个object中，以节省资源，使用tiny分配器分配内存；一般小对象通过mspan分配内存；大对象则直接由mheap分配内存。
