@@ -1,7 +1,5 @@
 package graph
 
-import "strings"
-
 type Neibor struct {
 	Div string
 	Val float64
@@ -12,7 +10,6 @@ var Graph = map[string][]*Neibor{}
 func calcEquation(equations [][]string, values []float64, queries [][]string) []float64 {
 	func() {
 		for i, equation := range equations {
-			// 原版
 			neiborRaw0 := &Neibor{
 				Div: equation[1],
 				Val: values[i],
@@ -25,33 +22,12 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 
 			neiborRaw1 := &Neibor{
 				Div: equation[0],
-				Val: float64(1) / values[i],
+				Val: 1 / values[i],
 			}
 			if _, ok := Graph[equation[1]]; ok {
 				Graph[equation[1]] = append(Graph[equation[1]], neiborRaw1)
 			} else {
 				Graph[equation[1]] = []*Neibor{neiborRaw1}
-			}
-			// 最简因式
-			var1, var2 := simplify(equation[0], equation[1])
-			neibor0 := &Neibor{
-				Div: var2,
-				Val: values[i],
-			}
-			if _, ok := Graph[var1]; ok {
-				Graph[var1] = append(Graph[var1], neibor0)
-			} else {
-				Graph[var1] = []*Neibor{neibor0}
-			}
-
-			neibor1 := &Neibor{
-				Div: var1,
-				Val: float64(1) / values[i],
-			}
-			if _, ok := Graph[var2]; ok {
-				Graph[var2] = append(Graph[var2], neibor1)
-			} else {
-				Graph[var2] = []*Neibor{neibor1}
 			}
 		}
 	}()
@@ -86,10 +62,10 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 
 			for _, neibor := range neibors {
 				if !reached[neibor.Div] {
-					temp := neibor.Val
-					temp *= dfs(neibor.Div, b)
-					if temp != -1 {
-						return temp
+					init := neibor.Val
+					val := dfs(neibor.Div, b)
+					if val != -1 {
+						return init * val
 					}
 				}
 			}
@@ -102,22 +78,22 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 	return res
 }
 
-func simplify(a, b string) (string, string) {
-	idxs := []int{}
-	for j := range a {
-		target := a[j]
-		idx := strings.IndexByte(b, target)
-		if idx == -1 {
-			continue
-		}
-
-		idxs = append(idxs, j)
-		b = b[:idx] + b[idx+1:]
-	}
-
-	for i := len(idxs) - 1; i >= 0; i-- {
-		a = a[:idxs[i]] + a[idxs[i]+1:]
-	}
-
-	return a, b
-}
+//func simplify(a, b string) (string, string) {
+//	idxs := []int{}
+//	for j := range a {
+//		target := a[j]
+//		idx := strings.IndexByte(b, target)
+//		if idx == -1 {
+//			continue
+//		}
+//
+//		idxs = append(idxs, j)
+//		b = b[:idx] + b[idx+1:]
+//	}
+//
+//	for i := len(idxs) - 1; i >= 0; i-- {
+//		a = a[:idxs[i]] + a[idxs[i]+1:]
+//	}
+//
+//	return a, b
+//}
