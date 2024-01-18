@@ -96,7 +96,9 @@ func canFinish_Standard(numCourses int, prerequisites [][]int) bool {
 	}
 
 	for i := 0; i < numCourses && valid; i++ {
-		dfs(i)
+		if reached[i] == 0 {
+			dfs(i)
+		}
 	}
 	return valid
 }
