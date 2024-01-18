@@ -337,7 +337,16 @@ sizeClass: 每个mspan和每个object都有对应的sizeClass，每个mspan按�
 
 为了提升性能和减少锁冲突，mheap分配了一块空间叫mcentral，同时每个processor内又一个mcache结构，给goroutine分配heap空间，大幅减少了访问中心化的mcentral和mheap的概率
 
-当一个对象申请内存空间，首先根据其大小判断sizeClass，根据sizeClass(外加该对象是否为指针)去mcache获取指定的mspan，如果mspan根据objectSize和freeIdx判断是否还有可分配的object；如果没有向mcentral对应的class申请获取更多mspan
+当一个对象申请内存空间，首先根据其大小判断是否为空对象，如[0]int, struct{},则会返回一个固定指针
+```
+if size == 0 {
+    return unsafe.Pointer(&zerobase) // 减少空对象进行内存申请释放的动作
+}
+```
+如果该对象是一个非指针对象且大小属于tiny对象(小于16 bytes),则先对内存进行对齐，比如如果申请对象的大小为7 byte，则对齐至8 byte；如果tinyCache没有值，则从sizeClass = 2进行对象的分配
+
+对于指针对象或者普通对象(小于32KB(大对象))，则根据class_size获取对应的mspan，然后先从span缓存的对象池看是否有free object，如果没有再从span后面分配(层层缓存啊)，
+根据objectSize和freeIdx判断是否还有可分配的object；如果没有向mcentral对应的class申请获取更多mspan
 
 mcentral每个classSize分有partial和free两个span set，优先从partial分配指定classSize的page大小；若无再从空的span裁剪出合适的pages给到mcache
 
