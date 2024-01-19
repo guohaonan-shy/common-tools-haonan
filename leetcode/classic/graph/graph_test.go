@@ -130,3 +130,46 @@ func Test_207(t *testing.T) {
 		})
 	}
 }
+
+func Test_909(t *testing.T) {
+	for _, tc := range []struct {
+		board    [][]int
+		expected int
+	}{
+		{
+			board: [][]int{
+				{-1, -1, -1, -1, -1, -1},
+				{-1, -1, -1, -1, -1, -1},
+				{-1, -1, -1, -1, -1, -1},
+				{-1, 35, -1, -1, 13, -1},
+				{-1, -1, -1, -1, -1, -1},
+				{-1, 15, -1, -1, -1, -1},
+			},
+			expected: 4,
+		},
+		{
+			board:    [][]int{{-1, -1}, {-1, 3}},
+			expected: 1,
+		},
+		{
+			board: [][]int{
+				{-1, -1, -1, -1, 48, 5, -1},
+				{12, 29, 13, 9, -1, 2, 32},
+				{-1, -1, 21, 7, -1, 12, 49},
+				{42, 37, 21, 40, -1, 22, 12},
+				{42, -1, 2, -1, -1, -1, 6},
+				{39, -1, 35, -1, -1, 39, -1},
+				{-1, 36, -1, -1, -1, -1, 5},
+			},
+			expected: 3,
+		},
+	} {
+		//t.Run("case", func(t *testing.T) {
+		//	assert.Equal(t, tc.expected, canFinish(tc.numCourses, tc.prerequisites))
+		//})
+
+		t.Run("standard", func(t *testing.T) {
+			assert.Equal(t, tc.expected, snakesAndLadders(tc.board))
+		})
+	}
+}
