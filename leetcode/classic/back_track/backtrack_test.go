@@ -14,6 +14,7 @@ func Test_17(t *testing.T) {
 func Test_77(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine(4, 2))
+		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine_standard(4, 2))
 	})
 
 	t.Run("case2", func(t *testing.T) {
@@ -22,5 +23,11 @@ func Test_77(t *testing.T) {
 
 	t.Run("case3", func(t *testing.T) {
 		assert.Equal(t, [][]int{{1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4}}, combine(4, 3))
+	})
+}
+
+func Test_46(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, [][]int{{0, 1}, {1, 0}}, permute([]int{0, 1}))
 	})
 }

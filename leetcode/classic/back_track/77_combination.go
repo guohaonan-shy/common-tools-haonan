@@ -32,3 +32,33 @@ func combineBackTrack(start, end int, k int) [][]int {
 	return ans
 
 }
+
+func combine_standard(n, k int) [][]int {
+
+	tempPath := make([]int, 0)
+	res := make([][]int, 0)
+
+	var dfs func(start, idx int)
+	dfs = func(start, idx int) {
+
+		if idx > k {
+			ans := make([]int, len(tempPath))
+			copy(ans, tempPath)
+			res = append(res, ans)
+			return
+		}
+
+		for i := start; i <= n; i++ {
+			if n-i < k-idx {
+				break
+			}
+
+			tempPath = append(tempPath, i)
+			dfs(i+1, idx+1)
+			tempPath = tempPath[:len(tempPath)-1]
+		}
+	}
+
+	dfs(1, 1)
+	return res
+}
