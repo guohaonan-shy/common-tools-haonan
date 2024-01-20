@@ -11,6 +11,12 @@ func Test_17(t *testing.T) {
 	})
 }
 
+func Test_22(t *testing.T) {
+	t.Run("case", func(t *testing.T) {
+		assert.Equal(t, []string{"((()))", "(()())", "(())()", "()(())", "()()()"}, generateParenthesis(3))
+	})
+}
+
 func Test_77(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine(4, 2))
