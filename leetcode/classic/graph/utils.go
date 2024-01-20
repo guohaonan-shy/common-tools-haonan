@@ -1,6 +1,6 @@
 package graph
 
-func buildGraph(str string) [][]byte {
+func BuildGraph(str string) [][]byte {
 	str = str[1 : len(str)-1]
 
 	graph := make([][]byte, 0)

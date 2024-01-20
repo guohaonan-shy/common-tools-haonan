@@ -1,6 +1,7 @@
 package trie_tree
 
 import (
+	"github.com/common-tools-haonan/leetcode/classic/graph"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -66,4 +67,30 @@ func Test_WordDictionary(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_212(t *testing.T) {
+	type TestCase struct {
+		Board    [][]byte
+		Words    []string
+		Expected []string
+	}
+
+	for _, tc := range []TestCase{
+		//{
+		//	Board:    graph.BuildGraph("[[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]]"),
+		//	Words:    []string{"oath", "pea", "eat", "rain"},
+		//	Expected: []string{"eat", "oath"},
+		//},
+		{
+			Board:    graph.BuildGraph("[[\"a\",\"b\",\"c\",\"e\"],[\"x\",\"x\",\"c\",\"d\"],[\"x\",\"x\",\"b\",\"a\"]]"),
+			Words:    []string{"abc", "abcd"},
+			Expected: []string{"abc", "abcd"},
+		},
+	} {
+		t.Run(strings.Join(tc.Expected, "+"), func(t *testing.T) {
+			assert.Equal(t, tc.Expected, findWords(tc.Board, tc.Words))
+		})
+	}
+
 }
