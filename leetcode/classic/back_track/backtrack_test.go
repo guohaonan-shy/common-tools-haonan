@@ -31,3 +31,10 @@ func Test_46(t *testing.T) {
 		assert.Equal(t, [][]int{{0, 1}, {1, 0}}, permute([]int{0, 1}))
 	})
 }
+
+func Test_52(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, 2, totalNQueens(4))
+		assert.Equal(t, 1, totalNQueens(1))
+	})
+}
