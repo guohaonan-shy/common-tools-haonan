@@ -23,3 +23,33 @@ func permute(nums []int) [][]int {
 	}
 	return ans
 }
+
+func permute_standard(nums []int) [][]int {
+	res := make([][]int, 0)
+	temp := make([]int, 0)
+	k := len(nums)
+	state := make([]bool, len(nums))
+
+	var dfs func(int)
+	dfs = func(idx int) {
+		if idx > k {
+			ans := make([]int, k)
+			copy(ans, temp)
+			res = append(res, ans)
+			return
+		}
+
+		for i, num := range nums {
+			if !state[i] {
+				state[i] = true
+				temp = append(temp, num)
+				dfs(idx + 1)
+				temp = temp[:len(temp)-1]
+				state[i] = false
+			}
+		}
+	}
+
+	dfs(1)
+	return res
+}
