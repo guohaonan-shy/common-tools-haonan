@@ -24,3 +24,43 @@ func Test_153(t *testing.T) {
 		assert.Equal(t, 1, findMin([]int{2, 1}))
 	})
 }
+
+func Test_4(t *testing.T) {
+	type testCase struct {
+		nums1    []int
+		nums2    []int
+		expected float64
+	}
+
+	for _, tc := range []testCase{
+		{
+			nums1:    []int{1, 3},
+			nums2:    []int{2},
+			expected: float64(2),
+		},
+		{
+			nums1:    []int{1, 2},
+			nums2:    []int{3, 4},
+			expected: 2.5,
+		},
+		{
+			nums1:    []int{1, 2, 3},
+			nums2:    []int{4, 5, 6, 7, 8, 9},
+			expected: float64(5),
+		},
+		{
+			nums1:    []int{1, 4, 5, 7},
+			nums2:    []int{2, 3, 6},
+			expected: float64(4),
+		},
+		{
+			nums1:    []int{1},
+			nums2:    []int{2, 3, 4, 5, 6},
+			expected: 3.5,
+		},
+	} {
+		t.Run("4", func(t *testing.T) {
+			assert.Equal(t, tc.expected, findMedianSortedArrays(tc.nums1, tc.nums2))
+		})
+	}
+}
