@@ -1,6 +1,7 @@
 package dynammic_programming
 
 import (
+	"github.com/common-tools-haonan/leetcode/classic/graph"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -28,5 +29,11 @@ func Test_188(t *testing.T) {
 
 	t.Run("general_buy_stock", func(t *testing.T) {
 		assert.Equal(t, 7, maxProfit_general(2, []int{3, 2, 6, 5, 0, 3}))
+	})
+}
+
+func Test_221(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, 4, maximalSquare(graph.BuildGraph("[[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]")))
 	})
 }
