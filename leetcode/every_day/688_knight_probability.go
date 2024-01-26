@@ -62,3 +62,30 @@ func knightProbability(n int, k int, row int, column int) float64 {
 	//return float64(inBoard) / math.Pow(8, float64(k))
 	return float64(inBoard) / float64(notInBoard+inBoard)
 }
+
+func knightProbability_dp(n int, k int, row int, column int) float64 {
+	dp := make([][][]float64, k+1)
+
+	for step := range dp {
+		dp[step] = make([][]float64, n)
+		for rowIdx := range dp[step] {
+			dp[step][rowIdx] = make([]float64, n)
+			for columnIdx := range dp[step][rowIdx] {
+				if step == 0 {
+					dp[step][rowIdx][columnIdx] = 1
+				} else {
+					for _, dir := range directions {
+						newX, newY := rowIdx+dir[0], columnIdx+dir[1]
+
+						if newX >= 0 && newX < n && newY >= 0 && newY < n {
+							dp[step][rowIdx][columnIdx] += dp[step-1][newX][newY] / 8
+						}
+					}
+				}
+
+			}
+
+		}
+	}
+	return dp[k][row][column]
+}
