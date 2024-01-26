@@ -12,3 +12,9 @@ func Test_650(t *testing.T) {
 		assert.Equal(t, 3, minSteps(3))
 	})
 }
+
+func Test_688(t *testing.T) {
+	t.Run("knight", func(t *testing.T) {
+		assert.Equal(t, 0.06250, knightProbability(3, 2, 0, 0))
+	})
+}
