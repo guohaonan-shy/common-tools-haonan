@@ -63,3 +63,13 @@ func Test_209(t *testing.T) {
 		assert.Equal(t, 3, minSubArrayLen(target4, case4))
 	})
 }
+
+func Test_159(t *testing.T) {
+	t.Run("longest substring with at most two distinct characters", func(t *testing.T) {
+		assert.Equal(t, 3, lengthOfLongestSubstringTwoDistinct("eceba"))
+	})
+
+	t.Run("longest substring with at most two distinct characters", func(t *testing.T) {
+		assert.Equal(t, 5, lengthOfLongestSubstringTwoDistinct("ccaabbb"))
+	})
+}
