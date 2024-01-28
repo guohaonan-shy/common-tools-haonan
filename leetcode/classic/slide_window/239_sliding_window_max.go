@@ -102,3 +102,36 @@ func maxSlidingWindow_heap(nums []int, k int) []int {
 	}
 	return res
 }
+
+func maxSlidingWindow_queue(nums []int, k int) []int {
+
+	queue := make([]int, 0) // 存元素索引，按照索引对应值的大小，左边的值大于右边
+
+	var push func(idx int)
+	push = func(idx int) {
+		for len(queue) > 0 && nums[queue[len(queue)-1]] < nums[idx] { // queue最多存储情况是nums为单调递减，那么queue内存的是第一大值的索引，第二大值的索引 一直到 第k大值的索引
+			queue = queue[:len(queue)-1]
+		}
+		queue = append(queue, idx)
+	}
+
+	for i := 0; i < k; i++ {
+		push(i)
+		queue = append(queue, i)
+	}
+
+	res := []int{nums[queue[0]]}
+	for idx := k; idx < len(nums); idx++ {
+		push(idx)
+
+		maxIdx := queue[0]
+		for maxIdx < idx-k+1 {
+			queue = queue[1:]
+			maxIdx = queue[0]
+		}
+
+		res = append(res, nums[maxIdx])
+	}
+
+	return res
+}
