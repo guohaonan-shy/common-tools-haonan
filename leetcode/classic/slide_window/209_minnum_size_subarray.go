@@ -5,7 +5,7 @@ import (
 )
 
 func standard_minSubArrayLen(target int, nums []int) int {
-	minSize, windowSum := math.MaxInt32, 0
+	minSize, windowSum := len(nums), 0
 	left, right := 0, 0
 	for right < len(nums) {
 		windowSum += nums[right]
@@ -16,10 +16,10 @@ func standard_minSubArrayLen(target int, nums []int) int {
 		}
 		right++
 	}
-	if minSize != math.MaxInt32 {
-		return minSize
+	if left == 0 {
+		return 0
 	}
-	return 0
+	return minSize
 }
 
 func minSubArrayLen(target int, nums []int) int {
