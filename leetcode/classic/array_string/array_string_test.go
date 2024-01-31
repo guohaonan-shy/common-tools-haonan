@@ -307,3 +307,23 @@ func Test_274(t *testing.T) {
 		assert.Equal(t, 2, hIndex(case4))
 	})
 }
+
+func Test_31(t *testing.T) {
+	t.Run("next permutation", func(t *testing.T) {
+		nums := []int{1, 2, 3}
+		nextPermutation(nums)
+		assert.Equal(t, []int{1, 3, 2}, nums)
+	})
+
+	t.Run("next permutation", func(t *testing.T) {
+		nums := []int{3, 2, 1}
+		nextPermutation(nums)
+		assert.Equal(t, []int{1, 2, 3}, nums)
+	})
+
+	t.Run("next permutation", func(t *testing.T) {
+		nums := []int{1, 1, 5}
+		nextPermutation(nums)
+		assert.Equal(t, []int{1, 5, 1}, nums)
+	})
+}
