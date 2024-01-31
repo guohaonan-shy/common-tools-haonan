@@ -124,3 +124,24 @@ mvcc原理是，每个事务都只能读取到小于当前事务编号的最新�
 为了保证数据的持久化，mysql一般采用WAL(write-ahead log)的写入策略，即执行数据的更新之前，先进行日志的写入，将redo log写入buffer，之后将更新的数据从磁盘加载到内存进行更新，事务提交，redo log刷盘  
 数据并不会随着redo log一起刷盘，而是定时+文件缓冲区满时，一次刷盘，减少I/O次数，redo log因为是append顺序I/O(相邻内存块减少寻址时间，同时数据块也会预先加载减少等待)，所以性能损耗较小；而数据持久化则是随机I/O效率较低，因此尽量减少次数
 
+## 主从架构
+主节点一般是用redo log进行数据的恢复，而从节点则是用binlog进行数据的写入和恢复的
+
+binlog的内容一般分为两种:
+1. statement，记录的为sql语句，即描述一个sql语句造成的影响
+2. row，记录的是每一行的改动，修改前和修改后的变动
+
+binlog在主从架构下，除了保证从节点的写入和数据复制，还用来配合redo log判断主节点数据是否需要回滚  
+
+当一个事务执行时，redo log和undo log都是随着执行过程不断往buffer内写入，加入binlog是在提交事务时写入的，那么事务提交成功，但是binlog没有写入，则从库相比于主库会少了本次操作
+
+因此，InnoDB采用两阶段的事务提交方式，拆分为prepare和commit：
+1. 执行事务过程中，写入redo log和undo log，此时事务处于prepare状态
+2. 修改内存数据，写入binlog
+3. 事务处于commit状态，提交事务，redo log和undo log落盘
+
+那么当server宕机时，这三个log可分为redo log和binlog，有以下几种情况:
+1. 当redo log文件包含该事务时，binlog一定也写入了，因为binlog写入是在事务提交+redo log落盘之前写入的，此时该事务需要恢复数据；即redo log落盘一定表明该事务执行完成  
+2. 当redo log无事务信息或者事务信息不全(并非同步刷盘)，但是binlog有，则表明数据已经写入但是提交时有问题，那么该数据mysql认为操作是合理的，则根据binlog进行逻辑恢复，同时补全redo log
+3. 当redo log无事务信息或者事务不全，但是无对应事务的binlog，则需要回滚这部分redo log
+
