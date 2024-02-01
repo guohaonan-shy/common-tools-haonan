@@ -44,3 +44,9 @@ func Test_52(t *testing.T) {
 		assert.Equal(t, 1, totalNQueens(1))
 	})
 }
+
+func Test_38(t *testing.T) {
+	t.Run("count and say", func(t *testing.T) {
+		assert.Equal(t, "1211", countAndSay(4))
+	})
+}

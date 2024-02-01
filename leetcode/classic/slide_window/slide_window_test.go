@@ -86,3 +86,13 @@ func Test_239(t *testing.T) {
 		assert.Equal(t, []int{3, 3, 5, 5, 6, 7}, maxSlidingWindow_heap([]int{1, 3, -1, -3, 5, 3, 6, 7}, 3))
 	})
 }
+
+func Test_32(t *testing.T) {
+	t.Run("longest valid parentheses", func(t *testing.T) {
+		assert.Equal(t, 2, longestValidParentheses("(()"))
+	})
+
+	t.Run("longest valid parentheses", func(t *testing.T) {
+		assert.Equal(t, 4, longestValidParentheses(")()())"))
+	})
+}
