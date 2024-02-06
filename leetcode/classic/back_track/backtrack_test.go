@@ -44,6 +44,12 @@ func Test_47(t *testing.T) {
 	})
 }
 
+func Test_51(t *testing.T) {
+	t.Run("n_queen", func(t *testing.T) {
+		assert.Equal(t, [][]string{{".Q..", "...Q", "Q...", "..Q."}, {"..Q.", "Q...", "...Q", ".Q.."}}, solveNQueens(4))
+	})
+}
+
 func Test_52(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		assert.Equal(t, 2, totalNQueens(4))
