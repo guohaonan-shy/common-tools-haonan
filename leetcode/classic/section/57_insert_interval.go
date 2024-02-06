@@ -1,31 +1,31 @@
 package section
 
-import "sort"
-
 func insert(intervals [][]int, newInterval []int) [][]int {
-	intervals = append(intervals, newInterval)
-	sort.Slice(intervals, func(i, j int) bool {
-		return intervals[i][0] < intervals[j][0]
-	})
-	preInterval := intervals[0]
-	res := make([][]int, 0)
-	for i := 1; i < len(intervals); i++ {
-		interval := make([]int, 2)
-		if preInterval[1] >= intervals[i][0] {
-			interval[0] = preInterval[0]
-			if preInterval[1] >= intervals[i][1] {
-				interval[1] = preInterval[1]
-			} else {
-				interval[1] = intervals[i][1]
-			}
-			preInterval = interval
-		} else {
-			res = append(res, preInterval)
+	// insert interval first
 
-			interval[0], interval[1] = intervals[i-1][0], intervals[i-1][1]
-			preInterval = intervals[i]
+	pointer := 0
+	for ; pointer < len(intervals); pointer++ {
+		comp := intervals[pointer]
+		if comp[0] > newInterval[0] {
+			break
 		}
 	}
-	res = append(res, preInterval)
-	return res
+
+	// insert
+	temp := make([][]int, len(intervals)-pointer)
+	copy(temp, intervals[pointer:])
+	intervals = append(append(intervals[:pointer], newInterval), temp...)
+
+	// then merge interval
+	slow, fast := 0, 1
+	for ; fast < len(intervals); fast++ {
+		pre, cur := intervals[slow], intervals[fast]
+		if pre[1] < cur[0] {
+			slow++
+			intervals[slow] = intervals[fast]
+		} else {
+			intervals[slow][1] = max(intervals[slow][1], intervals[fast][1])
+		}
+	}
+	return intervals[:slow+1]
 }
