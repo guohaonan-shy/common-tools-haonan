@@ -1,6 +1,7 @@
 package hash_table
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,4 +17,13 @@ func Test_128(t *testing.T) {
 		assert.Equal(t, 9, longestConsecutive(case2))
 	})
 
+}
+
+func Test_BloomFilter(t *testing.T) {
+	println(BloomHash("sin_6017"))
+	fmt.Printf("%x\n", BloomHash("sin_6017"))
+
+	println(BloomFilter("sin_6017"))
+
+	fmt.Printf("%x\n", InsertInBloomFilter("sin_6017"))
 }

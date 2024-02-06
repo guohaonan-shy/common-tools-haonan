@@ -38,6 +38,12 @@ func Test_46(t *testing.T) {
 	})
 }
 
+func Test_47(t *testing.T) {
+	t.Run("permutation2", func(t *testing.T) {
+		assert.Equal(t, [][]int{{1, 1, 2}, {1, 2, 1}, {2, 1, 1}}, permuteUnique([]int{1, 1, 2}))
+	})
+}
+
 func Test_52(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		assert.Equal(t, 2, totalNQueens(4))

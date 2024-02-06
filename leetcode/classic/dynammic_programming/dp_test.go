@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+func Test_44(t *testing.T) {
+	t.Run("wildcard matching", func(t *testing.T) {
+		assert.Equal(t, true, isMatch("adceb", "*a*b"))
+	})
+}
+
 func Test_97(t *testing.T) {
 	t.Run("dp97", func(t *testing.T) {
 		assert.Equal(t, true, isInterleave("aabcc", "dbbca", "aadbbcbcac"))
