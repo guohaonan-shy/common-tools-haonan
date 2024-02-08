@@ -62,3 +62,20 @@ func Test_38(t *testing.T) {
 		assert.Equal(t, "1211", countAndSay(4))
 	})
 }
+
+func Test_60(t *testing.T) {
+	t.Run("get kth permutation", func(t *testing.T) {
+		assert.Equal(t, "213", getPermutation(3, 3))
+		assert.Equal(t, "213", getPermutation_standard(3, 3))
+	})
+
+	t.Run("get kth permutation", func(t *testing.T) {
+		assert.Equal(t, "2314", getPermutation(4, 9))
+		assert.Equal(t, "2314", getPermutation_standard(4, 9))
+	})
+
+	t.Run("get kth permutation", func(t *testing.T) {
+		assert.Equal(t, "123", getPermutation(3, 1))
+		assert.Equal(t, "123", getPermutation_standard(3, 1))
+	})
+}
