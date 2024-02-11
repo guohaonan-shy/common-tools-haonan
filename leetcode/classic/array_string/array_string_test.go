@@ -98,6 +98,24 @@ func Test_42(t *testing.T) {
 	})
 }
 
+func Test_65(t *testing.T) {
+	t.Run(".1", func(t *testing.T) {
+		assert.Equal(t, true, isNumber(".1"))
+	})
+
+	t.Run("4e+", func(t *testing.T) {
+		assert.Equal(t, false, isNumber("4e+"))
+	})
+
+	t.Run(".-4", func(t *testing.T) {
+		assert.Equal(t, false, isNumber(".-4"))
+	})
+
+	t.Run("+.8", func(t *testing.T) {
+		assert.Equal(t, true, isNumber("+.8"))
+	})
+}
+
 func Test_68(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []string{"This", "is", "an", "example", "of", "text", "justification."}
