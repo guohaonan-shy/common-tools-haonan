@@ -19,6 +19,14 @@ func Test_61(t *testing.T) {
 	})
 }
 
+func Test_82(t *testing.T) {
+	t.Run("82", func(t *testing.T) {
+		case1 := buildLinkedList([]int{1, 2, 3, 3, 4, 4, 5})
+		expected1 := buildLinkedList([]int{1, 2, 5})
+		assert.Equal(t, expected1, deleteDuplicates(case1))
+	})
+}
+
 func Test_146(t *testing.T) {
 	type testCases struct {
 		cmds   []string
