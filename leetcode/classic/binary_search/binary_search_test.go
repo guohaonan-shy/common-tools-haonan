@@ -64,3 +64,23 @@ func Test_4(t *testing.T) {
 		})
 	}
 }
+
+func Test_33(t *testing.T) {
+	t.Run("rotate search in distinct array", func(t *testing.T) {
+		assert.Equal(t, 4, rotateSearch_noDistinct([]int{4, 5, 6, 7, 0, 1, 2}, 0))
+	})
+
+	t.Run("can't find element", func(t *testing.T) {
+		assert.Equal(t, -1, rotateSearch_noDistinct([]int{4, 5, 6, 7, 0, 1, 2}, 3))
+	})
+
+	t.Run("can't find element", func(t *testing.T) {
+		assert.Equal(t, -1, rotateSearch_noDistinct([]int{1}, 3))
+	})
+}
+
+func Test_81(t *testing.T) {
+	t.Run("rotate search in duplicated array", func(t *testing.T) {
+		assert.Equal(t, true, searchII([]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1}, 2))
+	})
+}
