@@ -34,28 +34,6 @@ func Test_15(t *testing.T) {
 	})
 }
 
-func Test_84(t *testing.T) {
-	t.Run("case1", func(t *testing.T) {
-		case1 := []int{2, 1, 5, 6, 2, 3}
-		assert.Equal(t, 10, largestRectangleArea(case1))
-	})
-
-	t.Run("case2", func(t *testing.T) {
-		case2 := []int{2, 4}
-		assert.Equal(t, 4, largestRectangleArea(case2))
-	})
-
-	t.Run("case3", func(t *testing.T) {
-		case3 := []int{0, 0}
-		assert.Equal(t, 0, largestRectangleArea(case3))
-	})
-
-	t.Run("case4", func(t *testing.T) {
-		case4 := []int{4, 2, 0, 3, 2, 4, 3, 4}
-		assert.Equal(t, 10, largestRectangleArea(case4))
-	})
-}
-
 func Test_125(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := "A man, a plan, a canal: Panama"

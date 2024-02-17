@@ -1,4 +1,4 @@
-package two_pointer
+package stack
 
 func largestRectangleArea(heights []int) int {
 	idx := maxIdx(heights)
@@ -109,4 +109,18 @@ func largestRectangleArea_standard(heights []int) int {
 		maxVal = max(maxVal, (right[i]-left[i]-1)*heights[i])
 	}
 	return maxVal
+}
+
+func max(a, b int) int {
+	if a < b {
+		return b
+	}
+	return a
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
