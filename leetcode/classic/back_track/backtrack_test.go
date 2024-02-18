@@ -79,3 +79,10 @@ func Test_60(t *testing.T) {
 		assert.Equal(t, "123", getPermutation_standard(3, 1))
 	})
 }
+
+func Test_93(t *testing.T) {
+	t.Run("restore ip", func(t *testing.T) {
+		//_ = restoreIpAddresses("25525511135")
+		_ = restoreIpAddresses("101023")
+	})
+}
