@@ -5,7 +5,6 @@ func isMatch(s string, p string) bool {
 	for i := range dp {
 		dp[i] = make([]bool, len(p)+1)
 	}
-
 	dp[0][0] = true
 	for i := 0; i <= len(s); i++ {
 		for j := 1; j <= len(p); j++ {

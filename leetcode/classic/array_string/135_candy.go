@@ -40,3 +40,38 @@ func compare(a, b int) int {
 	}
 
 }
+
+/*
+now, we optimize the space complexity based on time complexity O(n)
+*/
+func candyV2(ratings []int) int {
+	pre, res := 1, 1
+	complement := 0
+	startOfDecr := 0
+	for i := 1; i < len(ratings); i++ {
+		// increase => pre+1
+		if ratings[i] >= ratings[i-1] {
+			startOfDecr = 0
+			if ratings[i] == ratings[i-1] {
+				pre = 1 // rating equals, this child just need to allocate one candy for basic requirements
+			} else {
+				pre += 1 // when rating strictly increases, this child needs to allocate for pre+1 candies
+			}
+			res += pre
+			complement = 0
+		} else {
+			// strictly decrease
+			if startOfDecr == 0 {
+				startOfDecr = pre // this value is used to check whether we need to complement one candy for the start of decreased child, or the end of increased child
+			}
+			complement += 1 // complement for previous elements in strictly decreasing order
+			res += complement
+			if startOfDecr == complement {
+				res += 1 // complement 1 for the start of decreased child
+				startOfDecr += 1
+			}
+			pre = 1
+		}
+	}
+	return res
+}

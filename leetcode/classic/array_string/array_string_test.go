@@ -214,6 +214,35 @@ func Test_134(t *testing.T) {
 	})
 }
 
+func Test_135(t *testing.T) {
+	t.Run("candyV1", func(t *testing.T) {
+		rating1 := []int{1, 0, 2}
+		assert.Equal(t, 5, candy(rating1))
+
+		rating2 := []int{1, 2, 2}
+		assert.Equal(t, 4, candy(rating2))
+	})
+	t.Run("candyV2", func(t *testing.T) {
+		rating1 := []int{1, 0, 2}
+		assert.Equal(t, 5, candyV2(rating1))
+
+		rating2 := []int{1, 2, 2}
+		assert.Equal(t, 4, candyV2(rating2))
+
+		rating3 := []int{1, 3, 2, 2, 1}
+		assert.Equal(t, 7, candyV2(rating3))
+
+		rating4 := []int{1, 2, 3, 2, 2, 1}
+		assert.Equal(t, 10, candyV2(rating4))
+
+		rating5 := []int{1, 2, 3, 3, 2, 2, 1}
+		assert.Equal(t, 12, candyV2(rating5))
+
+		rating6 := []int{1, 6, 10, 8, 7, 3, 2}
+		assert.Equal(t, 18, candyV2(rating6))
+	})
+}
+
 func Test_151(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := "the sky is blue"
