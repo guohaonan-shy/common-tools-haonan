@@ -35,12 +35,19 @@ func trap_stack(height []int) int {
 	for i := 0; i < len(height); i++ {
 
 		// len(stack) > 0 => has top of stack; height[stack[len(stack)-1]] < height[i] => bottom exists
+		/*
+			one question: why must strictly increment here ?
+			answer: not necessary, if we don't set strictly increment here, the stack is a strictly decreased; it's a question of left side or right side; no effect
+
+			left => decrease; right increase
+		*/
 		for len(stack) > 0 && height[i] > height[stack[len(stack)-1]] {
 			top := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
+			// no storage if no decreased order on left side of ith
 			if len(stack) == 0 {
 				break
-			} // no decreased order on ith
+			}
 			// the second smallest element in the decreased array
 			left := stack[len(stack)-1]
 			/*
