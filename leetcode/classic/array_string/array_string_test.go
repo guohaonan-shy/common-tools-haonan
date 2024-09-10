@@ -17,6 +17,12 @@ func Test_12(t *testing.T) {
 	t.Run("case3", func(t *testing.T) {
 		assert.Equal(t, "MCMXCIV", intToRoman(1994))
 	})
+
+	t.Run("v2 cases", func(t *testing.T) {
+		assert.Equal(t, "III", intToRomanV2(3))
+		assert.Equal(t, "LVIII", intToRomanV2(58))
+		assert.Equal(t, "MCMXCIV", intToRomanV2(1994))
+	})
 }
 
 func Test_13(t *testing.T) {

@@ -48,3 +48,33 @@ func intToRoman(num int) string {
 	}
 	return ans
 }
+
+var divList = []int{1000, 500, 100, 50, 10, 5, 1}
+
+func intToRomanV2(num int) string {
+	res := ""
+	val := 0
+
+	for i := 0; i < len(divList); i++ {
+		div := divList[i]
+
+		val, num = num/div, num%div
+
+		if val == 0 {
+			continue
+		}
+		// because the value of num cannot exceed 4000
+		if (div == 100 || div == 10 || div == 1) && val == 4 {
+			res += dict[div]
+			res += dict[divList[i-1]]
+		} else if val == 1 && (div == 500 || div == 50 || div == 5) { // 9 or 90 or 900
+			res += dict[divList[i+1]]
+			res += dict[divList[i-1]]
+			num = num % divList[i+1]
+			i++
+		} else {
+			res += strings.Repeat(dict[div], val)
+		}
+	}
+	return res
+}
