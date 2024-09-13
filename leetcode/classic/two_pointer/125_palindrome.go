@@ -4,29 +4,21 @@ func isPalindrome(s string) bool {
 	left, right := 0, len(s)-1
 	res := true
 	for left < right {
-		left_is_letter := isAlphaNumeric(rune(s[left]))
-		if !left_is_letter {
+		// find an alphanumeric byte; because non-alphanumeric byte will be removed, we don't need to compare them
+		if !isAlphaNumeric(s[left]) {
 			left++
 			continue
 		}
 
-		right_is_letter := isAlphaNumeric(rune(s[right]))
-		if !right_is_letter {
+		for !isAlphaNumeric(s[right]) {
 			right--
 			continue
 		}
 
-		left_element := s[left]
-		if s[left] >= 65 && s[left] <= 90 { // 大写字母的ASCII码
-			left_element = s[left] + 32
-		}
-
-		right_element := s[right]
-		if s[right] >= 65 && s[right] <= 90 {
-			right_element = s[right] + 32
-		}
-
-		if left_element == right_element {
+		// numeric number can be compared directly
+		left_element, right_element := s[left], s[right]
+		// here, there is a corner case: number 0 and character 'P'
+		if left_element == right_element || (left_element >= 65 && right_element >= 65 && (left_element-right_element == 32 || right_element-left_element == 32)) {
 			left++
 			right--
 		} else {
@@ -37,15 +29,24 @@ func isPalindrome(s string) bool {
 	return res
 }
 
-func isAlphaNumeric(s rune) bool {
+func isAlphaNumeric(s byte) bool {
+	/*
+		A-Z 的 ASCII码: 65 - 90
+	*/
 	if s >= 65 && s <= 90 {
 		return true
 	}
 
+	/*
+		a-z 的 ASCII码: 97 - 122
+	*/
 	if s >= 97 && s <= 122 {
 		return true
 	}
 
+	/*
+		48 ～ 57 是 0-9 的ASCII码
+	*/
 	if s >= 48 && s <= 57 { // 数字0-9的ASCII码
 		return true
 	}

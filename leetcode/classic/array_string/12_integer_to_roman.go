@@ -54,7 +54,6 @@ var divList = []int{1000, 500, 100, 50, 10, 5, 1}
 func intToRomanV2(num int) string {
 	res := ""
 	val := 0
-
 	for i := 0; i < len(divList); i++ {
 		div := divList[i]
 
