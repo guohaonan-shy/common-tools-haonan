@@ -55,24 +55,22 @@ func intToRomanV2(num int) string {
 	res := ""
 	val := 0
 	for i := 0; i < len(divList); i++ {
-		div := divList[i]
-
-		val, num = num/div, num%div
+		val, num = num/divList[i], num%divList[i]
 
 		if val == 0 {
 			continue
 		}
-		// because the value of num cannot exceed 4000
-		if (div == 100 || div == 10 || div == 1) && val == 4 {
-			res += dict[div]
-			res += dict[divList[i-1]]
-		} else if val == 1 && (div == 500 || div == 50 || div == 5) { // 9 or 90 or 900
-			res += dict[divList[i+1]]
-			res += dict[divList[i-1]]
-			num = num % divList[i+1]
-			i++
+
+		if val == 4 {
+			preElement := res[len(res)-1]
+			if preElement == 'D' || preElement == 'L' || preElement == 'V' {
+				res = res[:len(res)-1]
+				res += dict[divList[i]] + dict[divList[i-2]]
+			} else {
+				res += dict[divList[i]] + dict[divList[i-1]]
+			}
 		} else {
-			res += strings.Repeat(dict[div], val)
+			res += strings.Repeat(dict[divList[i]], val)
 		}
 	}
 	return res

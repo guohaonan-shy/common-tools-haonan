@@ -1,8 +1,9 @@
 package array_string
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_12(t *testing.T) {
@@ -87,6 +88,21 @@ func Test_28(t *testing.T) {
 	t.Run("case2", func(t *testing.T) {
 		haystack2, needle2 := "sadbutsad", "sad"
 		assert.Equal(t, 0, strStr(haystack2, needle2))
+	})
+	t.Run("case3", func(t *testing.T) {
+		haystack3, needle3 := "a", "a"
+		assert.Equal(t, 0, strStr(haystack3, needle3))
+	})
+
+	t.Run("v2 cases", func(t *testing.T) {
+		haystack1, needle1 := "mississippi", "issip"
+		assert.Equal(t, 4, strStrV2(haystack1, needle1))
+
+		haystack2, needle2 := "sadbutsad", "sad"
+		assert.Equal(t, 0, strStrV2(haystack2, needle2))
+
+		haystack3, needle3 := "a", "a"
+		assert.Equal(t, 0, strStrV2(haystack3, needle3))
 	})
 }
 

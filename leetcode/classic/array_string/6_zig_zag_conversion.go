@@ -17,3 +17,18 @@ func convert(s string, numRows int) string {
 
 	return strings.Join(temp, "")
 }
+
+func convertV2(s string, numRows int) string {
+	// numRows = 1 -> div = 0; extreme case we need to process specifically
+	if numRows == 1 {
+		return s
+	}
+	div := 2*numRows - 2
+
+	res := make([]string, numRows)
+	for i := range s {
+		idx := min(i%div, div-i%div)
+		res[idx] += string(s[i])
+	}
+	return strings.Join(res, "")
+}
