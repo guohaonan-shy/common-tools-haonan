@@ -28,3 +28,19 @@ func max(a, b int) int {
 	}
 	return b
 }
+
+func lengthOfLongestSubstringV2(s string) int {
+	left, right := 0, 0
+	maxLength := 0
+	subString := make(map[byte]struct{}, 0)
+	for ; right < len(s); right++ {
+		_, exist := subString[s[right]]
+		for ; left <= right && exist; left++ {
+			delete(subString, s[left])
+			_, exist = subString[s[right]]
+		}
+		subString[s[right]] = struct{}{}
+		maxLength = max(maxLength, right-left+1)
+	}
+	return maxLength
+}
