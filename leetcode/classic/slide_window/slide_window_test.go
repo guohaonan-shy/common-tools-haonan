@@ -40,6 +40,13 @@ func Test_30(t *testing.T) {
 		case3, words := "a", []string{"a"}
 		assert.Equal(t, []int{0}, findSubstring(case3, words))
 	})
+
+	t.Run("case4", func(t *testing.T) {
+		case4, words := "wordgoodgoodgoodbestword", []string{"word", "good", "best", "good"}
+		//assert.Equal(t, []int{8}, findSubstringV2(case4, words))
+
+		assert.Equal(t, []int{8}, findSubstringV2_refractor(case4, words))
+	})
 }
 
 func Test_209(t *testing.T) {

@@ -42,3 +42,46 @@ func findSubstring(s string, words []string) []int {
 	}
 	return res
 }
+
+/*
+	solution is right, but its' time complexity might be higher
+	in addition, with the copy of map, the space complexity might be higher
+*/
+
+func findSubstringV2(s string, words []string) []int {
+	res := make([]int, 0)
+	num, unit := len(words), len(words[0])
+	dict := make(map[string]int, len(words))
+	for _, word := range words {
+		dict[word] += 1
+	}
+	for i := 0; i <= len(s)-num*unit; i++ {
+		dictCopy := make(map[string]int, 0)
+		copymap(dict, dictCopy)
+		left, right := i, i+unit
+		word := s[left:right]
+		cnt, ok := dictCopy[word]
+		threshold := len(words)
+		for ; right <= len(s) && threshold > 0 && ok && cnt > 0; threshold-- {
+			dictCopy[word]--
+			if right == len(s) {
+				continue
+			}
+			left += unit
+			right += unit
+			word = s[left:right]
+			cnt, ok = dictCopy[word]
+		}
+
+		if threshold == 0 {
+			res = append(res, i)
+		}
+	}
+	return res
+}
+
+func copymap(src map[string]int, dest map[string]int) {
+	for key, value := range src {
+		dest[key] = value
+	}
+}
