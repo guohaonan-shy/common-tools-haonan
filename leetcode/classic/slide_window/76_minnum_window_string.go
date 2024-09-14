@@ -47,3 +47,49 @@ func minWindow(s string, t string) string {
 		return s[ansL : ansR+1]
 	}
 }
+
+func minWindowV2(s string, t string) string {
+	left, right := 0, 0
+	resL, resR := -1, -1
+	minLength := math.MaxInt32
+	dict := make(map[byte]int, 0)
+	for i := range t {
+		dict[t[i]] += 1
+	}
+	cnt := make(map[byte]int, 0)
+	diff := len(t)
+
+	res := ""
+
+	for ; right < len(s); right++ {
+		if _, ok := dict[s[right]]; !ok {
+			continue
+		}
+
+		cnt[s[right]]++
+		if cnt[s[right]] <= dict[s[right]] {
+			diff--
+		}
+
+		for ; diff == 0; left++ {
+			if _, ok := dict[s[left]]; !ok {
+				continue
+			}
+			if minLength > right-left+1 {
+				minLength = right - left + 1
+				resL, resR = left, right+1
+			}
+			cnt[s[left]]--
+			/*
+				corner case: cnt[byte] > dict[byte] => cnt[byte] = dict[byte]; this case doesn't produce diff
+			*/
+			if cnt[s[left]] < dict[s[left]] {
+				diff++
+			}
+		}
+	}
+	if resL != -1 {
+		res = s[resL:resR]
+	}
+	return res
+}

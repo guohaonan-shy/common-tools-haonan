@@ -43,9 +43,14 @@ func Test_30(t *testing.T) {
 
 	t.Run("case4", func(t *testing.T) {
 		case4, words := "wordgoodgoodgoodbestword", []string{"word", "good", "best", "good"}
-		//assert.Equal(t, []int{8}, findSubstringV2(case4, words))
+		assert.Equal(t, []int{8}, findSubstringV2(case4, words))
+	})
+}
 
-		assert.Equal(t, []int{8}, findSubstringV2_refractor(case4, words))
+func Test_76(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		s1, t1 := "ADOBECODEBANC", "ABC"
+		assert.Equal(t, "BANC", minWindowV2(s1, t1))
 	})
 }
 
