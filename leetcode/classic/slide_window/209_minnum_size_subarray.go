@@ -52,8 +52,11 @@ func min(a, b int) int {
 	return b
 }
 
+/*
+pay more attention to the movement of pointer, we have to guarantee the index element is valid.
+*/
 func minSubArrayLenV2(target int, nums []int) int {
-	minRes := len(nums)
+	minRes := len(nums) + 1
 	window := nums[0]
 	left, right := 0, 0 // 'left' is left side of the window, and 'right' is the right side of the window
 
@@ -72,8 +75,30 @@ func minSubArrayLenV2(target int, nums []int) int {
 			left++
 		}
 	}
-	if minRes == len(nums) {
+	if minRes == len(nums)+1 {
 		minRes = 0
 	}
 	return minRes
+}
+
+/*
+after sorting out the loop logic, we have to control one varation and then iterate based on the current value => no need to consider corner casr
+*/
+func minSubArrayV2_Refractor(target int, nums []int) int {
+	window := 0
+	left, right := 0, 0
+	minLength := len(nums)
+
+	for ; right < len(nums); right++ {
+		window += nums[right]
+		for ; left <= right && window >= target; left++ {
+			window -= nums[left]
+			minLength = min(minLength, right-left+1)
+		}
+	}
+
+	if left == 0 {
+		minLength = 0
+	}
+	return minLength
 }

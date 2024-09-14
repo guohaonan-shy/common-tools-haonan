@@ -66,6 +66,11 @@ func Test_209(t *testing.T) {
 		assert.Equal(t, 3, minSubArrayLen(target4, case4))
 		assert.Equal(t, 3, minSubArrayLenV2(target4, case4))
 	})
+
+	t.Run("corner case", func(t *testing.T) {
+		target5, case5 := 15, []int{1, 2, 3, 4, 5}
+		assert.Equal(t, 5, minSubArrayLenV2(target5, case5))
+	})
 }
 
 func Test_159(t *testing.T) {
