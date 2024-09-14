@@ -46,21 +46,25 @@ func Test_209(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		target1, case1 := 7, []int{2, 3, 1, 2, 4, 3}
 		assert.Equal(t, 2, minSubArrayLen(target1, case1))
+		assert.Equal(t, 2, minSubArrayLenV2(target1, case1))
 	})
 
 	t.Run("case2", func(t *testing.T) {
 		target2, case2 := 4, []int{1, 4, 4}
 		assert.Equal(t, 1, minSubArrayLen(target2, case2))
+		assert.Equal(t, 1, minSubArrayLenV2(target2, case2))
 	})
 
 	t.Run("case3", func(t *testing.T) {
 		target3, case3 := 11, []int{1, 1, 1, 1, 1, 1, 1, 1}
 		assert.Equal(t, 0, minSubArrayLen(target3, case3))
+		assert.Equal(t, 0, minSubArrayLenV2(target3, case3))
 	})
 
 	t.Run("wrong_case4", func(t *testing.T) {
 		target4, case4 := 11, []int{1, 2, 3, 4, 5}
 		assert.Equal(t, 3, minSubArrayLen(target4, case4))
+		assert.Equal(t, 3, minSubArrayLenV2(target4, case4))
 	})
 }
 

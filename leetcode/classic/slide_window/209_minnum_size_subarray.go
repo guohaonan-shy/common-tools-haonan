@@ -51,3 +51,29 @@ func min(a, b int) int {
 	}
 	return b
 }
+
+func minSubArrayLenV2(target int, nums []int) int {
+	minRes := len(nums)
+	window := nums[0]
+	left, right := 0, 0 // 'left' is left side of the window, and 'right' is the right side of the window
+
+	for left <= right && right < len(nums) {
+		if window < target {
+			if right+1 < len(nums) {
+				right++
+				window += nums[right] // keep right+1 in the right scope
+			} else {
+				// even though we scale down the left side of window, the sum of elements in window will be still lower than target
+				break
+			}
+		} else {
+			minRes = min(minRes, right-left+1)
+			window -= nums[left]
+			left++
+		}
+	}
+	if minRes == len(nums) {
+		minRes = 0
+	}
+	return minRes
+}
