@@ -85,3 +85,48 @@ func copymap(src map[string]int, dest map[string]int) {
 		dest[key] = value
 	}
 }
+
+func findSubstringV2_refractored(s string, words []string) []int {
+	res := []int{}
+	unit := len(words[0])
+	numOfWords := len(words)
+
+	for i := 0; i < unit && i <= len(s)-numOfWords*unit; i++ {
+		diff := make(map[string]int, 0)
+		for j := 1; j <= numOfWords; j++ {
+			word := s[i+(j-1)*unit : i+j*unit]
+			diff[word]++
+		}
+
+		for _, word := range words {
+			diff[word]--
+			if diff[word] == 0 {
+				delete(diff, word)
+			}
+		}
+
+		if len(diff) == 0 {
+			res = append(res, i)
+		}
+
+		for start := i + unit; start <= len(s)-numOfWords*unit; start += unit {
+			rightWord := s[start+(numOfWords-1)*unit : start+numOfWords*unit]
+			diff[rightWord]++
+			if diff[rightWord] == 0 {
+				delete(diff, rightWord)
+			}
+
+			leftWord := s[start-unit : start]
+			diff[leftWord]--
+			if diff[leftWord] == 0 {
+				delete(diff, leftWord)
+			}
+
+			if len(diff) == 0 {
+				res = append(res, start)
+			}
+		}
+	}
+	return res
+
+}
