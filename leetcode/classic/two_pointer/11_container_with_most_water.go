@@ -27,3 +27,21 @@ func min(a, b int) int {
 	}
 	return b
 }
+
+func maxAreaV2(height []int) int {
+	area := 0
+	left, right := 0, len(height)-1
+
+	for left < right {
+
+		width := right - left
+		area = max(area, width*min(height[left], height[right]))
+		// decide iterative direction of the pointer
+		if height[left] < height[right] {
+			left++
+		} else {
+			right--
+		}
+	}
+	return area
+}
