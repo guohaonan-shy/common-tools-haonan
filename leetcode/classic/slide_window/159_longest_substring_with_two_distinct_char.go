@@ -33,3 +33,24 @@ func lengthOfLongestSubstringTwoDistinct(s string) int {
 
 	return longest
 }
+
+func lengthOfLongestSubstringTwoDistinctV2(s string) int {
+	set := make(map[byte]int, 0)
+	left, right := 0, 0
+	maxLength := 0
+
+	for ; right < len(s); right++ { // regard right end as the iteration index
+		char := s[right]
+		set[char]++
+		for ; left <= right && len(set) > 2; left++ {
+			leftChar := s[left]
+			set[leftChar]--
+			if set[leftChar] == 0 {
+				delete(set, leftChar)
+			}
+		}
+
+		maxLength = max(maxLength, right-left+1)
+	}
+	return maxLength
+}
