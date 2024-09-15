@@ -64,3 +64,65 @@ func isValidSudoku(board [][]byte) bool {
 	return true
 
 }
+
+func isValidSudokuV2(board [][]byte) bool {
+	rowValid := make([]bool, len(board))
+	colValid := make([]bool, len(board[0]))
+	gridValid := make([][3]bool, 3)
+
+	for i, row := range board {
+		for j := range row {
+			// only the filled cells need to be validated,
+			if row[j] == '.' { // no need to validate
+				continue
+			}
+
+			if !rowValid[i] {
+				rowSet := make(map[byte]struct{}, 0)
+				for _, rowChar := range row {
+					if rowChar == '.' {
+						continue
+					}
+					if _, ok := rowSet[rowChar]; ok {
+						return false
+					}
+					rowSet[rowChar] = struct{}{}
+				}
+				rowValid[i] = true
+			}
+
+			if !colValid[j] {
+				columnSet := make(map[byte]struct{}, 0)
+				for _, rowElements := range board {
+					ele := rowElements[j]
+					if ele == '.' {
+						continue
+					}
+					if _, ok := columnSet[ele]; ok {
+						return false
+					}
+					columnSet[ele] = struct{}{}
+				}
+				colValid[j] = true
+			}
+
+			if !gridValid[i/3][j/3] {
+				boxI, boxJ := i/3, j/3
+				boxSet := make(map[byte]struct{}, 0)
+				for a := boxI * 3; a < (boxI+1)*3; a++ {
+					for b := boxJ * 3; b < (boxJ+1)*3; b++ {
+						if board[a][b] == '.' {
+							continue
+						}
+						if _, ok := boxSet[board[a][b]]; ok {
+							return false
+						}
+						boxSet[board[a][b]] = struct{}{}
+					}
+				}
+				gridValid[boxI][boxJ] = true
+			}
+		}
+	}
+	return true
+}
