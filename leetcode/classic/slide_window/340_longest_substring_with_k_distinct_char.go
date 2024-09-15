@@ -30,3 +30,25 @@ func lengthOfLongestSubstringKDistinct(s string, k int) int {
 	}
 	return longest
 }
+
+func lengthOfLongestSubstringKDistinctV2(s string, k int) int {
+	left, right := 0, 0
+	maxLength := 0
+	set := make(map[byte]int, 0)
+
+	for ; right < len(s); right++ {
+		rightChar := s[right]
+		set[rightChar]++
+
+		for ; left <= right && len(set) > k; left++ {
+			leftChar := s[left]
+			set[leftChar]--
+			if set[leftChar] == 0 {
+				delete(set, leftChar)
+			}
+		}
+
+		maxLength = max(maxLength, right-left+1)
+	}
+	return maxLength
+}

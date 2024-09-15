@@ -100,6 +100,8 @@ func Test_159(t *testing.T) {
 func Test_340(t *testing.T) {
 	t.Run("with k distinct", func(t *testing.T) {
 		assert.Equal(t, 3, lengthOfLongestSubstringKDistinct("eceba", 2))
+		assert.Equal(t, 3, lengthOfLongestSubstringKDistinctV2("eceba", 2))
+		assert.Equal(t, 2, lengthOfLongestSubstringKDistinctV2("aa", 1))
 	})
 
 }
