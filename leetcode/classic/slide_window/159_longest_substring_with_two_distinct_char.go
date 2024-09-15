@@ -42,10 +42,10 @@ func lengthOfLongestSubstringTwoDistinctV2(s string) int {
 	for ; right < len(s); right++ { // regard right end as the iteration index
 		char := s[right]
 		set[char]++
-		for ; left <= right && len(set) > 2; left++ {
+		for ; left <= right && len(set) > 2; left++ { // shrink the window to meet requirements if not
 			leftChar := s[left]
 			set[leftChar]--
-			if set[leftChar] == 0 {
+			if set[leftChar] == 0 { // this element has not been in the window => remove
 				delete(set, leftChar)
 			}
 		}
