@@ -35,20 +35,30 @@ func Test_146(t *testing.T) {
 	}
 
 	cases := []testCases{
+		//{
+		//	cmds:   []string{"LRUCache", "put", "get", "put", "get", "get"},
+		//	value:  [][]int{{1}, {2, 1}, {2}, {3, 2}, {2}, {3}},
+		//	output: []int{-1, -1, 1, -1, -1, 2},
+		//},
+		//{
+		//	cmds:   []string{"LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"},
+		//	value:  [][]int{{2}, {1, 1}, {2, 2}, {1}, {3, 3}, {2}, {4, 4}, {1}, {3}, {4}},
+		//	output: []int{-1, -1, -1, 1, -1, -1, -1, -1, 3, 4},
+		//},
+		//{
+		//	cmds:   []string{"LRUCache", "put", "put", "get", "put", "put"},
+		//	value:  [][]int{{2}, {2, 1}, {2, 2}, {2}, {1, 1}, {4, 1}},
+		//	output: []int{-1, -1, -1, 2, -1, -1},
+		//},
+		//{
+		//	cmds:   []string{"LRUCache", "put", "put", "put", "put", "get", "get"},
+		//	value:  [][]int{{2}, {2, 1}, {1, 1}, {2, 3}, {4, 1}, {1}, {2}},
+		//	output: []int{-1, -1, -1, -1, -1, -1, 3},
+		//},
 		{
-			cmds:   []string{"LRUCache", "put", "get", "put", "get", "get"},
-			value:  [][]int{{1}, {2, 1}, {2}, {3, 2}, {2}, {3}},
-			output: []int{-1, -1, 1, -1, -1, 2},
-		},
-		{
-			cmds:   []string{"LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"},
-			value:  [][]int{{2}, {1, 1}, {2, 2}, {1}, {3, 3}, {2}, {4, 4}, {1}, {3}, {4}},
-			output: []int{-1, -1, -1, 1, -1, -1, -1, -1, 3, 4},
-		},
-		{
-			cmds:   []string{"LRUCache", "put", "put", "get", "put", "put"},
-			value:  [][]int{{2}, {2, 1}, {2, 2}, {2}, {1, 1}, {4, 1}},
-			output: []int{-1, -1, -1, 2, -1, -1},
+			cmds:   []string{"LRUCache", "get", "put", "get", "put", "put", "get", "get"},
+			value:  [][]int{{2}, {2}, {2, 6}, {1}, {1, 5}, {1, 2}, {1}, {2}},
+			output: []int{-1, -1, -1, -1, -1, -1, 2, 6},
 		},
 	}
 
@@ -77,4 +87,5 @@ func Test_146(t *testing.T) {
 		})
 
 	}
+
 }

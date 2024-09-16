@@ -1,109 +1,133 @@
 package linked_list
 
-type DoubleLinkedNode struct {
-	Key  int
-	Val  int
-	Prev *DoubleLinkedNode
-	Next *DoubleLinkedNode
+type LinkedNode struct {
+	Key, Val int
+	Next     *LinkedNode
+	Prev     *LinkedNode
 }
 
-type LRUCache struct {
-	Capacity int
-	Length   int
-	Head     *DoubleLinkedNode
-	Tail     *DoubleLinkedNode
-	Dict     map[int]*DoubleLinkedNode
-}
-
-func Constructor(capacity int) LRUCache {
-	dummy := &DoubleLinkedNode{
-		Key:  -1,
-		Val:  -1,
-		Prev: nil,
-		Next: nil,
-	}
-	return LRUCache{
-		Capacity: capacity,
-		Length:   0,
-		Dict:     make(map[int]*DoubleLinkedNode, capacity),
-		Head:     dummy,
-		Tail:     dummy,
+func NewLinkedNode(key, val int) *LinkedNode {
+	return &LinkedNode{
+		Key: key,
+		Val: val,
 	}
 }
 
-func (this *LRUCache) Get(key int) int {
-	if target, ok := this.Dict[key]; !ok {
+func (node *LinkedNode) tail() *LinkedNode {
+	cur := node
+	for ; cur.Next != nil; cur = cur.Next {
+	}
+	return cur
+}
+
+func (node *LinkedNode) search(key int) *LinkedNode {
+	cur := node
+	for ; cur != nil && cur.Key != key; cur = cur.Next {
+
+	}
+	return cur
+}
+
+type LRUCacheIns struct {
+	Capacity   int
+	data       map[int]int
+	linkedList *LinkedNode
+}
+
+func Constructor(capacity int) *LRUCacheIns {
+	return &LRUCacheIns{
+		Capacity:   capacity,
+		data:       make(map[int]int, capacity),
+		linkedList: nil,
+	}
+}
+
+func (lru *LRUCacheIns) Get(key int) int {
+
+	val, ok := lru.data[key]
+	if !ok {
 		return -1
-	} else {
-		targetVal := target.Val
-		// update queue
-		if this.Head.Next == target { // get head, no need for move
-			return targetVal
-		}
-
-		// 至少两个节点
-		target.Prev.Next = target.Next
-
-		if target == this.Tail { // update tail，更新tail位置
-			this.Tail = this.Tail.Prev
-		} else {
-			target.Next.Prev = target.Prev
-		}
-		target.Prev = this.Head
-		target.Next = this.Head.Next
-
-		this.Head.Next.Prev = target
-		this.Head.Next = target
-		return targetVal
 	}
+
+	// move the retrieved element into the head
+	target := lru.linkedList.search(key)
+	prev, next := target.Prev, target.Next
+	// 1. delete the connection
+	if prev != nil {
+		prev.Next = next
+	}
+	if next != nil {
+		next.Prev = prev
+	}
+	// 2. change the connection of target to head
+	if len(lru.data) == 1 {
+		return val
+	}
+
+	second := lru.linkedList
+	target.Prev = second.Prev
+	target.Next = second
+	second.Prev = target
+	lru.linkedList = target
+	return val
 }
 
-func (this *LRUCache) Put(key int, value int) {
-	if target, ok := this.Dict[key]; !ok {
-		node := &DoubleLinkedNode{
-			Key:  key,
-			Val:  value,
-			Prev: this.Head,
-			Next: this.Head.Next,
-		}
-
-		// 非第一次插入和第一次插入
-		if this.Length > 0 { // this.head.next != nil
-			this.Head.Next.Prev = node
-		} else {
-			this.Tail = node
-		}
-		this.Head.Next = node
-		this.Dict[key] = node
-		// 插入完成
-
-		// 考虑evict
-		if this.Length == this.Capacity {
-			deleteKey := this.Tail.Key
-			this.Tail = this.Tail.Prev
-			this.Tail.Next = nil
-			delete(this.Dict, deleteKey)
-		} else {
-			this.Length++
-		}
-	} else { // 三种情况，更新队首，队尾，对中间
-		target.Val = value
-		if this.Head.Next == target { // update head
-			return
-		}
-
-		// 至少两个节点
-		target.Prev.Next = target.Next
-
-		if target == this.Tail { // update tail，更新tail位置
-			this.Tail = this.Tail.Prev
-		} else {
-			target.Next.Prev = target.Prev
-		}
-		target.Prev = this.Head
-		target.Next = this.Head.Next
-
-		this.Head.Next.Prev = target
-		this.Head.Next = target
+func (lru *LRUCacheIns) Put(key, val int) {
+	// no elements:
+	// 1. init
+	// 2. after a series of operations, there is no data currently.
+	if lru.linkedList == nil {
+		lru.linkedList = NewLinkedNode(key, val)
+		lru.data[key] = val
+		return
 	}
+
+	// if key is in the data, we don't need to remove the tail node
+	if _, ok := lru.data[key]; ok {
+		target := lru.linkedList.search(key)
+		target.Val = val
+		prev, next := target.Prev, target.Next
+		if prev != nil {
+			prev.Next = nil
+		}
+		if next != nil {
+			next.Prev = nil
+		}
+
+		second := lru.linkedList
+		if second != target { // not head, avoid self reference
+			target.Next = second
+			second.Prev = target
+			lru.linkedList = target
+		}
+		lru.data[key] = val
+		return
+	}
+
+	// insert a kv that doesn't in the list
+	// insert element in the head of list,
+	// but there is a corner case: we need to remove the tail if reach the capacity
+	currentLength := len(lru.data)
+	if currentLength == lru.Capacity { // need to remove tail
+		//
+		tail := lru.linkedList.tail() // previous node become the tail, o(n)
+		delete(lru.data, tail.Key)
+		preTail := tail.Prev
+		if preTail != nil {
+			preTail.Next = nil
+		} else {
+			// capacity == 1
+			lru.linkedList = nil
+		}
+		tail.Prev = nil
+	}
+	insertedNode := NewLinkedNode(key, val)
+	secondNode := lru.linkedList
+	insertedNode.Next = secondNode
+	if secondNode != nil {
+		secondNode.Prev = insertedNode
+	}
+	lru.data[key] = val
+	lru.linkedList = insertedNode
+	return
 }
