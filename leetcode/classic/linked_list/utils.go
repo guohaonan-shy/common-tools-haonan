@@ -18,3 +18,12 @@ func buildLinkedList(vals []int) *ListNode {
 	}
 	return dummy.Next
 }
+
+func convertToList(node *ListNode) []int {
+	cur := node
+	res := make([]int, 0)
+	for ; cur != nil; cur = cur.Next {
+		res = append(res, cur.Val)
+	}
+	return res
+}

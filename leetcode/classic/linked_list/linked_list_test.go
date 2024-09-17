@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func Test_2(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		l1 := buildLinkedList([]int{2, 4, 3})
+		l2 := buildLinkedList([]int{5, 6, 4})
+
+		sum1 := addTwoNumber(l1, l2)
+		assert.Equal(t, []int{7, 0, 8}, convertToList(sum1))
+	})
+}
+
 func Test_61(t *testing.T) {
 	t.Run("rotate_list", func(t *testing.T) {
 		case1 := buildLinkedList([]int{1, 2, 3, 4, 5})
