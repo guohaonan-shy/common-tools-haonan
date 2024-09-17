@@ -13,7 +13,7 @@ func reverseKGroup(head *ListNode, k int) *ListNode {
 
 		if cnt == k {
 			temp := end.Next
-			newHead := reverse(cur, end.Next)
+			newHead := reverse(cur, end)
 			cnt = 1
 			pre.Next = newHead
 			pre, cur = cur, temp
@@ -43,5 +43,6 @@ func reverse(head *ListNode, end *ListNode) *ListNode {
 		pre = cur
 		cur = temp
 	}
-	return pre
+	end.Next = pre
+	return end
 }

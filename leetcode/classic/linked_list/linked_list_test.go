@@ -1,8 +1,9 @@
 package linked_list
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_2(t *testing.T) {
@@ -12,6 +13,16 @@ func Test_2(t *testing.T) {
 
 		sum1 := addTwoNumber(l1, l2)
 		assert.Equal(t, []int{7, 0, 8}, convertToList(sum1))
+	})
+}
+
+func Test_25(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		l1 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		res1 := reverseKGroup(l1, 2)
+
+		list1 := convertToList(res1)
+		assert.Equal(t, []int{2, 1, 4, 3, 5}, list1)
 	})
 }
 
