@@ -83,3 +83,51 @@ func isHappy(n int) bool {
 		}
 	}
 }
+
+func groupAnagrams_v2_sorted(strs []string) [][]string {
+	set := make(map[string][]string, 0)
+
+	for _, s := range strs {
+
+		bytes := []byte(s)
+
+		sort.Slice(bytes, func(i, j int) bool {
+			return bytes[i] < bytes[j]
+		})
+
+		if _, ok := set[string(bytes)]; ok {
+			set[string(bytes)] = append(set[string(bytes)], s)
+		} else {
+			set[string(bytes)] = []string{s}
+		}
+	}
+
+	res := make([][]string, 0)
+	for _, val := range set {
+		res = append(res, val)
+	}
+	return res
+}
+
+func groupAnagrams_v2_compared(strs []string) [][]string {
+	set := make(map[[26]int][]string, 0)
+	for _, s := range strs {
+		cnts := [26]int{}
+
+		for i := range s {
+			cnts[s[i]-'a']++
+		}
+
+		if _, ok := set[cnts]; ok {
+			set[cnts] = append(set[cnts], s)
+		} else {
+			set[cnts] = []string{s}
+		}
+	}
+
+	res := make([][]string, 0)
+	for _, values := range set {
+		res = append(res, values)
+	}
+	return res
+}
