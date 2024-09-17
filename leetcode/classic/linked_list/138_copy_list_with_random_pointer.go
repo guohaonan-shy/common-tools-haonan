@@ -6,8 +6,10 @@ type NodeWithRandomPointer struct {
 	Random *NodeWithRandomPointer
 }
 
+var mapping = map[*NodeWithRandomPointer]*NodeWithRandomPointer{}
+
 func copyRandomList(head *NodeWithRandomPointer) *NodeWithRandomPointer {
-	copyHead, mapping := deepcopyList(head, map[*NodeWithRandomPointer]*NodeWithRandomPointer{})
+	copyHead := deepcopyList(head)
 	p1, p2 := head, copyHead
 	for p1 != nil && p2 != nil {
 		random := mapping[p1.Random]
@@ -18,15 +20,15 @@ func copyRandomList(head *NodeWithRandomPointer) *NodeWithRandomPointer {
 	return copyHead
 }
 
-func deepcopyList(node *NodeWithRandomPointer, mapping map[*NodeWithRandomPointer]*NodeWithRandomPointer) (*NodeWithRandomPointer, map[*NodeWithRandomPointer]*NodeWithRandomPointer) {
+func deepcopyList(node *NodeWithRandomPointer) *NodeWithRandomPointer {
 	copyNode := &NodeWithRandomPointer{
 		Val: node.Val,
 	}
 	mapping[node] = copyNode
 	if node == nil {
-		return nil, mapping
+		return nil
 	}
 
-	copyNode.Next, mapping = deepcopyList(node.Next, mapping)
-	return copyNode, mapping
+	copyNode.Next = deepcopyList(node.Next)
+	return copyNode
 }
