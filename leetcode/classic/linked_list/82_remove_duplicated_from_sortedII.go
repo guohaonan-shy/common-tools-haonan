@@ -62,5 +62,8 @@ func deleteDuplicatesV2(head *ListNode) *ListNode {
 			}
 		}
 	}
+	if cur.Next != nil { // cur ~ end are duplicated
+		pre.Next = nil
+	}
 	return dummy.Next
 }
