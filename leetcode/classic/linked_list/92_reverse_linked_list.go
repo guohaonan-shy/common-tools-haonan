@@ -1,35 +1,36 @@
 package linked_list
 
+/*
+As for reverse, we need to know the pre node of left and the next node of right.
+In addition, we have to use the pre node of left and left node to start reverse
+*/
 func reverseBetween(head *ListNode, left int, right int) *ListNode {
-	dummy := &ListNode{
-		Val:  -501,
-		Next: head,
+	preLeft, l := (*ListNode)(nil), head
+	for i := 1; i < left; i++ {
+		preLeft = l
+		l = l.Next
 	}
-	pre, cur := dummy, head
-	leftNode, rightNode := &ListNode{}, &ListNode{}
-	preLeft := &ListNode{}
-	// find preLeft, left and right
-	// [5,3]
+	r, rightNext := head, head.Next
+	// because right <= length(linked-list), rightNext is always non-nil
 	for i := 1; i < right; i++ {
-		cur = cur.Next
-		pre = pre.Next
-		if i == left-1 { // => same as i < left
-			leftNode = cur
-			preLeft = pre
-		}
+		r = r.Next
+		rightNext = rightNext.Next
 	}
-	rightNode = cur
-	//
-	cur = leftNode.Next
-	pre = leftNode
-	rightNext := rightNode.Next
+	// do the reverse
+	pre, cur := (*ListNode)(nil), l
 	for cur != rightNext {
-		next := cur.Next
+		temp := cur.Next // Can cur be nil ? - only rightNext is nil, cur is nil.
 		cur.Next = pre
 		pre = cur
-		cur = next
+		cur = temp
 	}
-	preLeft.Next = rightNode
-	leftNode.Next = rightNext
-	return dummy.Next
+
+	if preLeft == nil {
+		head = r
+		l.Next = rightNext
+	} else {
+		preLeft.Next = r
+		l.Next = rightNext
+	}
+	return head
 }

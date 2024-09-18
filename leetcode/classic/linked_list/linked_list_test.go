@@ -48,6 +48,32 @@ func Test_82(t *testing.T) {
 	})
 }
 
+func Test_92(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		left, right := 2, 4
+		assert.Equal(t, []int{1, 4, 3, 2, 5}, convertToList(reverseBetween(case1, left, right)))
+	})
+
+	t.Run("extreme corner case1", func(t *testing.T) {
+		case2 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		left, right := 2, 5
+		assert.Equal(t, []int{1, 5, 4, 3, 2}, convertToList(reverseBetween(case2, left, right)))
+	})
+
+	t.Run("extreme corner case2", func(t *testing.T) {
+		case3 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		left, right := 1, 5
+		assert.Equal(t, []int{5, 4, 3, 2, 1}, convertToList(reverseBetween(case3, left, right)))
+	})
+
+	t.Run("extreme corner case3", func(t *testing.T) {
+		case3 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		left, right := 5, 5
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, convertToList(reverseBetween(case3, left, right)))
+	})
+}
+
 func Test_146(t *testing.T) {
 	type testCases struct {
 		cmds   []string
