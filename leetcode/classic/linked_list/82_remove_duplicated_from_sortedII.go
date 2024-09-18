@@ -21,7 +21,7 @@ func deleteDuplicates(head *ListNode) *ListNode {
 
 			pre.Next = fast
 			slow = fast
-			if fast != nil {
+			if fast != nil { // this solution has to guarantee that fast is not equal with slow
 				fast = fast.Next
 			}
 		} else {

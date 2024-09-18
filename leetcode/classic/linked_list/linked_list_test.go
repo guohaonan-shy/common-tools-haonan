@@ -46,6 +46,24 @@ func Test_61(t *testing.T) {
 		expected2 := buildLinkedList([]int{2, 0, 1})
 		assert.Equal(t, expected2, rotateRight(case2, 4))
 	})
+
+	t.Run("rotate_list v2", func(t *testing.T) {
+		case1 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		expected1 := buildLinkedList([]int{4, 5, 1, 2, 3})
+		assert.Equal(t, expected1, rotateRightV2(case1, 2))
+	})
+
+	t.Run("k > length v2", func(t *testing.T) {
+		case2 := buildLinkedList([]int{0, 1, 2})
+		expected2 := buildLinkedList([]int{2, 0, 1})
+		assert.Equal(t, expected2, rotateRightV2(case2, 4))
+	})
+
+	t.Run("k == length v2", func(t *testing.T) {
+		case3 := buildLinkedList([]int{0, 1, 2})
+		expected3 := buildLinkedList([]int{0, 1, 2})
+		assert.Equal(t, expected3, rotateRightV2(case3, 3))
+	})
 }
 
 func Test_82(t *testing.T) {
