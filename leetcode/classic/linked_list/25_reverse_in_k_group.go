@@ -46,3 +46,36 @@ func reverse(head *ListNode, end *ListNode) *ListNode {
 	end.Next = pre
 	return end
 }
+
+func reverseKGroupV2(head *ListNode, k int) *ListNode {
+
+	if head == nil {
+		return head
+	}
+
+	var (
+		cnt  = 1
+		pre  *ListNode
+		cur  = head
+		tail = head
+	)
+
+	for ; cnt < k && tail != nil; cnt++ {
+		tail = tail.Next
+	}
+
+	if tail == nil || cnt < k {
+		return head
+	}
+
+	newHead := reverseKGroup(tail.Next, k)
+
+	for pre != tail {
+		temp := cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = temp
+	}
+	head.Next = newHead
+	return pre
+}
