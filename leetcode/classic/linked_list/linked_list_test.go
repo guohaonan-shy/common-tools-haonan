@@ -54,6 +54,24 @@ func Test_82(t *testing.T) {
 		expected1 := buildLinkedList([]int{1, 2, 5})
 		assert.Equal(t, expected1, deleteDuplicates(case1))
 	})
+
+	t.Run("82 v2 case1", func(t *testing.T) {
+		case1 := buildLinkedList([]int{1, 2, 3, 3, 4, 4, 5})
+		expected1 := buildLinkedList([]int{1, 2, 5})
+		assert.Equal(t, expected1, deleteDuplicatesV2(case1))
+	})
+
+	t.Run("82 v2 case2", func(t *testing.T) {
+		case2 := buildLinkedList([]int{1, 1, 1, 2, 3})
+		expected2 := buildLinkedList([]int{2, 3})
+		assert.Equal(t, expected2, deleteDuplicatesV2(case2))
+	})
+
+	t.Run("82 v2 case3", func(t *testing.T) {
+		case3 := buildLinkedList([]int{1, 1})
+		expected3 := buildLinkedList([]int{})
+		assert.Equal(t, expected3, deleteDuplicatesV2(case3))
+	})
 }
 
 func Test_92(t *testing.T) {
