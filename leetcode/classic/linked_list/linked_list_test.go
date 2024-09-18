@@ -19,10 +19,18 @@ func Test_2(t *testing.T) {
 func Test_25(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		l1 := buildLinkedList([]int{1, 2, 3, 4, 5})
-		res1 := reverseKGroup(l1, 2)
+		res1 := reverseKGroupV2(l1, 2)
 
 		list1 := convertToList(res1)
 		assert.Equal(t, []int{2, 1, 4, 3, 5}, list1)
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		l2 := buildLinkedList([]int{1, 2, 3, 4, 5})
+		res1 := reverseKGroupV2(l2, 1)
+
+		list1 := convertToList(res1)
+		assert.Equal(t, []int{1, 2, 3, 4, 5}, list1)
 	})
 }
 

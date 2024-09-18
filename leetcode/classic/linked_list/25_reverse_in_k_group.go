@@ -48,34 +48,26 @@ func reverse(head *ListNode, end *ListNode) *ListNode {
 }
 
 func reverseKGroupV2(head *ListNode, k int) *ListNode {
+	end := head
+	for i := 1; i < k && end != nil; i++ {
+		end = end.Next
+	}
 
-	if head == nil {
+	if end == nil {
 		return head
 	}
 
-	var (
-		cnt  = 1
-		pre  *ListNode
-		cur  = head
-		tail = head
-	)
+	newHead := end.Next // store the next iteration head before reverse, or we will stay in loop
+	pre, cur := (*ListNode)(nil), head
 
-	for ; cnt < k && tail != nil; cnt++ {
-		tail = tail.Next
-	}
-
-	if tail == nil || cnt < k {
-		return head
-	}
-
-	newHead := reverseKGroup(tail.Next, k)
-
-	for pre != tail {
+	for pre != end {
 		temp := cur.Next
 		cur.Next = pre
 		pre = cur
 		cur = temp
 	}
-	head.Next = newHead
-	return pre
+
+	next := reverseKGroupV2(newHead, k)
+	head.Next = next
+	return end
 }
