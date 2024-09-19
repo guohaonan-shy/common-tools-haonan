@@ -46,24 +46,42 @@ func deleteDuplicatesV2(head *ListNode) *ListNode {
 		Next: head,
 	}
 	pre := dummy
-	cur, next := head, head
+	cur, next := head, head.Next
 
 	for next != nil {
 		if cur.Val == next.Val {
-			next = next.Next
-		} else {
-			if cur.Next == next {
-				cur = cur.Next
+			// find the first value that is greater than cur.val
+			for next != nil && next.Val == cur.Val {
 				next = next.Next
-				pre = pre.Next
-			} else {
-				pre.Next = next
-				cur = next
 			}
+			// next might be nil;
+			// if next is not nil, cur must not be nil
+			pre.Next = next
+			cur = next
+			if next != nil {
+				next = next.Next
+			}
+		} else {
+			cur = cur.Next
+			next = next.Next
+			pre = pre.Next
 		}
+
+		//if cur.Val == next.Val {
+		//	next = next.Next
+		//} else {
+		//	if cur.Next == next {
+		//		cur = cur.Next
+		//		next = next.Next
+		//		pre = pre.Next
+		//	} else {
+		//		pre.Next = next
+		//		cur = next
+		//	}
+		//}
 	}
-	if cur.Next != nil { // cur ~ end are duplicated
-		pre.Next = nil
-	}
+	//if cur.Next != nil { // cur ~ end are duplicated
+	//	pre.Next = nil
+	//}
 	return dummy.Next
 }
