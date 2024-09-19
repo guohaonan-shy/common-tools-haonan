@@ -32,6 +32,7 @@ type LRUCacheIns struct {
 	Capacity   int
 	data       map[int]int
 	linkedList *LinkedNode
+	tail       *LinkedNode
 }
 
 func Constructor(capacity int) *LRUCacheIns {
@@ -44,6 +45,7 @@ func Constructor(capacity int) *LRUCacheIns {
 		Capacity:   capacity,
 		data:       make(map[int]int, capacity),
 		linkedList: dummyHead,
+		tail:       dummyTail,
 	}
 }
 
@@ -109,7 +111,7 @@ func (lru *LRUCacheIns) Put(key, val int) {
 	// but there is a corner case: we need to remove the tail if reach the capacity
 
 	if lru.Capacity == len(lru.data) {
-		tail := lru.linkedList.tail()
+		tail := lru.tail.Prev
 
 		prev, next := tail.Prev, tail.Next
 		prev.Next = next
