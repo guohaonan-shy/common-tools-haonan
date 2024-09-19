@@ -30,3 +30,30 @@ func indexByValue(list []int, val int) int {
 	}
 	return -1
 }
+
+func buildTreeV2(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 {
+		return nil
+	}
+	rootVal := preorder[0]
+
+	// find the index of root in inorder array
+	idx := -1
+	for i, value := range inorder {
+		if value == rootVal {
+			idx = i
+			break
+		}
+	}
+
+	leftCnt := idx
+
+	left := buildTreeV2(preorder[1:1+leftCnt], inorder[0:idx])
+	right := buildTreeV2(preorder[1+leftCnt:], inorder[idx+1:])
+
+	return &TreeNode{
+		Val:   rootVal,
+		Left:  left,
+		Right: right,
+	}
+}
