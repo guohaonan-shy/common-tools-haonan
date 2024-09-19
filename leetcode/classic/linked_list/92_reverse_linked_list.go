@@ -5,9 +5,13 @@ As for reverse, we need to know the pre node of left and the next node of right.
 In addition, we have to use the pre node of left and left node to start reverse
 */
 func reverseBetween(head *ListNode, left int, right int) *ListNode {
-	preLeft, l := (*ListNode)(nil), head
+	dummy := &ListNode{
+		Val:  -501,
+		Next: head,
+	}
+	preLeft, l := dummy, head
 	for i := 1; i < left; i++ {
-		preLeft = l
+		preLeft = preLeft.Next
 		l = l.Next
 	}
 	r, rightNext := head, head.Next
@@ -18,19 +22,14 @@ func reverseBetween(head *ListNode, left int, right int) *ListNode {
 	}
 	// do the reverse
 	pre, cur := (*ListNode)(nil), l
-	for cur != rightNext {
+	for pre != r {
 		temp := cur.Next // Can cur be nil ? - only rightNext is nil, cur is nil.
 		cur.Next = pre
 		pre = cur
 		cur = temp
 	}
 
-	if preLeft == nil {
-		head = r
-		l.Next = rightNext
-	} else {
-		preLeft.Next = r
-		l.Next = rightNext
-	}
-	return head
+	preLeft.Next = r
+	l.Next = rightNext
+	return dummy.Next
 }
