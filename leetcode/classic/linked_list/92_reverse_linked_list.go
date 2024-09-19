@@ -10,15 +10,15 @@ func reverseBetween(head *ListNode, left int, right int) *ListNode {
 		Next: head,
 	}
 	preLeft, l := dummy, head
-	for i := 1; i < left; i++ {
-		preLeft = preLeft.Next
-		l = l.Next
-	}
 	r, rightNext := head, head.Next
 	// because right <= length(linked-list), rightNext is always non-nil
 	for i := 1; i < right; i++ {
 		r = r.Next
 		rightNext = rightNext.Next
+		if i < left {
+			preLeft = preLeft.Next
+			l = l.Next
+		}
 	}
 	// do the reverse
 	pre, cur := (*ListNode)(nil), l
