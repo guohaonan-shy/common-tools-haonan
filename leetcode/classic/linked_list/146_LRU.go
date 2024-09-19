@@ -30,7 +30,7 @@ func (node *LinkedNode) search(key int) *LinkedNode {
 
 type LRUCacheIns struct {
 	Capacity   int
-	data       map[int]int
+	data       map[int]*LinkedNode
 	linkedList *LinkedNode
 	tail       *LinkedNode
 }
@@ -43,9 +43,9 @@ func Constructor(capacity int) *LRUCacheIns {
 
 	return &LRUCacheIns{
 		Capacity:   capacity,
-		data:       make(map[int]int, capacity),
+		data:       make(map[int]*LinkedNode, capacity),
 		linkedList: dummyHead,
-		tail:       dummyTail,
+		tail:       dummyTail, // optimize the operation to find tail from 0(N) to O(1), not obvious
 	}
 }
 
@@ -54,13 +54,13 @@ Get() needs to move the retrieved kv node into the head of linked list
 */
 func (lru *LRUCacheIns) Get(key int) int {
 
-	val, ok := lru.data[key]
+	target, ok := lru.data[key]
 	if !ok {
 		return -1
 	}
 
 	// move the retrieved element into the head
-	target := lru.linkedList.search(key)
+	//target := lru.data[key]
 	prev, next := target.Prev, target.Next
 	// because of the existence of two dummy nodes, target.prev && target.next must be non-nil
 	// 1. delete the connection
@@ -74,7 +74,7 @@ func (lru *LRUCacheIns) Get(key int) int {
 
 	lru.linkedList.Next = target
 	target.Prev = lru.linkedList
-	return val
+	return target.Val
 }
 
 /*
@@ -88,8 +88,8 @@ func (lru *LRUCacheIns) Put(key, val int) {
 	// 2. after a series of operations, there is no data currently
 
 	// if key is in the data, we don't need to remove the tail node => just insert to the head
-	if _, ok := lru.data[key]; ok {
-		target := lru.linkedList.search(key)
+	if target, ok := lru.data[key]; ok {
+		//target := lru.linkedList.search(key)
 		target.Val = val
 		prev, next := target.Prev, target.Next
 
@@ -102,7 +102,7 @@ func (lru *LRUCacheIns) Put(key, val int) {
 		oldHead.Prev = target
 		target.Prev = lru.linkedList
 
-		lru.data[key] = val
+		//lru.data[key] = val
 		return
 	}
 
@@ -131,6 +131,6 @@ func (lru *LRUCacheIns) Put(key, val int) {
 	oldHead.Prev = insertedNode
 	insertedNode.Prev = lru.linkedList
 
-	lru.data[key] = val
+	lru.data[key] = insertedNode
 	return
 }
