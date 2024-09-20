@@ -39,3 +39,33 @@ func connectHandle(node *Node) {
 	}
 	last = node
 }
+
+func connectV2(root *Node) *Node {
+	if root == nil {
+		return root
+	}
+	queue := make([]*Node, 0)
+	nextQueue := make([]*Node, 0)
+	queue = append(queue, root)
+	for len(queue) > 0 {
+		for i := 0; i < len(queue); i++ {
+			if i == len(queue)-1 {
+				queue[i].Next = nil
+			} else {
+				queue[i].Next = queue[i+1]
+			}
+
+			if queue[i].Left != nil {
+				nextQueue = append(nextQueue, queue[i].Left)
+			}
+
+			if queue[i].Right != nil {
+				nextQueue = append(nextQueue, queue[i].Right)
+			}
+		}
+
+		queue = nextQueue
+		nextQueue = []*Node{}
+	}
+	return root
+}

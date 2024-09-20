@@ -98,6 +98,7 @@ func Test_114(t *testing.T) {
 		input := "[1,2,5,3,4,null,6]"
 		tree := treeify(input)
 		flatten(tree)
+		flattenV2(tree)
 		print("done")
 	})
 }

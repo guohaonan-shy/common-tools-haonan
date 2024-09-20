@@ -28,3 +28,25 @@ func flattenHandle(root *TreeNode) *TreeNode {
 
 	return root
 }
+
+func flattenV2(root *TreeNode) {
+	flattenProcessor(root)
+}
+
+func flattenProcessor(root *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+
+	left := flattenProcessor(root.Left)
+	right := flattenProcessor(root.Right)
+
+	root.Left = nil
+	root.Right = left
+	pre := root
+	for cur := root.Right; cur != nil; cur = cur.Right {
+		pre = pre.Right
+	}
+	pre.Right = right
+	return root
+}
