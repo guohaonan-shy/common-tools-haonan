@@ -27,3 +27,15 @@ func handle(root *TreeNode, total *int) {
 
 	return
 }
+
+func countNodesV2(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	leftCnts := countNodesV2(root.Left)
+	rightCnts := countNodesV2(root.Right)
+
+	return 1 + leftCnts + rightCnts
+
+}
