@@ -34,3 +34,53 @@ func (this *BSTIterator) HasNext() bool {
 	}
 	return false
 }
+
+type BSTIteratorV2 struct {
+	inOrder []int
+	cur     int
+}
+
+func NewBSTIteratorV2(root *TreeNode) BSTIteratorV2 {
+	return BSTIteratorV2{
+		inOrder: inOrderV2(root),
+		cur:     -1,
+	}
+}
+
+func inOrderV2(root *TreeNode) []int {
+
+	res := make([]int, 0)
+	stack := make([]*TreeNode, 0)
+	cur := root
+	/*
+		why should we check the cur is nil:
+		1. process the corner case in which the root is nil
+		2. as we iterate through the left path, if left node is nil, we should rollback to the parent of cur nil node
+	*/
+	for cur != nil || len(stack) > 0 {
+		if cur != nil {
+			stack = append(stack, cur)
+			cur = cur.Left
+			continue
+		}
+		cur = stack[len(stack)-1]
+		stack = stack[0 : len(stack)-1]
+		res = append(res, cur.Val)
+		cur = cur.Right
+	}
+	return res
+}
+
+func (iter *BSTIteratorV2) HasNext() bool {
+	next := iter.cur + 1
+	if next < len(iter.inOrder) {
+		return true
+	}
+	return false
+}
+
+func (iter *BSTIteratorV2) Next() int {
+	iter.cur++
+	val := iter.inOrder[iter.cur]
+	return val
+}

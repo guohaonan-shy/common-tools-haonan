@@ -162,16 +162,16 @@ func Test_173(t *testing.T) {
 		},
 	} {
 		t.Run("case", func(t *testing.T) {
-			var bst BSTIterator
+			var bst BSTIteratorV2
 			for i, cmd := range tc.cmds {
 				if cmd == "BSTIterator" {
-					bst = Constructor(treeify(tc.tree))
+					bst = NewBSTIteratorV2(treeify(tc.tree))
 				} else if cmd == "next" {
 					expect, _ := strconv.Atoi(tc.expected[i])
-					assert.Equal(t, bst.Next(), expect)
+					assert.Equal(t, expect, bst.Next())
 				} else {
 					expect, _ := strconv.ParseBool(tc.expected[i])
-					assert.Equal(t, bst.HasNext(), expect)
+					assert.Equal(t, expect, bst.HasNext())
 				}
 			}
 		})
