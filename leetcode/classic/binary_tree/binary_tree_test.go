@@ -119,7 +119,7 @@ func Test_124(t *testing.T) {
 	} {
 
 		t.Run(tc.input, func(t *testing.T) {
-			res := maxPathSum(treeify(tc.input))
+			res := maxPathSumV2(treeify(tc.input))
 			assert.Equal(t, tc.expected, res)
 		})
 

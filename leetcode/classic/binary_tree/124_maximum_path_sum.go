@@ -26,3 +26,39 @@ func maxPathSumHandle(root *TreeNode, maxV *int) int {
 //	}
 //	return b
 //}
+
+var maxSum int
+
+func maxPathSumV2(root *TreeNode) int {
+	maxSum = math.MinInt32
+	if root == nil {
+		return 0
+	}
+
+	_ = maxPathProcessorV2(root)
+	return maxSum
+}
+
+func maxPathProcessorV2(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	maxPath := root.Val
+
+	leftSum := maxPathProcessorV2(root.Left)
+	rightSum := maxPathProcessorV2(root.Right)
+
+	if leftSum <= 0 && rightSum <= 0 {
+		maxSum = max(maxSum, maxPath)
+		// maxPath = maxPath
+	} else if leftSum > 0 && rightSum > 0 {
+		maxSum = max(maxPath+leftSum+rightSum, maxSum)
+		maxPath += max(leftSum, rightSum)
+	} else {
+		maxSum = max(maxPath+max(leftSum, rightSum), maxSum)
+		maxPath += max(leftSum, rightSum)
+	}
+
+	return maxPath
+}
