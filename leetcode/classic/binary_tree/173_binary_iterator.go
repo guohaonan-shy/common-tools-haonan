@@ -51,6 +51,8 @@ func inOrderV2(root *TreeNode) []int {
 
 	res := make([]int, 0)
 	stack := make([]*TreeNode, 0)
+	// storage nodes that we are iterating their left side but still need to iterate the right side
+	// therefore, when we pop out from the stack, we have switched the current pointer to cur.right
 	cur := root
 	/*
 		why should we check the cur is nil:
