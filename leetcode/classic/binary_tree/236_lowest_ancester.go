@@ -26,9 +26,9 @@ func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
 
 func lowestCommonAncestor_Parent(root, p, q *TreeNode) *TreeNode {
 
-	parent := make(map[*TreeNode]*TreeNode, 0)
+	parent := make(map[*TreeNode]*TreeNode, 0) // as for one node except root, it's parent is unique
 	var dfs func(*TreeNode)
-	dfs = func(cur *TreeNode) {
+	dfs = func(cur *TreeNode) { // iterate all nodes in tree
 		if cur == nil {
 			return
 		}
