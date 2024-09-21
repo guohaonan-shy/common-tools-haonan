@@ -63,3 +63,36 @@ func sumProcessor(root *TreeNode, prefix []int) {
 	}
 	return
 }
+
+func sumNumbersV3(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	return sumProcessorV3(root, 0)
+}
+
+/*
+'prefix' means the sum in the path from the root the current node;
+'sumProcessorV3' return the sum of all leaf nodes under the current node
+*/
+func sumProcessorV3(root *TreeNode, prefixSum int) int {
+	//if root == nil {
+	//	return prefixSum
+	//}
+
+	prefixSum = prefixSum*10 + root.Val
+
+	if root.Left == nil && root.Right == nil {
+		return prefixSum
+	}
+	leftSum := 0
+	if root.Left != nil { // root.left == nil => have no leave node under the root.left
+		leftSum = sumProcessorV3(root.Left, prefixSum)
+	}
+	rightSum := 0
+	if root.Left != nil {
+		rightSum = sumProcessorV3(root.Right, prefixSum)
+	}
+
+	return leftSum + rightSum
+}

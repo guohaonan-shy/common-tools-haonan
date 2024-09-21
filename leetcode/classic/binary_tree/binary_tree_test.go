@@ -142,7 +142,7 @@ func Test_129(t *testing.T) {
 	} {
 
 		t.Run(tc.input, func(t *testing.T) {
-			res := sumNumbersV2(treeify(tc.input))
+			res := sumNumbersV3(treeify(tc.input))
 			assert.Equal(t, tc.expected, res)
 		})
 
