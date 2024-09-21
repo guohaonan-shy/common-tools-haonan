@@ -50,3 +50,25 @@ func kthSmallest_stack(root *TreeNode, k int) int {
 		root = root.Right // 按照中序遍历，下一个节点是node.right，如果node.right == nil，则为node.parent
 	}
 }
+
+func kthSmallestV2(root *TreeNode, k int) int {
+	stack := make([]*TreeNode, 0)
+	cur := root
+	for cur != nil || len(stack) > 0 {
+		if cur != nil {
+			stack = append(stack, cur)
+			cur = cur.Left
+			continue
+		}
+
+		cur = stack[len(stack)-1]
+		stack = stack[0 : len(stack)-1]
+
+		k--
+		if k == 0 {
+			return cur.Val
+		}
+		cur = cur.Right
+	}
+	return -1
+}

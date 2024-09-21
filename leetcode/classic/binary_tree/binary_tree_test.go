@@ -224,3 +224,21 @@ func Test_226(t *testing.T) {
 		})
 	}
 }
+
+func Test_530(t *testing.T) {
+	testCases := []struct {
+		input string
+	}{
+		{input: "[4,2,6,1,3]"},
+	}
+
+	for _, tc := range testCases {
+		formetInput := strings.TrimLeft(tc.input, "[")
+		formetInput = strings.TrimRight(formetInput, "]")
+		t.Run(tc.input, func(t *testing.T) {
+			val := getMinimumDifference(treeify(tc.input))
+
+			assert.Equal(t, 1, val)
+		})
+	}
+}
