@@ -116,3 +116,52 @@ func numIslands_DFS(grid [][]byte) int {
 	}
 	return ans
 }
+
+func numIslandsV2(grid [][]byte) int {
+	row, column := len(grid), len(grid[0])
+	status := make([][]bool, row)
+	for i := range status {
+		status[i] = make([]bool, column)
+	}
+
+	cnt := 0
+	var dfs func(i, j int)
+	dfs = func(i, j int) {
+
+		if i < 0 || i > row-1 || j < 0 || j > column-1 {
+			return
+		}
+
+		if status[i][j] {
+			return
+		}
+
+		if grid[i][j] == '0' {
+			return
+		}
+
+		status[i][j] = true
+
+		dfs(i-1, j)
+		dfs(i+1, j)
+		dfs(i, j-1)
+		dfs(i, j+1)
+		return
+	}
+
+	for i, rows := range grid {
+		for j := range rows {
+			if grid[i][j] == '0' {
+				continue
+			}
+
+			if status[i][j] {
+				continue
+			}
+
+			dfs(i, j)
+			cnt++
+		}
+	}
+	return cnt
+}
