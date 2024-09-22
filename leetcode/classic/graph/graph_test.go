@@ -165,6 +165,23 @@ func Test_909(t *testing.T) {
 		},
 		{
 			board: [][]int{
+				{-1, 4, -1},
+				{6, 2, 6},
+				{-1, 3, -1},
+			},
+			expected: 2,
+		},
+		{
+			board: [][]int{
+				{-1, 1, 2, -1},
+				{2, 13, 15, -1},
+				{-1, 10, -1, -1},
+				{-1, 6, 2, 8},
+			},
+			expected: 2,
+		},
+		{
+			board: [][]int{
 				{-1, -1, -1, -1, 48, 5, -1},
 				{12, 29, 13, 9, -1, 2, 32},
 				{-1, -1, 21, 7, -1, 12, 49},
@@ -181,7 +198,7 @@ func Test_909(t *testing.T) {
 		//})
 
 		t.Run("standard", func(t *testing.T) {
-			assert.Equal(t, tc.expected, snakesAndLadders(tc.board))
+			assert.Equal(t, tc.expected, snakesAndLaddersV2(tc.board))
 		})
 	}
 }

@@ -134,3 +134,57 @@ func snakesAndLadders_standard(board [][]int) int {
 	}
 	return -1
 }
+
+type BFSNode struct {
+	label int
+	step  int
+}
+
+func snakesAndLaddersV2(board [][]int) int {
+	queue := make([]*BFSNode, 0)
+	queue = append(queue, &BFSNode{
+		label: 1,
+		step:  0,
+	})
+	dimension := len(board)
+	reachedMap := make(map[int]bool, 0)
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+		label, step := cur.label, cur.step
+
+		for i := label + 1; i < min(label+6, dimension*dimension)+1; i++ {
+			rowIdx, colIdx := label2pos(i, dimension)
+			next := i
+			if board[rowIdx][colIdx] != -1 {
+				// if the step has the snake or ladder, we walk further in this step; we can move further as fewer steps as possible
+				next = board[rowIdx][colIdx]
+			}
+
+			if next == dimension*dimension {
+				return step + 1
+			}
+
+			if !reachedMap[next] {
+				reachedMap[next] = true
+				queue = append(queue, &BFSNode{
+					label: next,
+					step:  step + 1,
+				})
+			}
+		}
+	}
+	return -1
+}
+
+func label2pos(label int, dimension int) (int, int) {
+	label--
+	row, column := label/dimension, label%dimension
+
+	rowIdx := dimension - 1 - row
+	columnIdx := column
+	if row%2 == 1 {
+		columnIdx = dimension - 1 - column
+	}
+	return rowIdx, columnIdx
+}
