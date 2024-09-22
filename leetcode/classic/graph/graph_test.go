@@ -115,6 +115,7 @@ func Test_207(t *testing.T) {
 		{
 			numCourses:    3,
 			prerequisites: [][]int{{0, 2}, {1, 2}, {2, 0}},
+			expected:      false,
 		},
 		{
 			numCourses:    5,
@@ -137,7 +138,7 @@ func Test_207(t *testing.T) {
 		//})
 
 		t.Run("standard", func(t *testing.T) {
-			assert.Equal(t, tc.expected, canFinish_Standard(tc.numCourses, tc.prerequisites))
+			assert.Equal(t, tc.expected, canFinishV2(tc.numCourses, tc.prerequisites))
 		})
 	}
 }

@@ -102,3 +102,47 @@ func canFinish_Standard(numCourses int, prerequisites [][]int) bool {
 	}
 	return valid
 }
+
+func canFinishV2(numCourses int, prerequisites [][]int) bool {
+	// analysis the dependency between courses
+	adjacentMap := make(map[int][]int, 0)
+	for _, pair := range prerequisites {
+		target, prerequisite := pair[0], pair[1]
+
+		if _, ok := adjacentMap[prerequisite]; ok {
+			adjacentMap[prerequisite] = append(adjacentMap[prerequisite], target)
+		} else {
+			adjacentMap[prerequisite] = []int{target}
+		}
+	}
+
+	scheduled := make(map[int]int, 0)
+	var dfs func(cur int)
+	valid := true
+	dfs = func(cur int) {
+
+		adjacentList, _ := adjacentMap[cur]
+		scheduled[cur] = 1
+		for _, next := range adjacentList {
+			if scheduled[next] == 0 {
+				dfs(next)
+				if !valid {
+					return
+				}
+			} else if scheduled[next] == 1 {
+				valid = false
+				return
+			}
+			// when next node is scheduled: status == 2 => we continue to iterate other next nodes
+		}
+		scheduled[cur] = 2
+		return
+	}
+
+	for i := 0; i < numCourses && valid; i++ {
+		if scheduled[i] == 0 {
+			dfs(i)
+		}
+	}
+	return valid
+}
