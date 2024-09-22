@@ -78,22 +78,126 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 	return res
 }
 
-//func simplify(a, b string) (string, string) {
-//	idxs := []int{}
-//	for j := range a {
-//		target := a[j]
-//		idx := strings.IndexByte(b, target)
-//		if idx == -1 {
-//			continue
+//	func simplify(a, b string) (string, string) {
+//		idxs := []int{}
+//		for j := range a {
+//			target := a[j]
+//			idx := strings.IndexByte(b, target)
+//			if idx == -1 {
+//				continue
+//			}
+//
+//			idxs = append(idxs, j)
+//			b = b[:idx] + b[idx+1:]
 //		}
 //
-//		idxs = append(idxs, j)
-//		b = b[:idx] + b[idx+1:]
-//	}
+//		for i := len(idxs) - 1; i >= 0; i-- {
+//			a = a[:idxs[i]] + a[idxs[i]+1:]
+//		}
 //
-//	for i := len(idxs) - 1; i >= 0; i-- {
-//		a = a[:idxs[i]] + a[idxs[i]+1:]
+//		return a, b
 //	}
-//
-//	return a, b
-//}
+type CommonStruct struct {
+	start string
+	end   string
+	value float64
+}
+
+func calcEquationV2(equations [][]string, values []float64, queries [][]string) []float64 {
+	adjacenyMap := make(map[string][]*CommonStruct, 0)
+	statusMap := make(map[[2]string]bool, 0)
+
+	for i, equation := range equations {
+		start, end := equation[0], equation[1]
+
+		if _, ok := adjacenyMap[start]; ok {
+			adjacenyMap[start] = append(adjacenyMap[start], &CommonStruct{
+				start: start,
+				end:   end,
+				value: values[i],
+			})
+		} else {
+			adjacenyMap[start] = []*CommonStruct{
+				{
+					start: start,
+					end:   end,
+					value: values[i],
+				},
+			}
+		}
+
+		statusMap[[2]string{start, end}] = false
+
+		// know the a / b, we can also know b / a
+		if _, ok := adjacenyMap[end]; ok {
+			adjacenyMap[end] = append(adjacenyMap[end], &CommonStruct{
+				start: end,
+				end:   start,
+				value: 1.0 / values[i],
+			})
+		} else {
+			adjacenyMap[end] = []*CommonStruct{
+				{
+					start: end,
+					end:   start,
+					value: 1.0 / values[i],
+				},
+			}
+		}
+
+		statusMap[[2]string{end, start}] = false
+
+	}
+
+	var dfs func(cur *CommonStruct, target string, pre float64) float64
+	dfs = func(cur *CommonStruct, target string, pre float64) float64 {
+
+		if cur.end == target {
+			return pre * cur.value
+		}
+
+		statusMap[[2]string{cur.start, cur.end}] = true
+		val := -1.0
+		for _, next := range adjacenyMap[cur.end] {
+
+			if statusMap[[2]string{next.start, next.end}] {
+				continue
+			}
+			val = dfs(next, target, pre*cur.value)
+			if val != -1.0 {
+				break
+			}
+		}
+		statusMap[[2]string{cur.start, cur.end}] = false
+		return val
+	}
+
+	res := make([]float64, 0, len(queries))
+	for _, query := range queries {
+
+		start, end := query[0], query[1]
+
+		// corner case: like 'aa' vs 'aa'
+		val := -1.0
+		adjacenyList, ok := adjacenyMap[start]
+		_, ok2 := adjacenyMap[end]
+
+		if !ok || !ok2 {
+			res = append(res, val)
+			continue
+		}
+
+		if start == end && ok {
+			val = 1.0
+		} else {
+			for _, next := range adjacenyList {
+				val = dfs(next, end, 1.0)
+				if val != -1.0 {
+					break
+				}
+			}
+		}
+		res = append(res, val)
+	}
+	return res
+}

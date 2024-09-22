@@ -48,33 +48,44 @@ func Test_399(t *testing.T) {
 		Queries  [][]string
 		Expected []float64
 	}{
+		//{
+		//	Equation: [][]string{{"a", "b"}, {"b", "c"}},
+		//	Values:   []float64{2.0, 3.0},
+		//	Queries:  [][]string{{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}},
+		//	Expected: []float64{6.00000, 0.50000, -1.00000, 1.00000, -1.00000},
+		//},
+		//{
+		//	Equation: [][]string{{"a", "b"}, {"b", "c"}, {"bc", "cd"}},
+		//	Values:   []float64{1.5, 2.5, 5.0},
+		//	Queries:  [][]string{{"a", "c"}, {"c", "b"}, {"bc", "cd"}, {"cd", "bc"}},
+		//	Expected: []float64{3.75000, 0.40000, 5.00000, 0.20000},
+		//},
+		//{
+		//	Equation: [][]string{{"a", "b"}},
+		//	Values:   []float64{0.5},
+		//	Queries:  [][]string{{"a", "b"}, {"b", "a"}, {"a", "c"}, {"x", "y"}},
+		//	Expected: []float64{0.50000, 2.00000, -1.00000, -1.00000},
+		//},
+		//{
+		//	Equation: [][]string{{"a", "aa"}},
+		//	Values:   []float64{9.0},
+		//	Queries:  [][]string{{"aa", "a"}, {"aa", "aa"}},
+		//	Expected: []float64{0.1111111111111111, 1.0},
+		//},
 		{
-			Equation: [][]string{{"a", "b"}, {"b", "c"}},
-			Values:   []float64{2.0, 3.0},
-			Queries:  [][]string{{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}},
-			Expected: []float64{6.00000, 0.50000, -1.00000, 1.00000, -1.00000},
-		},
-		{
-			Equation: [][]string{{"a", "b"}, {"b", "c"}, {"bc", "cd"}},
-			Values:   []float64{1.5, 2.5, 5.0},
-			Queries:  [][]string{{"a", "c"}, {"c", "b"}, {"bc", "cd"}, {"cd", "bc"}},
-			Expected: []float64{3.75000, 0.40000, 5.00000, 0.20000},
-		},
-		{
-			Equation: [][]string{{"a", "b"}},
-			Values:   []float64{0.5},
-			Queries:  [][]string{{"a", "b"}, {"b", "a"}, {"a", "c"}, {"x", "y"}},
-			Expected: []float64{0.50000, 2.00000, -1.00000, -1.00000},
-		},
-		{
-			Equation: [][]string{{"a", "aa"}},
-			Values:   []float64{9.0},
-			Queries:  [][]string{{"aa", "a"}, {"aa", "aa"}},
-			Expected: []float64{0.11111, 1.0},
+			Equation: [][]string{{"a", "b"}, {"a", "c"}, {"a", "d"}, {"a", "e"}, {"a", "f"}, {"a", "g"}, {"a", "h"},
+				{"a", "i"}, {"a", "j"}, {"a", "k"}, {"a", "l"}, {"a", "aa"}, {"a", "aaa"}, {"a", "aaaa"}, {"a", "aaaaa"}, {"a", "bb"}, {"a", "bbb"}, {"a", "ff"}},
+			Values: []float64{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 1.0, 1.0, 1.0, 1.0, 1.0, 3.0, 5.0},
+			Queries: [][]string{
+				{"d", "f"}, {"e", "g"}, {"e", "k"}, {"h", "a"}, {"aaa", "k"}, {"aaa", "i"}, {"aa", "e"}, {"aaa", "aa"}, {"aaa", "ff"}, {"bbb", "bb"}, {"bb", "h"}, {"bb", "i"}, {"bb", "k"}, {"aaa", "k"}, {"k", "l"}, {"x", "k"},
+				{"l", "ll"}},
+			Expected: []float64{
+				1.6666666666666665, 1.5, 2.5, 0.14285714285714285, 10, 8, 4, 1, 5, 0.3333333333333333, 7, 8, 10, 10, 1.0999999999999999, -1,
+				-1},
 		},
 	} {
 		t.Run("case", func(t *testing.T) {
-			assert.Equal(t, tc.Expected, calcEquation(tc.Equation, tc.Values, tc.Queries))
+			assert.Equal(t, tc.Expected, calcEquationV2(tc.Equation, tc.Values, tc.Queries))
 			Graph = make(map[string][]*Neibor, 0)
 		})
 	}
