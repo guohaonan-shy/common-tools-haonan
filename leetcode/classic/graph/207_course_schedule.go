@@ -103,6 +103,15 @@ func canFinish_Standard(numCourses int, prerequisites [][]int) bool {
 	return valid
 }
 
+// time complexity high
+/*
+	this type of practice start to apply deep first search for each point, and find if this graph exists cycle or not
+	1. if there is a cycle when we are iterating, it means we cannot major all courses on cycle. We have to check whether this graph is a DAG
+	eg. a => b => c => a;
+
+	extra question: Can we find another path or solution to cover all courses?
+	- no, in this case, if we iterate to a node that we have covered in current path, it means these courses are cycle dependencies.
+*/
 func canFinishV2(numCourses int, prerequisites [][]int) bool {
 	// analysis the dependency between courses
 	adjacentMap := make(map[int][]int, 0)
@@ -116,33 +125,34 @@ func canFinishV2(numCourses int, prerequisites [][]int) bool {
 		}
 	}
 
-	scheduled := make(map[int]int, 0)
-	var dfs func(cur int)
-	valid := true
-	dfs = func(cur int) {
+	scheduled := make(map[int]bool, 0)
+	var dfs func(cur int, remain int) bool
+	dfs = func(cur int, remain int) bool {
+
+		if scheduled[cur] {
+			return false
+		}
 
 		adjacentList, _ := adjacentMap[cur]
-		scheduled[cur] = 1
-		for _, next := range adjacentList {
-			if scheduled[next] == 0 {
-				dfs(next)
-				if !valid {
-					return
-				}
-			} else if scheduled[next] == 1 {
-				valid = false
-				return
-			}
-			// when next node is scheduled: status == 2 => we continue to iterate other next nodes
+		if len(adjacentList) == 0 && remain == 0 {
+			return true
 		}
-		scheduled[cur] = 2
-		return
+
+		scheduled[cur] = true
+		for _, next := range adjacentList {
+
+			if !dfs(next, remain-1) {
+				return false
+			}
+		}
+		scheduled[cur] = false
+		return true
 	}
 
-	for i := 0; i < numCourses && valid; i++ {
-		if scheduled[i] == 0 {
-			dfs(i)
+	for i := 0; i < numCourses; i++ {
+		if !dfs(i, numCourses-1) {
+			return false
 		}
 	}
-	return valid
+	return true
 }
