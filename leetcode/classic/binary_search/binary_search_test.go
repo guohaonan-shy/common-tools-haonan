@@ -95,3 +95,15 @@ func Test_81(t *testing.T) {
 		assert.Equal(t, true, searchII([]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1}, 2))
 	})
 }
+
+func Test_162(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 1}
+		assert.Equal(t, 2, findPeakElementV2(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{1, 2, 1, 3, 5, 6, 4}
+		assert.Equal(t, 1, findPeakElementV2(case2))
+	})
+}
