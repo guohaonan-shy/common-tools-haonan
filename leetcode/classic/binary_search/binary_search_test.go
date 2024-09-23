@@ -1,9 +1,20 @@
 package binary_search
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+func Test_35(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 3, 5, 6}
+		assert.Equal(t, 1, searchInsert(case1, 3))
+		assert.Equal(t, 1, searchInsert(case1, 2))
+		assert.Equal(t, 4, searchInsert(case1, 7))
+		assert.Equal(t, 0, searchInsert(case1, 0))
+	})
+}
 
 func Test_74(t *testing.T) {
 	t.Run("case", func(t *testing.T) {
