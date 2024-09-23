@@ -32,3 +32,30 @@ func permuteUnique(nums []int) [][]int {
 	dfs()
 	return res
 }
+
+func permuteUniqueV2(nums []int) [][]int {
+	res := make([][]int, 0)
+	tempPermutation := make([]int, len(nums))
+
+	var dfs func(cur int)
+	dfs = func(cur int) {
+		if len(tempPermutation) == len(nums) {
+			permutation := make([]int, len(nums))
+			copy(permutation, tempPermutation)
+			res = append(res, permutation)
+			return
+		}
+
+		for start := cur; start < len(nums); start++ {
+			if start > cur && nums[start] == nums[start-1] {
+				continue
+			}
+			tempPermutation = append(tempPermutation, nums[start])
+			dfs(start + 1)
+			tempPermutation = tempPermutation[:len(tempPermutation)-1]
+		}
+		return
+	}
+	dfs(0)
+	return res
+}

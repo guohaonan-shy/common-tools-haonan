@@ -34,13 +34,13 @@ func Test_77(t *testing.T) {
 
 func Test_46(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
-		assert.Equal(t, [][]int{{0, 1}, {1, 0}}, permute([]int{0, 1}))
+		assert.Equal(t, [][]int{{0, 1}, {1, 0}}, permuteV2([]int{0, 1}))
 	})
 }
 
 func Test_47(t *testing.T) {
 	t.Run("permutation2", func(t *testing.T) {
-		assert.Equal(t, [][]int{{1, 1, 2}, {1, 2, 1}, {2, 1, 1}}, permuteUnique([]int{1, 1, 2}))
+		assert.Equal(t, [][]int{{1, 1, 2}, {1, 2, 1}, {2, 1, 1}}, permuteUniqueV2([]int{1, 1, 2}))
 	})
 }
 

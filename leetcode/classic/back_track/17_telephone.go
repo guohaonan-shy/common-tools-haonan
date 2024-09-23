@@ -30,3 +30,24 @@ func letterCombinations(digits string) []string {
 	}
 	return ans
 }
+
+func letterCombinationsV2(digits string) []string {
+	if len(digits) == 0 {
+		return []string{}
+	}
+
+	if len(digits) == 1 {
+		return telephone[digits[0]]
+	}
+
+	cur := digits[0]
+	combinations := letterCombinationsV2(digits[1:])
+
+	res := make([]string, 0)
+	for _, curChoice := range telephone[cur] {
+		for _, combination := range combinations {
+			res = append(res, curChoice+combination)
+		}
+	}
+	return res
+}
