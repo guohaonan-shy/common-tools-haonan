@@ -88,6 +88,22 @@ func Test_33(t *testing.T) {
 	t.Run("can't find element", func(t *testing.T) {
 		assert.Equal(t, -1, rotateSearch_noDistinct([]int{1}, 3))
 	})
+
+	t.Run("rotate search in distinct array", func(t *testing.T) {
+		assert.Equal(t, 4, searchRotateArray([]int{4, 5, 6, 7, 0, 1, 2}, 0))
+	})
+
+	t.Run("can't find element", func(t *testing.T) {
+		assert.Equal(t, -1, searchRotateArray([]int{4, 5, 6, 7, 0, 1, 2}, 3))
+	})
+
+	t.Run("can't find element", func(t *testing.T) {
+		assert.Equal(t, -1, searchRotateArray([]int{1}, 3))
+	})
+
+	t.Run("corner case", func(t *testing.T) {
+		assert.Equal(t, 1, searchRotateArray([]int{3, 1}, 1))
+	})
 }
 
 func Test_81(t *testing.T) {
