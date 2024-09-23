@@ -1,6 +1,6 @@
 package binary_tree
 
-func preorderTraversal(root *TreeNode) []int {
+func PreorderTraversal(root *TreeNode) []int {
 	stack := make([]*TreeNode, 0)
 	cur := root
 	res := make([]int, 0)
