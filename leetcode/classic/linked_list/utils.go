@@ -5,6 +5,10 @@ type ListNode struct {
 	Next *ListNode
 }
 
+func BuildLinkedList(vals []int) *ListNode {
+	return buildLinkedList(vals)
+}
+
 func buildLinkedList(vals []int) *ListNode {
 	dummy := &ListNode{}
 	pre := dummy
@@ -17,6 +21,10 @@ func buildLinkedList(vals []int) *ListNode {
 		pre = cur
 	}
 	return dummy.Next
+}
+
+func ConvertToList(node *ListNode) []int {
+	return convertToList(node)
 }
 
 func convertToList(node *ListNode) []int {
