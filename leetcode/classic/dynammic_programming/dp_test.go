@@ -1,9 +1,10 @@
 package dynammic_programming
 
 import (
+	"testing"
+
 	"github.com/common-tools-haonan/leetcode/classic/graph"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_44(t *testing.T) {
@@ -25,6 +26,28 @@ func Test_97(t *testing.T) {
 func Test_123(t *testing.T) {
 	t.Run("buy_stock_3", func(t *testing.T) {
 		assert.Equal(t, 4, maxProfit([]int{1, 2, 3, 4, 5}))
+	})
+}
+
+func Test_139(t *testing.T) {
+	t.Run("split_words case1", func(t *testing.T) {
+		assert.Equal(t, true, splitWord("leetcode", []string{"leet", "code"}))
+	})
+
+	t.Run("split_words case2", func(t *testing.T) {
+		assert.Equal(t, true, splitWord("applepenapple", []string{"apple", "pen"}))
+	})
+
+	t.Run("split_words case3", func(t *testing.T) {
+		assert.Equal(t, false, splitWord("catsandog", []string{"cats", "dog", "sand", "and", "cat"}))
+	})
+
+	t.Run("split_words case4", func(t *testing.T) {
+		assert.Equal(t, false, splitWord("a", []string{"b"}))
+	})
+
+	t.Run("split_words case5", func(t *testing.T) {
+		assert.Equal(t, true, splitWord("b", []string{"b", "bbb", "bbbb"}))
 	})
 }
 
