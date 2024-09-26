@@ -76,3 +76,39 @@ func rotateSearch_noDistinct(nums []int, target int) int {
 	return -1
 
 }
+
+func searchRotateArray(nums []int, target int) int {
+	left, right := 0, len(nums)-1
+
+	for left < right {
+
+		mid := (left + right) / 2
+
+		if nums[mid] == target {
+			return mid
+		}
+
+		// left side ascend
+		if nums[left] < nums[mid] {
+			if nums[left] <= target && target <= nums[mid] {
+				right = mid
+			} else {
+				// if target is not in the left ascend sequence, it must be on the right side
+				// because nums is made by rotating an ascending array at a specified index, if left sequence is ascending, the elements in right side must be greater than or smaller than left side.
+				left = mid + 1
+			}
+		} else {
+			if nums[mid+1] <= target && target <= nums[right] {
+				left = mid + 1
+			} else {
+				right = mid
+			}
+		}
+	}
+
+	if nums[left] == target {
+		return left
+	}
+
+	return -1
+}

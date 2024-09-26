@@ -88,10 +88,38 @@ func Test_33(t *testing.T) {
 	t.Run("can't find element", func(t *testing.T) {
 		assert.Equal(t, -1, rotateSearch_noDistinct([]int{1}, 3))
 	})
+
+	t.Run("rotate search in distinct array", func(t *testing.T) {
+		assert.Equal(t, 4, searchRotateArray([]int{4, 5, 6, 7, 0, 1, 2}, 0))
+	})
+
+	t.Run("can't find element", func(t *testing.T) {
+		assert.Equal(t, -1, searchRotateArray([]int{4, 5, 6, 7, 0, 1, 2}, 3))
+	})
+
+	t.Run("can't find element", func(t *testing.T) {
+		assert.Equal(t, -1, searchRotateArray([]int{1}, 3))
+	})
+
+	t.Run("corner case", func(t *testing.T) {
+		assert.Equal(t, 1, searchRotateArray([]int{3, 1}, 1))
+	})
 }
 
 func Test_81(t *testing.T) {
 	t.Run("rotate search in duplicated array", func(t *testing.T) {
 		assert.Equal(t, true, searchII([]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1}, 2))
+	})
+}
+
+func Test_162(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 1}
+		assert.Equal(t, 2, findPeakElementV2(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{1, 2, 1, 3, 5, 6, 4}
+		assert.Equal(t, 1, findPeakElementV2(case2))
 	})
 }

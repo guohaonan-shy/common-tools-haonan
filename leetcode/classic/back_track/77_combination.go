@@ -62,3 +62,28 @@ func combine_standard(n, k int) [][]int {
 	dfs(1, 1)
 	return res
 }
+
+func combineV2(n, k int) [][]int {
+	tempCombination := make([]int, 0)
+	res := make([][]int, 0)
+
+	var dfs func(cur int)
+
+	dfs = func(cur int) {
+		if len(tempCombination) == k {
+			combination := make([]int, k)
+			copy(combination, tempCombination)
+			res = append(res, combination)
+			return
+		}
+
+		for start := cur; start <= n && start <= n+1-k+len(tempCombination); start++ {
+			tempCombination = append(tempCombination, start)
+			dfs(start)
+			tempCombination = tempCombination[0 : len(tempCombination)-1]
+		}
+		return
+	}
+	dfs(1)
+	return res
+}

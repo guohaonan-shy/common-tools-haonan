@@ -53,3 +53,32 @@ func permute_standard(nums []int) [][]int {
 	dfs(1)
 	return res
 }
+
+func permuteV2(nums []int) [][]int {
+	res := make([][]int, 0)
+	tempPermutation := make([]int, 0)
+	reached := make([]bool, len(nums))
+
+	var dfs func()
+	dfs = func() {
+		if len(tempPermutation) == len(nums) {
+			permutation := make([]int, len(nums))
+			copy(permutation, tempPermutation)
+			res = append(res, permutation)
+			return
+		}
+
+		for i, num := range nums {
+			if !reached[i] {
+				tempPermutation = append(tempPermutation, num)
+				reached[i] = true
+				dfs()
+				reached[i] = false
+				tempPermutation = tempPermutation[0 : len(tempPermutation)-1]
+			}
+		}
+		return
+	}
+	dfs()
+	return res
+}
