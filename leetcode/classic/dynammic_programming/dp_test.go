@@ -66,3 +66,23 @@ func Test_221(t *testing.T) {
 		assert.Equal(t, 4, maximalSquare(graph.BuildGraph("[[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]")))
 	})
 }
+
+func Test_322(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		coinPackage := []int{1, 2, 5}
+		target := 11
+		assert.Equal(t, 3, coinChange(coinPackage, target))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		coinPackage := []int{2}
+		target := 3
+		assert.Equal(t, -1, coinChange(coinPackage, target))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		coinPackage := []int{1}
+		target := 0
+		assert.Equal(t, 0, coinChange(coinPackage, target))
+	})
+}
