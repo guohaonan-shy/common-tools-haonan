@@ -67,6 +67,44 @@ func Test_221(t *testing.T) {
 	})
 }
 
+func Test_300(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, 4, longestIncreasingSequence([]int{10, 9, 2, 5, 3, 7, 101, 18}))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		assert.Equal(t, 4, longestIncreasingSequence([]int{5, 6, 7, 1, 2, 3, 4}))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		assert.Equal(t, 4, longestIncreasingSequence([]int{0, 1, 0, 3, 2, 3}))
+	})
+
+	t.Run("case4", func(t *testing.T) {
+		assert.Equal(t, 1, longestIncreasingSequence([]int{7, 7, 7, 7, 7, 7, 7}))
+	})
+
+	t.Run("binary search case1", func(t *testing.T) {
+		assert.Equal(t, 4, longestIncreasingSequence_binarySearch([]int{10, 9, 2, 5, 3, 7, 101, 18}))
+	})
+
+	t.Run("binary search case2", func(t *testing.T) {
+		assert.Equal(t, 4, longestIncreasingSequence_binarySearch([]int{5, 6, 7, 1, 2, 3, 4}))
+	})
+
+	t.Run("binary search case3", func(t *testing.T) {
+		assert.Equal(t, 4, longestIncreasingSequence_binarySearch([]int{0, 1, 0, 3, 2, 3}))
+	})
+
+	t.Run("binary search case4", func(t *testing.T) {
+		assert.Equal(t, 1, longestIncreasingSequence_binarySearch([]int{7, 7, 7, 7, 7, 7, 7}))
+	})
+
+	t.Run("binary search case5", func(t *testing.T) {
+		assert.Equal(t, 3, longestIncreasingSequence_binarySearch([]int{10, 9, 2, 5, 3, 4}))
+	})
+}
+
 func Test_322(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		coinPackage := []int{1, 2, 5}
