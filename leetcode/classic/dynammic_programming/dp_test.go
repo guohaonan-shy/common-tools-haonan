@@ -23,6 +23,38 @@ func Test_97(t *testing.T) {
 	})
 }
 
+func Test_120(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		triangle := [][]int{
+			{2},
+			{3, 4},
+			{6, 5, 7},
+			{4, 1, 8, 3},
+		}
+		actual := minimumTotal(triangle)
+		assert.Equal(t, 11, actual)
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		triangle := [][]int{
+			{-10},
+		}
+		actual := minimumTotal(triangle)
+		assert.Equal(t, -10, actual)
+	})
+
+	t.Run("case1 for less-memory method", func(t *testing.T) {
+		triangle := [][]int{
+			{2},
+			{3, 4},
+			{6, 5, 7},
+			{4, 1, 8, 3},
+		}
+		actual := minimumTotalWithLessMemory(triangle)
+		assert.Equal(t, 11, actual)
+	})
+}
+
 func Test_123(t *testing.T) {
 	t.Run("buy_stock_3", func(t *testing.T) {
 		assert.Equal(t, 4, maxProfit([]int{1, 2, 3, 4, 5}))
