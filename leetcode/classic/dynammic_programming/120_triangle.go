@@ -43,7 +43,7 @@ func minimumTotalWithLessMemory(triangle [][]int) int {
 	if len(triangle) == 1 {
 		return triangle[0][0]
 	}
-	pre := make([]int, 0)\
+	pre := make([]int, 0)
 	pre = append(pre, triangle[0][0])
 
 	for row := 1; row < len(triangle); row++ {
@@ -54,7 +54,7 @@ func minimumTotalWithLessMemory(triangle [][]int) int {
 				continue
 			}
 			if column == len(triangle[row])-1 {
-				cur[column] = pre[len(pre)-1]+triangle[row][column]
+				cur[column] = pre[len(pre)-1] + triangle[row][column]
 				continue
 			}
 			minVal := min(pre[column], pre[column-1]) + triangle[row][column]
