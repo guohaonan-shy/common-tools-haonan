@@ -51,6 +51,18 @@ func Test_63(t *testing.T) {
 	})
 }
 
+func Test_72(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		word1, word2 := "horse", "ros"
+		assert.Equal(t, 3, minDistanceV2(word1, word2))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		word1, word2 := "intention", "execution"
+		assert.Equal(t, 5, minDistanceV2(word1, word2))
+	})
+}
+
 func Test_97(t *testing.T) {
 	t.Run("dp97", func(t *testing.T) {
 		assert.Equal(t, true, isInterleave("aabcc", "dbbca", "aadbbcbcac"))
