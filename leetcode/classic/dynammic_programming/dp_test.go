@@ -122,6 +122,10 @@ func Test_123(t *testing.T) {
 	t.Run("buy_stock_3", func(t *testing.T) {
 		assert.Equal(t, 4, maxProfit([]int{1, 2, 3, 4, 5}))
 	})
+
+	t.Run("buy_stock_3", func(t *testing.T) {
+		assert.Equal(t, 4, maxProfitV2([]int{1, 2, 3, 4, 5}))
+	})
 }
 
 func Test_139(t *testing.T) {
