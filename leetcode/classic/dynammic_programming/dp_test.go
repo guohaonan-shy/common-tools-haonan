@@ -7,6 +7,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_5(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := "babad"
+		assert.Equal(t, "bab", longestPalindrome(case1))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := "cbbd"
+		assert.Equal(t, "bb", longestPalindrome(case2))
+	})
+
+	t.Run("corner case 1", func(t *testing.T) {
+		cornerCase1 := "a"
+		assert.Equal(t, "a", longestPalindrome(cornerCase1))
+	})
+}
+
 func Test_44(t *testing.T) {
 	t.Run("wildcard matching", func(t *testing.T) {
 		assert.Equal(t, true, isMatch("adceb", "*a*b"))
