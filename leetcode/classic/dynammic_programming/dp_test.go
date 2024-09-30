@@ -164,6 +164,22 @@ func Test_221(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		assert.Equal(t, 4, maximalSquare(graph.BuildGraph("[[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]")))
 	})
+
+	t.Run("v2 case1", func(t *testing.T) {
+		assert.Equal(t, 4, maximalSquareV2(graph.BuildGraph("[[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]")))
+	})
+
+	t.Run("v2 case2", func(t *testing.T) {
+		assert.Equal(t, 1, maximalSquareV2(graph.BuildGraph("[[\"0\",\"1\"],[\"1\",\"0\"]]")))
+	})
+
+	t.Run("v2 case3", func(t *testing.T) {
+		assert.Equal(t, 0, maximalSquareV2(graph.BuildGraph("[[\"0\"]]")))
+	})
+
+	t.Run("v2 case4", func(t *testing.T) {
+		assert.Equal(t, 4, maximalSquareV2(graph.BuildGraph("[[\"1\",\"1\"],[\"1\",\"1\"]]")))
+	})
 }
 
 func Test_300(t *testing.T) {
