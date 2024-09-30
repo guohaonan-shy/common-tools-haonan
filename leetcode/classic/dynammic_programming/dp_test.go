@@ -59,6 +59,19 @@ func Test_97(t *testing.T) {
 	t.Run("dp97", func(t *testing.T) {
 		assert.Equal(t, false, isInterleave("aabcc", "dbbca", "aadbbbaccc"))
 	})
+
+	t.Run("interleaving v2 case1", func(t *testing.T) {
+		s1, s2 := "aabcc", "dbbca"
+		s3 := "aadbbcbcac"
+		assert.Equal(t, true, isInterleaveV2(s1, s2, s3))
+	})
+
+	t.Run("interleaving v2 case2", func(t *testing.T) {
+		s1, s2 := "aabcc", "dbbca"
+		s3 := "aadbbbaccc"
+		assert.Equal(t, false, isInterleaveV2(s1, s2, s3))
+	})
+
 }
 
 func Test_120(t *testing.T) {
