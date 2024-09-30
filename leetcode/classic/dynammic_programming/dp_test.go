@@ -13,6 +13,27 @@ func Test_44(t *testing.T) {
 	})
 }
 
+func Test_63(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		grid := [][]int{
+			{0, 0, 0},
+			{0, 1, 0},
+			{0, 0, 0},
+		}
+
+		assert.Equal(t, 2, uniquePathsWithObstacles(grid))
+	})
+
+	t.Run("case1", func(t *testing.T) {
+		grid := [][]int{
+			{0, 1},
+			{0, 0},
+		}
+
+		assert.Equal(t, 1, uniquePathsWithObstacles(grid))
+	})
+}
+
 func Test_97(t *testing.T) {
 	t.Run("dp97", func(t *testing.T) {
 		assert.Equal(t, true, isInterleave("aabcc", "dbbca", "aadbbcbcac"))
