@@ -30,14 +30,14 @@ func isInterleave(s1 string, s2 string, s3 string) bool {
 
 func isInterleaveV2(s1 string, s2 string, s3 string) bool {
 
-	if len(s1) == 0 {
+	if len(s1) == 0 { // process the corner case: s1 == 0
 		return s2 == s3
 	}
 
-	if len(s2) == 0 {
+	if len(s2) == 0 { // process the corner case: s2 == 0
 		return s1 == s3
 	}
-
+	// both of above process steps has already solved the case where all strings are empty
 	if len(s1)+len(s2) != len(s3) {
 		return false
 	}
@@ -50,6 +50,9 @@ func isInterleaveV2(s1 string, s2 string, s3 string) bool {
 
 	for length := 1; length <= len(s3); length++ {
 		for lengthS1 := 0; lengthS1 <= len(s1) && lengthS1 <= length; lengthS1++ {
+			// filter the wrong condition that s2 pointer is greater than s2 length
+			// Don't use this in the loop conditions: lengthS1 <= len(s1) && lengthS1 <= length && """length-lengthS1 <= len(s2)"""
+			// because we iterate s1 in increasing order, the order of s2 is reverse so that we will miss some cases when length - lengthS1 <= len(s2)
 			if length-lengthS1 > len(s2) {
 				continue
 			}
