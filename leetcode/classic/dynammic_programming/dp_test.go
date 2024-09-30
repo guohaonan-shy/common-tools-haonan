@@ -13,6 +13,16 @@ func Test_44(t *testing.T) {
 	})
 }
 
+func Test_64(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		grid1 := [][]int{
+			{1, 2, 3},
+			{4, 5, 6},
+		}
+		assert.Equal(t, 12, minPathSum(grid1))
+	})
+}
+
 func Test_97(t *testing.T) {
 	t.Run("dp97", func(t *testing.T) {
 		assert.Equal(t, true, isInterleave("aabcc", "dbbca", "aadbbcbcac"))
