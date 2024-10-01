@@ -1,8 +1,9 @@
 package every_day
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_650(t *testing.T) {
@@ -16,6 +17,24 @@ func Test_650(t *testing.T) {
 func Test_688(t *testing.T) {
 	t.Run("knight", func(t *testing.T) {
 		assert.Equal(t, 0.06250, knightProbability(3, 2, 0, 0))
+	})
+}
+
+func Test_983(t *testing.T) {
+	t.Run("minimum travel ticket case1", func(t *testing.T) {
+		assert.Equal(t, 11, minimumTravelCost([]int{1, 4, 6, 7, 8, 20}, []int{2, 7, 15}))
+	})
+
+	t.Run("minimum travel ticket case2", func(t *testing.T) {
+		assert.Equal(t, 17, minimumTravelCost([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 31}, []int{2, 7, 15}))
+	})
+
+	t.Run("minimum travel ticket case2", func(t *testing.T) {
+		assert.Equal(t, 6, minimumTravelCost([]int{1, 4, 6, 7, 8, 20}, []int{7, 2, 15}))
+	})
+
+	t.Run("minimum travel ticket case3", func(t *testing.T) {
+		assert.Equal(t, 50, minimumTravelCost([]int{1, 2, 3, 4, 6, 8, 9, 10, 13, 14, 16, 17, 19, 21, 24, 26, 27, 28, 29}, []int{3, 14, 50}))
 	})
 }
 
