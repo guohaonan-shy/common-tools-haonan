@@ -7,7 +7,8 @@ import "math"
 */
 
 func minSpeedOnTime(dist []int, hour float64) int {
-	minSpeed, maxSpeed := 1, math.MaxInt32
+	//minSpeed, maxSpeed := 1, math.MaxInt32
+	minSpeed, maxSpeed := 1, 10000000 // because hour has at most two digit, the shortest drive period is 10^5/0.01 = 10^7
 	globalMinSpeed := maxSpeed
 	for minSpeed <= maxSpeed {
 
@@ -35,8 +36,12 @@ func minSpeedOnTime(dist []int, hour float64) int {
 			minSpeed = mid + 1
 		}
 	}
-	// be compatible with 32-bit and 64-bit both
-	if minSpeed < 0 || minSpeed == math.MaxInt32+1 {
+	// be compatible with 32-bit and 64-bit both, because we use maximum of int32 as our right pointer
+	//if minSpeed < 0 || minSpeed == math.MaxInt32+1 {
+	//	globalMinSpeed = -1
+	//}
+
+	if minSpeed == 10000001 {
 		globalMinSpeed = -1
 	}
 	return globalMinSpeed
