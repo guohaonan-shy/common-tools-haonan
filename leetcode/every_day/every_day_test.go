@@ -6,6 +6,43 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_166(t *testing.T) {
+	t.Run("fraction case1", func(t *testing.T) {
+		numerator, denominator := 1, 2
+		assert.Equal(t, "0.5", fractionToDecimal(numerator, denominator))
+	})
+
+	t.Run("fraction case2", func(t *testing.T) {
+		numerator, denominator := 2, 1
+		assert.Equal(t, "2", fractionToDecimal(numerator, denominator))
+	})
+
+	t.Run("fraction case3", func(t *testing.T) {
+		numerator, denominator := 4, 333
+		assert.Equal(t, "0.(012)", fractionToDecimal(numerator, denominator))
+	})
+
+	t.Run("fraction case4", func(t *testing.T) {
+		numerator, denominator := 1, 6
+		assert.Equal(t, "0.1(6)", fractionToDecimal(numerator, denominator))
+	})
+
+	t.Run("fraction case5", func(t *testing.T) {
+		numerator, denominator := -50, 8
+		assert.Equal(t, "-6.25", fractionToDecimal(numerator, denominator))
+	})
+
+	t.Run("fraction case6", func(t *testing.T) {
+		numerator, denominator := 7, -12
+		assert.Equal(t, "-0.58(3)", fractionToDecimal(numerator, denominator))
+	})
+
+	t.Run("corner case 1", func(t *testing.T) {
+		numerator, denominator := -2147483648, 1
+		assert.Equal(t, "-2147483648", fractionToDecimal(numerator, denominator))
+	})
+}
+
 func Test_650(t *testing.T) {
 	t.Run("650", func(t *testing.T) {
 		assert.Equal(t, 0, minSteps(1))
