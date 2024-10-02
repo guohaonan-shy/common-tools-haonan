@@ -47,6 +47,32 @@ func Test_1570(t *testing.T) {
 	})
 }
 
+func Test_1870(t *testing.T) {
+	t.Run("minimum speed to take the trains case1", func(t *testing.T) {
+		dist := []int{1, 3, 2}
+		hour := 6.0
+		assert.Equal(t, 1, minSpeedOnTime(dist, hour))
+	})
+
+	t.Run("minimum speed to take the trains case2", func(t *testing.T) {
+		dist := []int{1, 3, 2}
+		hour := 2.7
+		assert.Equal(t, 3, minSpeedOnTime(dist, hour))
+	})
+
+	t.Run("minimum speed to take the trains case3", func(t *testing.T) {
+		dist := []int{1, 3, 2}
+		hour := 1.9
+		assert.Equal(t, -1, minSpeedOnTime(dist, hour))
+	})
+
+	t.Run("minimum speed to take the trains: extreme case1", func(t *testing.T) {
+		dist := []int{1, 1, 100000}
+		hour := 2.01
+		assert.Equal(t, 10000000, minSpeedOnTime(dist, hour))
+	})
+}
+
 func Test_2304(t *testing.T) {
 	t.Run("minimum path in the grid case1", func(t *testing.T) {
 		grid := [][]int{
