@@ -43,7 +43,6 @@ func minCost(maxTime int, edges [][]int, passingFees []int) int {
 		globalMinCost = -1
 		reached       = make(map[int]struct{}, 0)
 	)
-
 	dfs = func(idx int, curTime int, cost int) {
 		if curTime > maxTime {
 			return
@@ -76,7 +75,7 @@ func minCostDP(maxTime int, edges [][]int, passingFees []int) int {
 	for i := range adjacenyMatrix {
 		adjacenyMatrix[i] = make([]int, len(passingFees))
 	}
-
+	// O(m), m is the number of edges
 	for _, edge := range edges {
 		left, right := edge[0], edge[1]
 		weight := edge[2]
@@ -108,7 +107,7 @@ func minCostDP(maxTime int, edges [][]int, passingFees []int) int {
 		dp[i] = make([]int, maxTime+1)
 	}
 
-	// inititalization
+	// initialization
 	nexts := adjacenyList[0]
 
 	for _, next := range nexts {
@@ -118,6 +117,7 @@ func minCostDP(maxTime int, edges [][]int, passingFees []int) int {
 		}
 	}
 
+	// time complexity is O(maxTime * len(nodes))
 	for i := 1; i < maxTime; i++ {
 		for point := 0; point < len(passingFees)-1; point++ {
 			if dp[point][i] == 0 {
@@ -151,4 +151,47 @@ func minCostDP(maxTime int, edges [][]int, passingFees []int) int {
 		globalMinCost = -1
 	}
 	return globalMinCost
+}
+
+func minCostDPOptimized(maxTime int, edges [][]int, passingFees []int) int {
+	/*
+		the above method need to firstly iterate edges to form an adjacent list for the process of dynamic programming to index
+		time complexity is O(num(edges) + max_times*num(nodes))
+
+		the better way: in the iteration of maxTime, we can iterate edges to check the minimum cost of current node
+	*/
+
+	numOfNodes := len(passingFees)
+	dp := make([][]int, numOfNodes)
+	for i := range dp {
+		dp[i] = make([]int, maxTime+1)
+		for j := range dp[i] {
+			dp[i][j] = math.MaxInt32
+		}
+	}
+
+	dp[0][0] = passingFees[0]
+	for ts := 1; ts <= maxTime; ts++ {
+		for _, edge := range edges {
+			start, end, time := edge[0], edge[1], edge[2]
+
+			if ts-time >= 0 {
+				if dp[start][ts-time] != math.MaxInt32 { // the previous node can be reached from 0 to current timestamp
+					dp[end][ts] = min(dp[start][ts-time]+passingFees[end], dp[end][ts])
+				}
+				if dp[end][ts-time] != math.MaxInt32 {
+					dp[start][ts] = min(dp[end][ts-time]+passingFees[start], dp[start][ts])
+				}
+			}
+
+		}
+	}
+	res := math.MaxInt32
+	for _, val := range dp[numOfNodes-1] {
+		res = min(res, val)
+	}
+	if res == math.MaxInt32 {
+		res = -1
+	}
+	return res
 }
