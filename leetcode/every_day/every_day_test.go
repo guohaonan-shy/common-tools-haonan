@@ -110,6 +110,48 @@ func Test_1870(t *testing.T) {
 	})
 }
 
+func Test_1928(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		edges := [][]int{
+			{0, 1, 10},
+			{1, 2, 10},
+			{2, 5, 10},
+			{0, 3, 1},
+			{3, 4, 10},
+			{4, 5, 15},
+		}
+		passingFees := []int{5, 1, 2, 20, 20, 3}
+		assert.Equal(t, 11, minCostDP(30, edges, passingFees))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		edges := [][]int{
+			{0, 1, 10},
+			{1, 2, 10},
+			{2, 5, 10},
+			{0, 3, 1},
+			{3, 4, 10},
+			{4, 5, 15},
+		}
+		passingFees := []int{5, 1, 2, 20, 20, 3}
+		assert.Equal(t, 48, minCostDP(29, edges, passingFees))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		edges := [][]int{
+			{0, 1, 10},
+			{1, 2, 10},
+			{2, 5, 10},
+			{0, 3, 1},
+			{3, 4, 10},
+			{4, 5, 15},
+		}
+		passingFees := []int{5, 1, 2, 20, 20, 3}
+		assert.Equal(t, -1, minCostDP(25, edges, passingFees))
+	})
+
+}
+
 func Test_2304(t *testing.T) {
 	t.Run("minimum path in the grid case1", func(t *testing.T) {
 		grid := [][]int{
