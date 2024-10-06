@@ -164,6 +164,20 @@ func Test_1928(t *testing.T) {
 
 }
 
+func Test_2024(t *testing.T) {
+	t.Run("maximum consecutive confusion::case1", func(t *testing.T) {
+		assert.Equal(t, 4, maxConsecutiveAnswers("TTFF", 2))
+	})
+
+	t.Run("maximum consecutive confusion::case2", func(t *testing.T) {
+		assert.Equal(t, 3, maxConsecutiveAnswers("TTFF", 1))
+	})
+
+	t.Run("maximum consecutive confusion::case3", func(t *testing.T) {
+		assert.Equal(t, 5, maxConsecutiveAnswers("TTFTTFTT", 1))
+	})
+}
+
 func Test_2304(t *testing.T) {
 	t.Run("minimum path in the grid case1", func(t *testing.T) {
 		grid := [][]int{
