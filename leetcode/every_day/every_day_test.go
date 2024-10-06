@@ -6,6 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_134(t *testing.T) {
+	t.Run("gas station::has solution::case1", func(t *testing.T) {
+		gas, cost := []int{1, 2, 3, 4, 5}, []int{3, 4, 5, 1, 2}
+		assert.Equal(t, 3, canCompleteCircuit(gas, cost))
+	})
+
+	t.Run("gas station::no solution::case1", func(t *testing.T) {
+		gas, cost := []int{2, 3, 4}, []int{3, 4, 3}
+		assert.Equal(t, -1, canCompleteCircuit(gas, cost))
+	})
+}
+
 func Test_166(t *testing.T) {
 	t.Run("fraction case1", func(t *testing.T) {
 		numerator, denominator := 1, 2
