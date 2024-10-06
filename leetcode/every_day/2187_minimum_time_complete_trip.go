@@ -18,12 +18,23 @@ func minimumTime(time []int, totalTrips int) int64 {
 	return int64(cur - 1)
 }
 
+/*
+	I spent a lot of time in how to fix in dynamic programming, but I found there is no difference with the above iteration
+
+	Given the total trips, as days increase from one day to upper limit of days that we can travel, the total trips that we can travel is increasing
+
+	eg. If we take one day, we can take 1 trip;
+		If we take three days we can take 5 trip ...
+
+	Therefore, our goal is to find the minimum days that we used to take the give trips. We can use binary search to find the minimum day count to meet the given target.
+*/
+
 func minimumTime_standard(time []int, totalTrips int) int64 {
 	maxBus := 0
 	for _, timeCost := range time {
 		maxBus = max(maxBus, timeCost)
 	}
-	left, right := int64(1), int64(maxBus*totalTrips)
+	left, right := int64(1), int64(maxBus*totalTrips) // upper limit: the max value of time * total trips
 
 	for left < right {
 		mid := (left + right) / 2
