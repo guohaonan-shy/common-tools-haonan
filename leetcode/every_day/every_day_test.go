@@ -178,6 +178,20 @@ func Test_2024(t *testing.T) {
 	})
 }
 
+func Test_2187(t *testing.T) {
+	t.Run("minimum time::case1", func(t *testing.T) {
+		assert.Equal(t, int64(3), minimumTime_standard([]int{1, 2, 3}, 5))
+	})
+
+	t.Run("minimum time::case2", func(t *testing.T) {
+		assert.Equal(t, int64(2), minimumTime_standard([]int{2}, 1))
+	})
+
+	t.Run("minimum time::case3", func(t *testing.T) {
+		assert.Equal(t, int64(25), minimumTime_standard([]int{5, 10, 10}, 9))
+	})
+}
+
 func Test_2304(t *testing.T) {
 	t.Run("minimum path in the grid case1", func(t *testing.T) {
 		grid := [][]int{
