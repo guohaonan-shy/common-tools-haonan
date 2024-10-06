@@ -27,6 +27,10 @@ func minimumTime(time []int, totalTrips int) int64 {
 		If we take three days we can take 5 trip ...
 
 	Therefore, our goal is to find the minimum days that we used to take the give trips. We can use binary search to find the minimum day count to meet the given target.
+
+	Another reason why we consider binary search is that if we specified the day, the trips we can take can be calculated.
+	If we can reach the target, we can reduce the days to find the potential minimum.
+	If not, we can give more days for exploration.
 */
 
 func minimumTime_standard(time []int, totalTrips int) int64 {
