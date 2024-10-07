@@ -9,7 +9,7 @@ require (
 	github.com/ghn980421/common-tools-haonan v0.0.0-20211210092931-25d81a192a5c
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/sirupsen/logrus v1.9.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli v1.22.14
 	github.com/v2pro/plz v0.0.0-20221028024117-e5f9aec5b631
 	github.com/vishvananda/netlink v1.1.0
