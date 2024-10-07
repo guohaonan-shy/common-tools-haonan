@@ -6,6 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_134(t *testing.T) {
+	t.Run("gas station::has solution::case1", func(t *testing.T) {
+		gas, cost := []int{1, 2, 3, 4, 5}, []int{3, 4, 5, 1, 2}
+		assert.Equal(t, 3, canCompleteCircuit(gas, cost))
+	})
+
+	t.Run("gas station::no solution::case1", func(t *testing.T) {
+		gas, cost := []int{2, 3, 4}, []int{3, 4, 3}
+		assert.Equal(t, -1, canCompleteCircuit(gas, cost))
+	})
+}
+
 func Test_166(t *testing.T) {
 	t.Run("fraction case1", func(t *testing.T) {
 		numerator, denominator := 1, 2
@@ -186,6 +198,20 @@ func Test_2024(t *testing.T) {
 
 	t.Run("maximum consecutive confusion::case3", func(t *testing.T) {
 		assert.Equal(t, 5, maxConsecutiveAnswers("TTFTTFTT", 1))
+	})
+}
+
+func Test_2187(t *testing.T) {
+	t.Run("minimum time::case1", func(t *testing.T) {
+		assert.Equal(t, int64(3), minimumTime_standard([]int{1, 2, 3}, 5))
+	})
+
+	t.Run("minimum time::case2", func(t *testing.T) {
+		assert.Equal(t, int64(2), minimumTime_standard([]int{2}, 1))
+	})
+
+	t.Run("minimum time::case3", func(t *testing.T) {
+		assert.Equal(t, int64(25), minimumTime_standard([]int{5, 10, 10}, 9))
 	})
 }
 
