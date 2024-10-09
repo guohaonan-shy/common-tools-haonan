@@ -253,3 +253,41 @@ func Test_2304(t *testing.T) {
 		assert.Equal(t, 6, minimumPathInGridDP(grid, moveCost))
 	})
 }
+
+func Test_3171(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 4}
+		k := 3
+		assert.Equal(t, 0, minimumDifference(case1, k))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{1, 3, 1, 3}
+		k := 2
+		assert.Equal(t, 1, minimumDifference(case2, k))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		case3 := []int{1}
+		k := 10
+		assert.Equal(t, 9, minimumDifference(case3, k))
+	})
+
+	t.Run("case4", func(t *testing.T) {
+		case4 := []int{6}
+		k := 2
+		assert.Equal(t, 4, minimumDifference(case4, k))
+	})
+
+	t.Run("case5", func(t *testing.T) {
+		case5 := []int{1, 10}
+		k := 6
+		assert.Equal(t, 4, minimumDifference(case5, k))
+	})
+
+	t.Run("case6", func(t *testing.T) {
+		case6 := []int{1, 8, 9}
+		k := 7
+		assert.Equal(t, 1, minimumDifference(case6, k))
+	})
+}
