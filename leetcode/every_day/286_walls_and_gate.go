@@ -82,3 +82,16 @@ func bfsRooms(i, j int, rooms [][]int) {
 	}
 	rooms[i][j] = minimum
 }
+
+/*
+	A general thought about BFS:
+	1. confirm the start point of bfs
+	2. get the head of node in queue as the current node
+	3. iterate four directions:
+		3.1. check if the four direction of current node is valid or not: out of range => filter
+		3.2. check if this node is reached or has already added in to queue
+		3.3. specified conditions in practice => filter
+		3.4. target
+		3.5. if need to further search, add next node into queue and tag it as reached
+		3.6. go to step 2
+*/
