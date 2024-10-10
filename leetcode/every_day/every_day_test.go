@@ -55,6 +55,24 @@ func Test_166(t *testing.T) {
 	})
 }
 
+func Test_286(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		rooms := [][]int{
+			{2147483647, -1, 0, 2147483647},
+			{2147483647, 2147483647, 2147483647, -1},
+			{2147483647, -1, 2147483647, -1},
+			{0, -1, 2147483647, 2147483647},
+		}
+		wallsAndGates(rooms)
+		assert.Equal(t, [][]int{
+			{3, -1, 0, 1},
+			{2, 2, 1, -1},
+			{1, -1, 2, -1},
+			{0, -1, 3, 4},
+		}, rooms)
+	})
+}
+
 func Test_650(t *testing.T) {
 	t.Run("650", func(t *testing.T) {
 		assert.Equal(t, 0, minSteps(1))
