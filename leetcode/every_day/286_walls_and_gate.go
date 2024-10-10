@@ -32,7 +32,7 @@ func bfsRooms(i, j int, rooms [][]int) {
 		depth:  0,
 	})
 	minimum := math.MaxInt32
-	reached := make(map[[2]int]bool, 0)
+	reached := make(map[[2]int]bool, 0) // check whether available nodes is in the queue but still not check
 	reached[[2]int{i, j}] = true
 	for len(queue) > 0 {
 		cur := queue[0]
