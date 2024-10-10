@@ -87,6 +87,29 @@ func Test_688(t *testing.T) {
 	})
 }
 
+func Test_871(t *testing.T) {
+	t.Run("refueling stop::case1", func(t *testing.T) {
+		assert.Equal(t, 0, minRefuelStops(1, 1, [][]int{}))
+		assert.Equal(t, 0, minRefuelStopDP(1, 1, [][]int{}))
+	})
+
+	t.Run("refueling stop::case2", func(t *testing.T) {
+		assert.Equal(t, -1, minRefuelStops(100, 1, [][]int{{10, 100}}))
+		assert.Equal(t, -1, minRefuelStopDP(100, 1, [][]int{{10, 100}}))
+	})
+
+	t.Run("refueling stop::case3", func(t *testing.T) {
+		stations := [][]int{
+			{10, 60},
+			{20, 30},
+			{30, 30},
+			{60, 40},
+		}
+		assert.Equal(t, 2, minRefuelStops(100, 10, stations))
+		assert.Equal(t, 2, minRefuelStopDP(100, 10, stations))
+	})
+}
+
 func Test_983(t *testing.T) {
 	t.Run("minimum travel ticket case1", func(t *testing.T) {
 		assert.Equal(t, 11, minimumTravelCost([]int{1, 4, 6, 7, 8, 20}, []int{2, 7, 15}))
@@ -246,5 +269,43 @@ func Test_2304(t *testing.T) {
 		}
 
 		assert.Equal(t, 6, minimumPathInGridDP(grid, moveCost))
+	})
+}
+
+func Test_3171(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 4}
+		k := 3
+		assert.Equal(t, 0, minimumDifference(case1, k))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		case2 := []int{1, 3, 1, 3}
+		k := 2
+		assert.Equal(t, 1, minimumDifference(case2, k))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		case3 := []int{1}
+		k := 10
+		assert.Equal(t, 9, minimumDifference(case3, k))
+	})
+
+	t.Run("case4", func(t *testing.T) {
+		case4 := []int{6}
+		k := 2
+		assert.Equal(t, 4, minimumDifference(case4, k))
+	})
+
+	t.Run("case5", func(t *testing.T) {
+		case5 := []int{1, 10}
+		k := 6
+		assert.Equal(t, 4, minimumDifference(case5, k))
+	})
+
+	t.Run("case6", func(t *testing.T) {
+		case6 := []int{1, 8, 9}
+		k := 7
+		assert.Equal(t, 1, minimumDifference(case6, k))
 	})
 }

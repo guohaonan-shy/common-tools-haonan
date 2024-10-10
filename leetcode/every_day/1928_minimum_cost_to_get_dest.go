@@ -159,6 +159,12 @@ func minCostDPOptimized(maxTime int, edges [][]int, passingFees []int) int {
 		time complexity is O(num(edges) + max_times*num(nodes))
 
 		the better way: in the iteration of maxTime, we can iterate edges to check the minimum cost of current node
+
+		supposed dp[i][j] means the minimum cost when we arrive in node i at time j => the outer loop is from 1 to maxTime => as time goes by, the depth of search is deeper
+
+		then why we choose to iterate edges?:
+			1. most of graph is sparse, which means we can iterate edge list
+			2. at time j, we want to know: 1. if we can get node i from j - cost[i,j] 2. if can, we want to calculate the minimum cost from dp[start][j-cost[i,j]]
 	*/
 
 	numOfNodes := len(passingFees)
