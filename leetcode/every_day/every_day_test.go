@@ -205,6 +205,18 @@ func Test_1928(t *testing.T) {
 
 }
 
+func Test_1945(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, 36, getLucky("iiii", 1))
+	})
+
+	t.Run("s[i] vs str", func(t *testing.T) {
+		iterateString("aaa过好难")
+
+		iterateStringByStr("aaa过好难")
+	})
+}
+
 func Test_2024(t *testing.T) {
 	t.Run("maximum consecutive confusion::case1", func(t *testing.T) {
 		assert.Equal(t, 4, maxConsecutiveAnswers("TTFF", 2))

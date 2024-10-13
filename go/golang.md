@@ -139,10 +139,10 @@ a1和a2两个函数唯一的区别在于函数签名中的返回值，一个是�
 ## 3. rune和byte类型：  
 这个问题很简单本质上，但是单独拎出来说是为了概念的明确，不要带着模模糊糊的概念往下走，这条路是长期的，不是面试一次就完了的  
 ```
-var str = "abcdefg中国  
+var str = "abcdefg中国"  
 for i, s := range str {
-    print(str[i])
-    print(s)
+    print(str[i]) // 返回的事unicode
+    print(s) // 返回的是utf-8 的计算机编码
 } 
 ```
 这两个输出的内容一样吗？- 可能一样，也可能不一样，怎么解释？  
