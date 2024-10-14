@@ -110,6 +110,20 @@ func Test_871(t *testing.T) {
 	})
 }
 
+func Test_887(t *testing.T) {
+	t.Run("super_egg_drop case1", func(t *testing.T) {
+		assert.Equal(t, 2, superEggDrop(1, 2))
+	})
+
+	t.Run("super_egg_drop case2", func(t *testing.T) {
+		assert.Equal(t, 3, superEggDrop(2, 6))
+	})
+
+	t.Run("super_egg_drop case3", func(t *testing.T) {
+		assert.Equal(t, 4, superEggDrop(3, 14))
+	})
+}
+
 func Test_983(t *testing.T) {
 	t.Run("minimum travel ticket case1", func(t *testing.T) {
 		assert.Equal(t, 11, minimumTravelCost([]int{1, 4, 6, 7, 8, 20}, []int{2, 7, 15}))
