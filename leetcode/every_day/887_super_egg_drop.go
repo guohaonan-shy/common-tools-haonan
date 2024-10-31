@@ -3,15 +3,13 @@ package every_day
 import "math"
 
 /*
-	timeout => time complexity: O(n^2*k)
+timeout => time complexity: O(n^2*k)
 */
 func superEggDrop(k int, n int) int {
 	dp := make([][]int, n+1) // the first dimension is the number of floors
-
 	for i := range dp {
 		dp[i] = make([]int, k+1) // the second dimension is the number of remaining eggs
 	}
-
 	for floor := 1; floor <= n; floor++ {
 
 		for eggs := 1; eggs <= k; eggs++ {
