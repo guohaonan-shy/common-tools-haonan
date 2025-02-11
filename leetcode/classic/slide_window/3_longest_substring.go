@@ -44,3 +44,30 @@ func lengthOfLongestSubstringV2(s string) int {
 	}
 	return maxLength
 }
+
+// longest repeat character
+func lengthOfLongestSubstringV3(s string) int {
+	if len(s) == 0 {
+		return 0
+	}
+
+	target := s[0]
+	left, right := 0, 0
+	maxLength := 0
+
+	for right < len(s) {
+		for ; right < len(s) && s[right] == target; right++ {
+			if right-left+1 > maxLength {
+				maxLength = right - left + 1
+			}
+		}
+
+		if right == len(s) {
+			break
+		}
+
+		target = s[right]
+		left = right
+	}
+	return maxLength
+}
