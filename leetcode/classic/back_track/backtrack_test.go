@@ -34,7 +34,7 @@ func Test_77(t *testing.T) {
 
 func Test_46(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
-		assert.Equal(t, [][]int{{0, 1}, {1, 0}}, permuteV2([]int{0, 1}))
+		assert.Equal(t, [][]int{{0, 1}, {1, 0}}, permuteV3([]int{0, 1}))
 	})
 }
 

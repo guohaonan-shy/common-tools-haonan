@@ -82,3 +82,26 @@ func permuteV2(nums []int) [][]int {
 	dfs()
 	return res
 }
+
+func permuteV3(nums []int) [][]int {
+
+	if len(nums) == 1 {
+		return [][]int{{nums[0]}}
+	}
+	res := make([][]int, 0)
+
+	for i := range nums {
+		cur := nums[i]
+		next := make([]int, 0)
+		next = append(next, nums[:i]...)
+		next = append(next, nums[i+1:]...)
+
+		permutations := permuteV3(next)
+
+		for j := range permutations {
+			newPermutation := append(permutations[j], cur)
+			res = append(res, newPermutation)
+		}
+	}
+	return res
+}

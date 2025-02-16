@@ -3,6 +3,9 @@ package dynammic_programming
 func longestIncreasingSequence(nums []int) int {
 
 	dp := make([]int, len(nums))
+	// dp[i] is the maximum length of strictly increasing subsequence that ends with index i
+	// if maximum subsequence that doesn't end with last element, 'dp[len(nums)-1]' is not what we want.
+	// maximum among dp[0:len(nums)] is what we want
 	maxLength := 0
 	for end := 0; end < len(nums); end++ {
 		localMax := 1
