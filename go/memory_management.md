@@ -37,3 +37,78 @@
 答案是效率，即分配对象的效率。假设现在以page做为内存管理对象而非不同大小的`mspan`，运行时会怎么操作？
 从bitmap或者linkedlist上进行遍历查找直到有满足所需大小的内存空间，近似一个滑动窗口的问题，效率很低。
 因此，通过设计层面划分67个不同对象大小的class，先根据所需内存寻找`mspan`，随后配合`spans`索引到对应的page寻找空闲内存，效率会高很多。
+
+```go
+// path: /usr/local/go/src/runtime/mheap.go
+type mspan struct {
+	next *mspan //链表前向指针，用于将span链接起来
+	
+	prev *mspan //链表前向指针，用于将span链接起来
+	
+	startAddr uintptr // 起始地址，也即所管理页的地址
+	
+	npages uintptr // 管理的页数
+	
+	nelems uintptr // 该mspan总计对象个数
+	
+	allocBits *gcBits  //分配位图，每一位代表对应对象是否已分配
+	
+	allocCount uint16 // 该mspan内已分配块的对象数目
+	
+	spanclass spanClass  // class表中的class ID，和Size Class相关
+	
+	elemsize uintptr //该mspan内单位对象大小
+}
+```
+
+![mspan整体示意图](./resource/mspan_overall.png)
+<p style="font-size: 14px; color: lightgrey; text-align: center;">
+    图 4: mspan整体示意图
+</p>
+
+整体来说，中小对象的分配占整个程序对象分配的大头，某些大小的`mspan`可能会有多个，相同大小的mspan通过链表连接在一起方便进行可分配对象的查找。
+Runtime并不需要根据其实地址和单位对象大小进行线性查找，可以根据每一个mspan上的信息快速判断该mspan是否有空间进行对象分配，如果没有，跳到下一步`mspan`。
+
+从上图，我们可以更明显的看出，`mspan`在内存管理上的作用，按照对象的大小分成不同规格的管理对象，记录负责内存页上对象的分配情况，关联其他相同class的`mspan`进行可分配对象的快速查询。
+
+### 内存管理
+在了解清楚Golang的内存管理单元`mspan`之后，我们将关注点拉回到内存管理和内存分配上。当一个goroutine申请内存时，需要从`arena`区域申请`mspan`，随着goroutine的数目的增加，针对`arena`的锁冲突会导致性能的劣化。
+所以，如何减少锁冲突从而提升Go程序分配对象的性能成为内存管理的一个核心问题。遇到这种问题，最常用的解决方案是将大部分的对象分配本地化，从而减少因分配对象带来的锁竞争。这一版内存分配采用的是`mcache`和`mcentral`对内存进行管理。
+
+#### mcache
+每一个工作线程P均包含一个私有的`mcache`，每一个`mcache`均包含每一个大小的`mspan`列表供每个在当前工作线程P上执行的goroutine进行对象分配。
+```go
+//path: /usr/local/go/src/runtime/mcache.go
+type mcache struct {
+    alloc [numSpanClasses]*mspan
+}
+
+numSpanClasses = _NumSizeClasses << 1
+```
+
+为什么`mspan`的class数目是size class的两倍？- `mspan`分为指针对象和非指针对象，主要加速内存回收速度，暂时先不深究细节，此处我们仍以`mspan`作为基本单元了解内存分配。
+
+随着程序运行过程中，工作线程P不断向`mcentral`进行`mspan`申请，然后缓存到本地，用于goroutine的内存分配。
+由于`mcache`上的`mspan`均是和工作线程P绑定的，而同一时间一个P上只有一个goroutine执行，所以不存在锁竞争的问题。
+#### mcentral
+`mcentral`作为一个中心化的组件，全局管理不同class的`mspan`，用于`mcache`申请获取。一个span class对应一个`mcentral`对象，以供`mheap`进行统一管理。
+```go
+//path: /usr/local/go/src/runtime/mcentral.go
+
+type mcentral struct {
+    lock mutex // 互斥锁，避免多个goroutine的竞态问题
+	
+    sizeclass int32 
+	
+    nonempty mSpanList // 尚有空闲object的mspan链表
+    
+    
+    empty mSpanList // 没有空闲object的mspan链表，或者是已被mcache取走的msapn链表
+	
+    nmalloc uint64  // 已累计分配的对象个数
+}
+```
+![mcentral整体示意图](./resource/mcentral.png)
+<p style="font-size: 14px; color: lightgrey; text-align: center;">
+    图 5: mcentral示意图
+</p>
