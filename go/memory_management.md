@@ -186,3 +186,28 @@ Go基于内存是连续的假设，结合TCMalloc(Thread-Caching Malloc, 线程�
 
 链表分配器（Free-List Allocator）可以重用已经被释放的内存，它在内部会维护一个类似链表的数据结构。当用户程序申请内存时，空闲链表分配器会依次遍历空闲的内存块，找到足够大的内存，然后申请新的资源并修改链表。
 因为不同的内存块通过指针构成了链表，所以使用这种方式的分配器可以重新利用回收的资源，但是因为分配内存时需要遍历链表，所以它的时间复杂度是O(n)。
+
+## 稀疏内存
+接下来，我们再画一小部分篇幅延伸下Go内存管理的一次重要变化: 有限的线性内存->无上限的稀疏内存。
+最早，在Go的1.5版本时，有一位开发者反馈，当他在处理大数据相关的任务时，当时硬编码的128G的内存大小成为了限制。尽管后面Go官方将内存大小升级到了512GB，但是仍然有开发者反馈内存不够用。
+最后在Go 1.10版本，Go官方亲自下场承诺会在新版本好好考虑这个问题合适的解决方案。
+![稀疏内存](./resource/sparse_memory.png)
+<p style="font-size: 14px; color: lightgrey; text-align: center;">
+    图 10: 稀疏内存示意图
+</p>
+如上图所示，运行时使用二维数组`heapArena`进行内存管理，每个单元管理64MB内存空间
+
+```go
+type heapArena struct {
+	bitmap       [heapArenaBitmapBytes]byte
+	spans        [pagesPerArena]*mspan
+	pageInUse    [pagesPerArena / 8]uint8
+	pageMarks    [pagesPerArena / 8]uint8
+	pageSpecials [pagesPerArena / 8]uint8
+	checkmarks   *checkmarksMap
+	zeroedBase   uintptr
+}
+```
+该结构体中的 bitmap 和 spans 与线性内存中的 bitmap 和 spans 区域一一对应，zeroedBase 字段指向了该结构体管理的内存的基地址。上述设计将原有的连续大内存切分成稀疏的小内存，而用于管理这些内存的元信息也被切成了小块。
+
+不同平台和架构的二维数组大小可能完全不同，如果我们的 Go 语言服务在 Linux 的 x86-64 架构上运行，二维数组的一维大小会是 1，而二维大小是 4,194,304，因为每一个指针占用 8 字节的内存空间，所以元信息的总大小为 32MB。由于每个 runtime.heapArena 都会管理 64MB 的内存，整个堆区最多可以管理 256TB 的内存，这比之前的 512GB 多好几个数量级。
