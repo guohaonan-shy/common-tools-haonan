@@ -144,7 +144,34 @@ type mheap struct {
 	}
 }
 ```
-![mheapl整体示意图](./resource/mheap.png)
+![mheap整体示意图](./resource/mheap.png)
 <p style="font-size: 14px; color: lightgrey; text-align: center;">
     图 6: mheap示意图
 </p>
+
+### 高效
+Go基于内存是连续的假设，结合TCMalloc(Thread-Caching Malloc, 线程缓存分配)以及分级缓存的管理模式，实现了较为高效的内存分配。
+跟其他编程语言相比，Go的内存分配高效在哪。大体上编程语言的内存分配器一般为两种方式，一种是线性分配器，一种是空闲链表分配。
+#### 线性分配
+![线性分配器](./resource/linear_allocator.png)
+<p style="font-size: 14px; color: lightgrey; text-align: center;">
+    图 7: 线性分配器示意图
+</p>
+
+线性分配主要通过指针记录线性内存空间中`已使用`和`未使用`空间的边界，用户程序向分配器申请内存，分配器只需要检查剩余的空间内存、返回分配的内存区域并修改指针位置即可。
+该方式可实现较快的执行速度和较低的实现复杂度，但是内存的复用性较差。
+![线性分配器内存碎片](./resource/linear_allocator_gc.png)
+<p style="font-size: 14px; color: lightgrey; text-align: center;">
+    图 8: 线性分配器内存碎片
+</p>
+
+内存回收之后，在使用区域的空闲内存无法及时被复用，考虑到这样的问题，线性分配器通常会与具有拷贝特性的垃圾回收算法配合，通过定期拷贝已使用内存、移动指针，提升内存分配器的效率。
+但是对于直接暴露指针的编程语言，该策略并不能实现。
+#### 链表分配器
+![链表分配器内存碎片](./resource/linklist_allocator.png)
+<p style="font-size: 14px; color: lightgrey; text-align: center;">
+    图 9: 链表分配器示意图
+</p>
+
+链表分配器（Free-List Allocator）可以重用已经被释放的内存，它在内部会维护一个类似链表的数据结构。当用户程序申请内存时，空闲链表分配器会依次遍历空闲的内存块，找到足够大的内存，然后申请新的资源并修改链表。
+因为不同的内存块通过指针构成了链表，所以使用这种方式的分配器可以重新利用回收的资源，但是因为分配内存时需要遍历链表，所以它的时间复杂度是O(n)。
