@@ -26,3 +26,18 @@ func removeElement2(nums []int, val int) int {
 	}
 	return slow
 }
+
+func removeElementV3(nums []int, val int) int {
+	insertedIdx, iteratedIdx := 0, 0
+
+	for ; iteratedIdx < len(nums); iteratedIdx++ {
+		if nums[iteratedIdx] == val {
+			continue
+		}
+
+		nums[insertedIdx] = nums[iteratedIdx]
+		insertedIdx++
+	}
+
+	return insertedIdx
+}
