@@ -1,4 +1,4 @@
-package array_string
+package remove_element
 
 func removeDuplicates_atMostTwice(nums []int) int {
 	duplicates, slow := 1, 1
@@ -35,4 +35,22 @@ func removeDuplicates_atMostTwice_standard(nums []int) int {
 		}
 	}
 	return slow
+}
+
+func removeDuplicates_atMostTwice_V3(nums []int) int {
+
+	if len(nums) <= 2 {
+		return len(nums)
+	}
+
+	insertedIdx, iteratedIdx := 2, 2
+
+	for ; iteratedIdx < len(nums); iteratedIdx++ {
+		if nums[insertedIdx-2] != nums[iteratedIdx] {
+			nums[insertedIdx] = nums[iteratedIdx]
+			insertedIdx++
+		}
+
+	}
+	return insertedIdx
 }

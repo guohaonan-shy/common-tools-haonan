@@ -1,4 +1,4 @@
-package array_string
+package remove_element
 
 func removeElement(nums []int, val int) int {
 	length := len(nums)
