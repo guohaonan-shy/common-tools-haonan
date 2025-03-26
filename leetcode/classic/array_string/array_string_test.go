@@ -195,9 +195,37 @@ func Test_80(t *testing.T) {
 }
 
 func Test_88(t *testing.T) {
-	num1 := []int{1, 2, 3, 0, 0, 0}
-	merge(num1, 3, []int{2, 5, 6}, 3)
-	assert.Equal(t, []int{1, 2, 2, 3, 5, 6}, num1)
+	//num1 := []int{1, 2, 3, 0, 0, 0}
+	//merge(num1, 3, []int{2, 5, 6}, 3)
+	//assert.Equal(t, []int{1, 2, 2, 3, 5, 6}, num1)
+
+	t.Run("merge v2: case1", func(t *testing.T) {
+		num1 := []int{1, 2, 3, 0, 0, 0}
+		num2 := []int{2, 5, 6}
+		mergeV2(num1, 3, num2, 3)
+		assert.Equal(t, []int{1, 2, 2, 3, 5, 6}, num1)
+	})
+
+	t.Run("merge v2: case2", func(t *testing.T) {
+		num1 := []int{1}
+		num2 := []int{}
+		mergeV2(num1, 1, num2, 0)
+		assert.Equal(t, []int{1}, num1)
+	})
+
+	t.Run("merge v2: case3", func(t *testing.T) {
+		num1 := []int{0}
+		num2 := []int{1}
+		mergeV2(num1, 0, num2, 1)
+		assert.Equal(t, []int{1}, num1)
+	})
+
+	t.Run("merge v2: case4", func(t *testing.T) {
+		num1 := []int{2, 0}
+		num2 := []int{1}
+		mergeV2(num1, 1, num2, 1)
+		assert.Equal(t, []int{1, 2}, num1)
+	})
 }
 
 func Test_121(t *testing.T) {

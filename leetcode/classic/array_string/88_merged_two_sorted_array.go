@@ -126,3 +126,36 @@ func mergeByIndex(nums1 []int, m int, nums2 []int, n int) {
 	}
 	nums1 = result
 }
+
+func mergeV2(nums1 []int, m int, nums2 []int, n int) {
+	// copy
+	nums1Copy := make([]int, m)
+	for i := range nums1Copy {
+		nums1Copy[i] = nums1[i]
+	}
+
+	p1, p2 := 0, 0
+
+	for p1 < m && p2 < n {
+		if nums1Copy[p1] < nums2[p2] {
+			nums1[p1+p2] = nums1Copy[p1]
+			p1++
+		} else {
+			nums1[p1+p2] = nums2[p2]
+			p2++
+		}
+	}
+
+	base := m
+	idx := p2
+	remain := nums2
+	if p1 < m {
+		idx = p1
+		remain = nums1Copy
+		base = n
+	}
+
+	for ; idx < len(remain); idx++ {
+		nums1[base+idx] = remain[idx]
+	}
+}
