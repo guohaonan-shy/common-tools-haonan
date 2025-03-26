@@ -27,3 +27,17 @@ func min(a, b int) int {
 	}
 	return b
 }
+
+func maxProfitV2(prices []int) int {
+	minPrice, maxProfit := 10_000, 0
+	// important!!!! 10^4 是10 XOR 4，即10和4做异或运算，minPrice = 10_000
+
+	for _, price := range prices {
+		if price < minPrice {
+			minPrice = price
+		} else {
+			maxProfit = max(maxProfit, price-minPrice)
+		}
+	}
+	return maxProfit
+}

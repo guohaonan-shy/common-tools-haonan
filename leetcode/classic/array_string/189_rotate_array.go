@@ -71,3 +71,28 @@ func reverse(nums []int) {
 		right--
 	}
 }
+
+func rotateV2(nums []int, k int) {
+
+	k = k % len(nums)
+
+	maxDivider := func(a, b int) int {
+		for b != 0 {
+			a, b = b, a%b
+		}
+		return a
+	}
+
+	cycle := maxDivider(len(nums), k)
+
+	for start := 0; start < cycle; start++ {
+		insertedElement := nums[start]
+		cur := start
+		for ok := true; ok; ok = cur != start {
+			next := (cur + k) % len(nums)
+			nums[next], insertedElement = insertedElement, nums[next]
+			cur = next
+		}
+	}
+	return
+}
