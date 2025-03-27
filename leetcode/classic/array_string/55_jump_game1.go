@@ -12,3 +12,17 @@ func canJump(nums []int) bool {
 	}
 	return max_distance >= len(nums)-1
 }
+
+func canJumpV2(nums []int) bool {
+	maxStep := 0
+	for i, step := range nums {
+		if maxStep >= len(nums)-1 {
+			return true
+		}
+
+		if i <= maxStep {
+			maxStep = max(maxStep, i+step)
+		}
+	}
+	return false
+}
