@@ -202,7 +202,7 @@ type bmap struct { // bucket的数据结构
 先不考虑扩容，map是如何查找和写入的？  
 #### 查找逻辑：
 1. 根据hashmap内的hash种子计算出key的hash 
-2. has值与bucket数目取模确认bucket位置
+2. hash值与bucket数目取模确认bucket位置
 3. bucket内的bmap结点进行遍历，先比较高位的hash是否相同，若相同在比较key是否相同，知道找到目标key或者遍历完仍未发现目标key
 
 #### 写入逻辑：
