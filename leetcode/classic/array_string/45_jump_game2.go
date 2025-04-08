@@ -12,3 +12,18 @@ func jump(nums []int) int {
 	}
 	return step
 }
+
+// pre-condition: all test cases are generated such that we can reach the final idx
+func jumpV2(nums []int) int {
+	maxPos, end := 0, 0
+	cnt := 0
+
+	for idx, step := range nums[:len(nums)-1] {
+		maxPos = max(maxPos, idx+step)
+		if idx == end {
+			cnt++
+			end = maxPos
+		}
+	}
+	return cnt
+}
