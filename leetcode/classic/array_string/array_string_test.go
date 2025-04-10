@@ -3,7 +3,6 @@ package array_string
 import (
 	"testing"
 
-	"github.com/common-tools-haonan/leetcode/classic/array_string/remove_element"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -78,6 +77,37 @@ func Test_42(t *testing.T) {
 	})
 }
 
+func Test_45(t *testing.T) {
+	t.Run("case 1", func(t *testing.T) {
+		case1 := []int{2, 3, 1, 1, 4}
+		assert.Equal(t, 2, jumpV2(case1))
+	})
+
+	t.Run("case 2", func(t *testing.T) {
+		case2 := []int{2, 3, 0, 1, 4}
+		assert.Equal(t, 2, jumpV2(case2))
+	})
+
+	t.Run("case 3", func(t *testing.T) {
+		case3 := []int{0}
+		assert.Equal(t, 0, jumpV2(case3))
+	})
+
+}
+
+func Test_55(t *testing.T) {
+	t.Run("case 1: can reach", func(t *testing.T) {
+		case1 := []int{2, 3, 1, 1, 4}
+		assert.Equal(t, true, canJumpV2(case1))
+	})
+
+	t.Run("case 2: can't reach", func(t *testing.T) {
+		case2 := []int{3, 2, 1, 0, 4}
+		assert.Equal(t, false, canJumpV2(case2))
+	})
+
+}
+
 func Test_65(t *testing.T) {
 	t.Run(".1", func(t *testing.T) {
 		assert.Equal(t, true, isNumber(".1"))
@@ -108,48 +138,6 @@ func Test_68(t *testing.T) {
 		max_width2 := 16
 		assert.Equal(t, []string{"What   must   be", "acknowledgment  ", "shall be        "}, fullJustify(case2, max_width2))
 	})
-}
-
-func Test_80(t *testing.T) {
-	t.Run("case1", func(t *testing.T) {
-		case1 := []int{1, 1, 1, 2, 2, 3}
-		k1 := remove_element.removeDuplicates_atMostTwice(case1)
-		assert.Equal(t, 5, k1)
-		assert.Equal(t, []int{1, 1, 2, 2, 3, 3}, case1)
-		case11 := []int{1, 1, 1, 2, 2, 3}
-		k11 := remove_element.removeDuplicates_atMostTwice_standard(case11)
-		assert.Equal(t, 5, k11)
-		assert.Equal(t, []int{1, 1, 2, 2, 3, 3}, case11)
-	})
-
-	t.Run("case2", func(t *testing.T) {
-		case2 := []int{0, 0, 1, 1, 1, 1, 2, 3, 3}
-		k2 := remove_element.removeDuplicates_atMostTwice(case2)
-		assert.Equal(t, 7, k2)
-		assert.Equal(t, []int{0, 0, 1, 1, 2, 3, 3, 3, 3}, case2)
-	})
-
-	t.Run("special_case1", func(t *testing.T) {
-		special_case1 := []int{1}
-		k3 := remove_element.removeDuplicates_atMostTwice(special_case1)
-		assert.Equal(t, 1, k3)
-		assert.Equal(t, []int{1}, special_case1)
-	})
-
-	t.Run("special_case2", func(t *testing.T) {
-		special_case2 := []int{2, 2}
-		k4 := remove_element.removeDuplicates_atMostTwice(special_case2)
-		assert.Equal(t, 2, k4)
-		assert.Equal(t, []int{2, 2}, special_case2)
-	})
-
-	t.Run("special_case3", func(t *testing.T) {
-		special_case3 := []int{2, 3}
-		k5 := remove_element.removeDuplicates_atMostTwice(special_case3)
-		assert.Equal(t, 2, k5)
-		assert.Equal(t, []int{2, 3}, special_case3)
-	})
-
 }
 
 func Test_88(t *testing.T) {
