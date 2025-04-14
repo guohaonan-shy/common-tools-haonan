@@ -329,6 +329,13 @@ func Test_189(t *testing.T) {
 
 }
 
+func Test_238(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		case1 := []int{1, 2, 3, 4}
+		assert.Equal(t, []int{24, 12, 8, 6}, productExceptSelf(case1))
+	})
+}
+
 func Test_274(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{3, 0, 6, 1, 5}

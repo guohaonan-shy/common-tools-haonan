@@ -14,19 +14,6 @@ func canJump(nums []int) bool {
 }
 
 func canJumpV2(nums []int) bool {
-<<<<<<< HEAD
-	maxStep := 0
-	for i, step := range nums {
-		if maxStep >= len(nums)-1 {
-			return true
-		}
-
-		if i <= maxStep {
-			maxStep = max(maxStep, i+step)
-		}
-	}
-	return false
-=======
 	maxPos := 0
 
 	for idx, step := range nums {
@@ -38,5 +25,4 @@ func canJumpV2(nums []int) bool {
 		}
 	}
 	return maxPos >= len(nums)-1
->>>>>>> 9de7f057c20e674ed8790d8e440f08b68e2204cb
 }
