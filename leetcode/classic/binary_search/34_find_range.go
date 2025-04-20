@@ -35,3 +35,48 @@ func binarySearch_Range(nums []int, left, right int, target int, last bool) int 
 
 	return -1
 }
+
+func searchRangeV2(nums []int, target int) []int {
+	if len(nums) == 0 {
+		return []int{-1, -1}
+	}
+
+	return []int{findFirst(nums, target), findLast(nums, target)}
+}
+
+func findFirst(nums []int, target int) int {
+	left, right := 0, len(nums)-1
+
+	for left < right {
+		mid := (left + right) / 2
+		if nums[mid] >= target {
+			right = mid
+		} else {
+			left = mid + 1
+		}
+	}
+
+	if nums[left] != target {
+		return -1
+	}
+
+	return left
+}
+
+func findLast(nums []int, target int) int {
+	left, right := 0, len(nums)-1
+
+	for left < right {
+		mid := (left + right + 1) / 2
+		if nums[mid] <= target {
+			left = mid
+		} else {
+			right = mid - 1
+		}
+	}
+
+	if nums[left] != target {
+		return -1
+	}
+	return left
+}

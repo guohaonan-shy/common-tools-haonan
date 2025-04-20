@@ -6,6 +6,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_34(t *testing.T) {
+
+	type args struct {
+		nums   []int
+		target int
+	}
+
+	for _, testCase := range []struct {
+		name   string
+		args   args
+		wanted []int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				nums:   []int{5, 7, 7, 8, 8, 10},
+				target: 8,
+			},
+			wanted: []int{3, 4},
+		},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			res := searchRangeV2(testCase.args.nums, testCase.args.target)
+			assert.Equal(t, testCase.wanted, res)
+		})
+	}
+
+}
+
 func Test_35(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := []int{1, 3, 5, 6}
