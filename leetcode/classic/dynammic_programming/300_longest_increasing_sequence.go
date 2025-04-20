@@ -21,16 +21,18 @@ func longestIncreasingSequence(nums []int) int {
 }
 
 func longestIncreasingSequence_binarySearch(nums []int) int {
-	list := make([]int, len(nums)+1) // list[i] means that the minimum of last element in the increasing sequence, which the length is i
+	list := make([]int, len(nums)+1)
+	// list[i] means that the minimum of last element in the increasing sequence, which the length is i
 
-	insetedIdx := 1 // this is the position that our target element, 'num', will be inserted in
+	insetedIdx := 1
+	// this idx means that we currently find the minimum of increasing sequence, which the length is insetedIdx
 	for _, num := range nums {
 		left, right := 1, insetedIdx
 		for left < right {
 
 			mid := (left + right) / 2
 
-			if list[mid] < num {
+			if list[mid] < num { // last element of length 'mid'
 				left = mid + 1
 			} else {
 				right = mid
@@ -39,6 +41,7 @@ func longestIncreasingSequence_binarySearch(nums []int) int {
 
 		list[left] = num
 
+		// 'num' should be set in the current length idx
 		if left == insetedIdx {
 			insetedIdx++
 		}
