@@ -6,6 +6,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_7(t *testing.T) {
+	type args struct {
+		input int
+	}
+
+	testCases := []struct {
+		name   string
+		args   args
+		wanted int
+	}{
+		{
+			name: "test case 1",
+			args: args{
+				input: 123,
+			},
+			wanted: 321,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			assert.Equal(t, testCase.wanted, reverse(testCase.args.input))
+		})
+	}
+}
+
 func Test_134(t *testing.T) {
 	t.Run("gas station::has solution::case1", func(t *testing.T) {
 		gas, cost := []int{1, 2, 3, 4, 5}, []int{3, 4, 5, 1, 2}
@@ -243,6 +269,36 @@ func Test_2024(t *testing.T) {
 	t.Run("maximum consecutive confusion::case3", func(t *testing.T) {
 		assert.Equal(t, 5, maxConsecutiveAnswers("TTFTTFTT", 1))
 	})
+}
+
+func Test_2145(t *testing.T) {
+	type args struct {
+		differences  []int
+		lower, upper int
+	}
+
+	testCases := []struct {
+		name   string
+		args   args
+		wanted int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				differences: []int{1, -3, 4},
+				lower:       1,
+				upper:       6,
+			},
+			wanted: 2,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			res := numberOfArrays(testCase.args.differences, testCase.args.lower, testCase.args.upper)
+			assert.Equal(t, testCase.wanted, res)
+		})
+	}
 }
 
 func Test_2187(t *testing.T) {
