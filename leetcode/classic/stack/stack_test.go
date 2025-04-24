@@ -10,6 +10,11 @@ func Test_20(t *testing.T) {
 		case1 := "()"
 		assert.Equal(t, true, isValid(case1))
 	})
+
+	t.Run("case2: right parentheses is more", func(t *testing.T) {
+		case1 := ")"
+		assert.Equal(t, false, isValid(case1))
+	})
 }
 
 func Test_71(t *testing.T) {
