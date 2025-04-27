@@ -24,6 +24,50 @@ func Test_5(t *testing.T) {
 	})
 }
 
+func Test_32(t *testing.T) {
+	for _, testCase := range []struct {
+		name   string
+		input  string
+		wanted int
+	}{
+		{
+			name:   "test case 1",
+			input:  "(()",
+			wanted: 2,
+		},
+		{
+			name:   "test case 2",
+			input:  ")()())",
+			wanted: 4,
+		},
+		{
+			name:   "test case 3",
+			input:  "",
+			wanted: 0,
+		},
+		{
+			name:   "test case 4",
+			input:  "()(())",
+			wanted: 6,
+		},
+		{
+			name:   "test case 5",
+			input:  "()(()",
+			wanted: 2,
+		},
+		{
+			name:   "test case 6",
+			input:  "(()())",
+			wanted: 6,
+		},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			res := longestValidParentheses_standard(testCase.input)
+			assert.Equal(t, testCase.wanted, res)
+		})
+	}
+}
+
 func Test_44(t *testing.T) {
 	t.Run("wildcard matching", func(t *testing.T) {
 		assert.Equal(t, true, isMatch("adceb", "*a*b"))
