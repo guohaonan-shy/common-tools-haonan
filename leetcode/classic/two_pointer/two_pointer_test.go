@@ -40,6 +40,35 @@ func Test_15(t *testing.T) {
 	})
 }
 
+func Test_31(t *testing.T) {
+	for _, testCase := range []struct {
+		name   string
+		input  []int
+		wanted []int
+	}{
+		{
+			name:   "test case 1",
+			input:  []int{1, 2, 3},
+			wanted: []int{1, 3, 2},
+		},
+		{
+			name:   "test case 2",
+			input:  []int{3, 2, 1},
+			wanted: []int{1, 2, 3},
+		},
+		{
+			name:   "test case 3",
+			input:  []int{1, 1, 5},
+			wanted: []int{1, 5, 1},
+		},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			nextPermutation(testCase.input)
+			assert.Equal(t, testCase.wanted, testCase.input)
+		})
+	}
+}
+
 func Test_125(t *testing.T) {
 	t.Run("case1", func(t *testing.T) {
 		case1 := "A man, a plan, a canal: Panama"
