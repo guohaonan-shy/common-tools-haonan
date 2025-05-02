@@ -52,6 +52,11 @@ func Test_43(t *testing.T) {
 		res := multiply("498828660196", "840477629533")
 		assert.Equal(t, "419254329864656431168468", res)
 	})
+
+	t.Run("case5", func(t *testing.T) {
+		res := multiply("140", "721")
+		assert.Equal(t, "100940", res)
+	})
 }
 
 func Test_134(t *testing.T) {
