@@ -1,6 +1,9 @@
 package every_day
 
 func multiply(num1 string, num2 string) string {
+	if num1 == "0" || num2 == "0" {
+		return "0"
+	}
 	pre := []byte{}
 	for i := 0; i < len(num2); i++ {
 		pre = append([]byte{'0'}, pre...)
