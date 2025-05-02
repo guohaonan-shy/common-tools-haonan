@@ -47,7 +47,7 @@ func multiply(num1 string, num2 string) string {
 		}
 
 		if addStep > 0 {
-			pre = append(pre, addStep)
+			pre = append(pre, addStep+'0')
 		}
 	}
 	return reverseList(pre)
