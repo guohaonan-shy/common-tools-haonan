@@ -32,6 +32,28 @@ func Test_7(t *testing.T) {
 	}
 }
 
+func Test_43(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		res := multiply("2", "3")
+		assert.Equal(t, "6", res)
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		res := multiply("123", "456")
+		assert.Equal(t, "56088", res)
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		res := multiply("9", "9")
+		assert.Equal(t, "81", res)
+	})
+
+	t.Run("case4", func(t *testing.T) {
+		res := multiply("498828660196", "840477629533")
+		assert.Equal(t, "419254329864656431168468", res)
+	})
+}
+
 func Test_134(t *testing.T) {
 	t.Run("gas station::has solution::case1", func(t *testing.T) {
 		gas, cost := []int{1, 2, 3, 4, 5}, []int{3, 4, 5, 1, 2}
