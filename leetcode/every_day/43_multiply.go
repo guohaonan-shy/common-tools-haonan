@@ -10,10 +10,11 @@ func multiply(num1 string, num2 string) string {
 		multiple := num2[i] - '0'
 		multiStep := uint8(0)
 		cur := make([]byte, 0)
+		// multiply
 		for j := len(num1) - 1; j >= 0; j-- {
 			temp := (num1[j]-'0')*multiple + multiStep
 			multiAns := temp % 10
-			cur = append(cur, multiAns+'0')
+			cur = append(cur, multiAns+'0') // bytes vs uint8
 			multiStep = temp / 10
 		}
 		if multiStep > 0 {
