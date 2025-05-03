@@ -72,6 +72,18 @@ func Test_44(t *testing.T) {
 	t.Run("wildcard matching", func(t *testing.T) {
 		assert.Equal(t, true, isMatch("adceb", "*a*b"))
 	})
+
+	t.Run("wildcard matching V2 case 1", func(t *testing.T) {
+		assert.Equal(t, true, isMatchV2("adceb", "*a*b"))
+	})
+
+	t.Run("wildcard matching V2 case 2", func(t *testing.T) {
+		assert.Equal(t, false, isMatchV2("mississippi", "m??*ss*?i*pi"))
+	})
+
+	t.Run("wildcard matching V2 case 3", func(t *testing.T) {
+		assert.Equal(t, true, isMatchV2("", "*****"))
+	})
 }
 
 func Test_63(t *testing.T) {
