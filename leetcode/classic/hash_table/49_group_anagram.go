@@ -141,10 +141,10 @@ func groupAnagrams_2025(strs []string) [][]string {
 		sort.Slice(copyStr, func(i, j int) bool {
 			return copyStr[i] < copyStr[j]
 		})
-		if _, ok := reached[copyStr]; ok {
-			reached[copyStr] = append(reached[copyStr], cur)
+		if _, ok := reached[string(copyStr)]; ok {
+			reached[string(copyStr)] = append(reached[string(copyStr)], cur)
 		} else {
-			reached[copyStr] = []string{cur}
+			reached[string(copyStr)] = []string{cur}
 		}
 	}
 	res := make([][]string, 0)
