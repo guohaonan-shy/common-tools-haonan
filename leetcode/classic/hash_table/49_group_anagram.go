@@ -2,6 +2,7 @@ package hash_table
 
 import (
 	"sort"
+	"strings"
 )
 
 // 假设字符数组长度个数为n，数组内最长的字符长为k，时间复杂度为O(N*KlogK)
@@ -128,6 +129,27 @@ func groupAnagrams_v2_compared(strs []string) [][]string {
 	res := make([][]string, 0)
 	for _, values := range set {
 		res = append(res, values)
+	}
+	return res
+}
+
+func groupAnagrams_2025(strs []string) [][]string {
+	reached := make(map[string][]string, 0)
+	for i := range strs {
+		cur := strs[i]
+		copyStr := []byte(strings.Clone(cur))
+		sort.Slice(copyStr, func(i, j int) bool {
+			return copyStr[i] < copyStr[j]
+		})
+		if _, ok := reached[copyStr]; ok {
+			reached[copyStr] = append(reached[copyStr], cur)
+		} else {
+			reached[copyStr] = []string{cur}
+		}
+	}
+	res := make([][]string, 0)
+	for _, val := range reached {
+		res = append(res, val)
 	}
 	return res
 }
