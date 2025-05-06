@@ -57,3 +57,70 @@ func fullJustify(words []string, maxWidth int) []string {
 	res = append(res, last_word)
 	return res
 }
+
+func fullJustify_20250509(words []string, maxWidth int) []string {
+
+	temp := make([][]string, 1)
+	temp[0] = make([]string, 0)
+	curIdx := 0
+	curLength := 0
+
+	for cur := 0; cur < len(words); {
+		word := words[cur]
+		if curLength+len(word) > maxWidth {
+			curLength = 0
+			curIdx++
+			temp = append(temp, make([]string, 0))
+			continue
+		}
+
+		// at least one space
+		curLength += len(word) + 1
+		temp[curIdx] = append(temp[curIdx], word)
+		cur++
+	}
+
+	res := make([]string, 0)
+	for i := range temp {
+
+		wordLength := 0
+
+		for j := range temp[i] {
+			wordLength += len(temp[i][j])
+		}
+
+		space := maxWidth - wordLength
+		var base, extra int
+		if len(temp[i]) > 1 {
+			base, extra = space/(len(temp[i])-1), space%(len(temp[i])-1)
+		} else {
+			base = space
+		}
+
+		ans := ""
+		if i < len(temp)-1 {
+			for j := range temp[i] {
+				ans += temp[i][j]
+				if len(ans) == maxWidth {
+					break
+				}
+				ans += strings.Repeat(" ", base)
+				if extra > 0 {
+					ans += " "
+					extra--
+				}
+			}
+		} else {
+			for j := range temp[i] {
+				ans += temp[i][j]
+				ans += " "
+				if j == len(temp[i])-1 {
+					ans += strings.Repeat(" ", maxWidth-len(ans))
+				}
+			}
+		}
+
+		res = append(res, ans)
+	}
+	return res
+}
