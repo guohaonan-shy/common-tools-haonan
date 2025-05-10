@@ -43,3 +43,80 @@ func Test_54(t *testing.T) {
 		assert.Equal(t, []int{1, 2, 3, 6, 9, 8, 7, 4, 5}, spiralOrder(case1))
 	})
 }
+
+func Test_79(t *testing.T) {
+	type args struct {
+		board [][]byte
+		word  string
+	}
+
+	for _, testCase := range []struct {
+		name string
+		args args
+		res  bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				board: [][]byte{
+					{'A', 'B', 'C', 'E'},
+					{'S', 'F', 'C', 'S'},
+					{'A', 'D', 'E', 'E'},
+				},
+				word: "ABCCED",
+			},
+			res: true,
+		},
+		{
+			name: "case 2",
+			args: args{
+				board: [][]byte{
+					{'A', 'B', 'C', 'E'},
+					{'S', 'F', 'C', 'S'},
+					{'A', 'D', 'E', 'E'},
+				},
+				word: "SEE",
+			},
+			res: true,
+		},
+		{
+			name: "case 3",
+			args: args{
+				board: [][]byte{
+					{'A', 'B', 'C', 'E'},
+					{'S', 'F', 'C', 'S'},
+					{'A', 'D', 'E', 'E'},
+				},
+				word: "ABCB",
+			},
+			res: false,
+		},
+		{
+			name: "case 4",
+			args: args{
+				board: [][]byte{
+					{'a', 'b'},
+					{'c', 'd'},
+				},
+				word: "acdb",
+			},
+			res: true,
+		},
+		{
+			name: "case 5",
+			args: args{
+				board: [][]byte{
+					{'C', 'A', 'A'},
+					{'A', 'A', 'A'},
+					{'B', 'C', 'D'},
+				},
+				word: "AAB",
+			},
+			res: true,
+		},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			assert.Equal(t, testCase.res, existDFS(testCase.args.board, testCase.args.word))
+		})
+	}
+}
