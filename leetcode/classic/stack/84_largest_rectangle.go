@@ -124,3 +124,43 @@ func min(a, b int) int {
 	}
 	return b
 }
+
+func largestRectangleArea_20250510(heights []int) int {
+	left := make([]int, len(heights))
+	stack := make([]int, 0)
+
+	for i := 0; i < len(heights); i++ {
+
+		for len(stack) > 0 && heights[stack[len(stack)-1]] >= heights[i] {
+			stack = stack[:len(stack)-1]
+		}
+
+		if len(stack) == 0 {
+			left[i] = -1
+		} else {
+			left[i] = stack[len(stack)-1]
+		}
+		stack = append(stack, i)
+	}
+
+	right := make([]int, len(heights))
+	stack = make([]int, 0)
+	for i := len(heights) - 1; i >= 0; i-- {
+		for len(stack) > 0 && heights[stack[len(stack)-1]] >= heights[i] {
+			stack = stack[:len(stack)-1]
+		}
+
+		if len(stack) == 0 {
+			right[i] = len(heights)
+		} else {
+			right[i] = stack[len(stack)-1]
+		}
+		stack = append(stack, i)
+	}
+
+	maxVal := 0
+	for i := 0; i < len(heights); i++ {
+		maxVal = max(maxVal, heights[i]*(right[i]-left[i]-1))
+	}
+	return maxVal
+}
