@@ -139,6 +139,14 @@ func Test_81(t *testing.T) {
 	t.Run("rotate search in duplicated array", func(t *testing.T) {
 		assert.Equal(t, true, searchII([]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1}, 2))
 	})
+
+	t.Run("rotate search in backtrack case 1", func(t *testing.T) {
+		assert.Equal(t, true, search_20250510([]int{2, 5, 6, 0, 0, 1, 2}, 0))
+	})
+
+	t.Run("rotate search in backtrack case 1", func(t *testing.T) {
+		assert.Equal(t, false, search_20250510([]int{2, 5, 6, 0, 0, 1, 2}, 3))
+	})
 }
 
 func Test_162(t *testing.T) {

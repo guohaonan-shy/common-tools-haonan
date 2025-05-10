@@ -32,3 +32,23 @@ func searchII(nums []int, target int) bool {
 	}
 	return false
 }
+
+func search_20250510(nums []int, target int) bool {
+
+	if len(nums) == 0 {
+		return false
+	}
+
+	if len(nums) == 1 {
+		return nums[0] == target
+	}
+
+	left, right := 0, len(nums)-1
+
+	mid := (left + right) / 2
+	if nums[mid] == target {
+		return true
+	}
+
+	return search_20250510(nums[:mid], target) || search_20250510(nums[mid+1:], target)
+}
