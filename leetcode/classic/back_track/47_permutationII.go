@@ -1,6 +1,6 @@
 package back_track
 
-func permuteUnique(nums []int) [][]int {
+func permuteUniqueV2(nums []int) [][]int {
 	k := len(nums)
 	temp := make([]int, 0)
 	res := make([][]int, 0)

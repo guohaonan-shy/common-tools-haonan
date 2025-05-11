@@ -1,6 +1,7 @@
 package back_track
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -17,18 +18,9 @@ func Test_22(t *testing.T) {
 	})
 }
 
-func Test_77(t *testing.T) {
-	t.Run("case1", func(t *testing.T) {
-		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine(4, 2))
-		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine_standard(4, 2))
-	})
-
-	t.Run("case2", func(t *testing.T) {
-		assert.Equal(t, [][]int{{1}}, combine(1, 1))
-	})
-
-	t.Run("case3", func(t *testing.T) {
-		assert.Equal(t, [][]int{{1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4}}, combine(4, 3))
+func Test_38(t *testing.T) {
+	t.Run("count and say", func(t *testing.T) {
+		assert.Equal(t, "1211", countAndSay(4))
 	})
 }
 
@@ -57,12 +49,6 @@ func Test_52(t *testing.T) {
 	})
 }
 
-func Test_38(t *testing.T) {
-	t.Run("count and say", func(t *testing.T) {
-		assert.Equal(t, "1211", countAndSay(4))
-	})
-}
-
 func Test_60(t *testing.T) {
 	t.Run("get kth permutation", func(t *testing.T) {
 		assert.Equal(t, "213", getPermutation(3, 3))
@@ -77,6 +63,36 @@ func Test_60(t *testing.T) {
 	t.Run("get kth permutation", func(t *testing.T) {
 		assert.Equal(t, "123", getPermutation(3, 1))
 		assert.Equal(t, "123", getPermutation_standard(3, 1))
+	})
+}
+
+func Test_77(t *testing.T) {
+	t.Run("case1", func(t *testing.T) {
+		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine(4, 2))
+		assert.Equal(t, [][]int{{1, 2}, {1, 3}, {1, 4}, {2, 3}, {2, 4}, {3, 4}}, combine_standard(4, 2))
+	})
+
+	t.Run("case2", func(t *testing.T) {
+		assert.Equal(t, [][]int{{1}}, combine(1, 1))
+	})
+
+	t.Run("case3", func(t *testing.T) {
+		assert.Equal(t, [][]int{{1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4}}, combine(4, 3))
+	})
+}
+
+func Test_88(t *testing.T) {
+	t.Run("case 1", func(t *testing.T) {
+		assert.Equal(t, []int{0, 1, 3, 2}, grayCode(2))
+	})
+
+	t.Run("case 2", func(t *testing.T) {
+		assert.Equal(t, []int{0, 1}, grayCode(1))
+	})
+
+	t.Run("case 5", func(t *testing.T) {
+		res := grayCode(5)
+		fmt.Sprint(res)
 	})
 }
 
