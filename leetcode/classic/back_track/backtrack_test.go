@@ -107,7 +107,7 @@ func Test_90(t *testing.T) {
 }
 
 func Test_93(t *testing.T) {
-	t.Run("restore ip", func(t *testing.T) {
+	t.Run("restore ip case 1", func(t *testing.T) {
 		//_ = restoreIpAddresses("25525511135")
 		_ = restoreIpAddresses("101023")
 	})

@@ -37,6 +37,12 @@ func Test_treeify(t *testing.T) {
 	}
 }
 
+func Test_95(t *testing.T) {
+	t.Run("case 1", func(t *testing.T) {
+		generateTrees(3)
+	})
+}
+
 func Test_100(t *testing.T) {
 	type testCase struct {
 		inputA   string
