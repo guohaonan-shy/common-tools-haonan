@@ -129,6 +129,16 @@ func Test_72(t *testing.T) {
 	})
 }
 
+func Test_91(t *testing.T) {
+	t.Run("case 1", func(t *testing.T) {
+		assert.Equal(t, 0, numDecodings("06"))
+	})
+
+	t.Run("case 2", func(t *testing.T) {
+		assert.Equal(t, 1, numDecodings("99"))
+	})
+}
+
 func Test_97(t *testing.T) {
 	t.Run("dp97", func(t *testing.T) {
 		assert.Equal(t, true, isInterleave("aabcc", "dbbca", "aadbbcbcac"))
