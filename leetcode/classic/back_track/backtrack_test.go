@@ -96,6 +96,16 @@ func Test_88(t *testing.T) {
 	})
 }
 
+func Test_90(t *testing.T) {
+	t.Run("case 1", func(t *testing.T) {
+		assert.Equal(t, [][]int{{}, {1}, {1, 2}, {1, 2, 2}, {2}, {2, 2}}, subsetsWithDup([]int{1, 2, 2}))
+	})
+
+	t.Run("case 2", func(t *testing.T) {
+		assert.Equal(t, [][]int{{}, {0}}, subsetsWithDup([]int{0}))
+	})
+}
+
 func Test_93(t *testing.T) {
 	t.Run("restore ip", func(t *testing.T) {
 		//_ = restoreIpAddresses("25525511135")
