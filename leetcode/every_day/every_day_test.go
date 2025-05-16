@@ -59,6 +59,23 @@ func Test_43(t *testing.T) {
 	})
 }
 
+func Test_115(t *testing.T) {
+	t.Run("case 1", func(t *testing.T) {
+		res := numDistinct("rabbbit", "rabbit")
+		assert.Equal(t, 3, res)
+	})
+
+	t.Run("case 2", func(t *testing.T) {
+		res := numDistinct("babgbag", "bag")
+		assert.Equal(t, 5, res)
+	})
+
+	t.Run("case 3", func(t *testing.T) {
+		res := numDistinct("aabb", "abb")
+		assert.Equal(t, 2, res)
+	})
+}
+
 func Test_134(t *testing.T) {
 	t.Run("gas station::has solution::case1", func(t *testing.T) {
 		gas, cost := []int{1, 2, 3, 4, 5}, []int{3, 4, 5, 1, 2}
