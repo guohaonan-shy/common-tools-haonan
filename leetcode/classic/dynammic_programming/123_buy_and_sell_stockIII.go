@@ -21,7 +21,6 @@ func maxProfit(prices []int) int {
 			}
 		}
 	}
-
 	profits := 0
 	for i := 0; i < 5; i++ {
 		profits = max(profits, dp[len(prices)][i])
