@@ -14,7 +14,9 @@ func longestConsecutive(nums []int) int {
 
 	// 双层循环，但是时间复杂度是N
 	for key := range dict {
-		if !dict[key-1] { // 连续序列的开头一定是不连续的，即element-1不存在
+		if !dict[key-1] {
+			// 连续序列的开头一定是不连续的，即element-1不存在;
+			// 这一步还是挺重要的，寻找一个无前置元素的元素，然后从它开始向后遍历；如果有前置元素，代表他在前置元素（甚至更前）的iteration内已被处理
 			temp := key
 			length := 0
 			for ; dict[temp]; temp++ {

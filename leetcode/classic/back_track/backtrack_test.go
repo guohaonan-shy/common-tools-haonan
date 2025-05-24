@@ -112,3 +112,16 @@ func Test_93(t *testing.T) {
 		_ = restoreIpAddresses("101023")
 	})
 }
+
+func Test_126(t *testing.T) {
+	t.Run("word ladder", func(t *testing.T) {
+		res := findLadders("hit", "cog", []string{"hot", "dot", "dog", "lot", "log", "cog"})
+		assert.Equal(t, [][]string{{"hit", "hot", "dot", "dog", "cog"}, {"hit", "hot", "lot", "log", "cog"}}, res)
+	})
+
+	t.Run("word ladder", func(t *testing.T) {
+		res := findLadders("a", "c", []string{"a", "b", "c"})
+		assert.Equal(t, [][]string{{"a", "c"}}, res)
+	})
+
+}
